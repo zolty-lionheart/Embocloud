@@ -65,7 +65,10 @@
         });
 
         var handleImgError = function(e, id) {
-          e.target.src = 'https://picsum.photos/400/225?random=' + id;
+          // 优先使用本地备用占位图
+          var localFallbacks = ['images/course_01.jpg', 'images/course_03.jpg', 'images/course_05.jpg', 'images/course_07.jpg', 'images/course_09.jpg'];
+          var fallback = localFallbacks[id % localFallbacks.length];
+          e.target.src = fallback;
         };
 
         var avatarColors = ['#1565C0','#6A1B9A','#00695C','#E65100','#0D47A1','#BF360C','#1B5E20','#4527A0','#0277BD','#4E342E'];
