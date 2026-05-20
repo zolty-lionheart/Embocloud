@@ -1,0 +1,529 @@
+/**
+ * 具身智能众创云空间 — 静态数据
+ * 所有 Mock 数据集中在此文件定义，各组件通过 window.AppData 引用
+ */
+window.AppData = {
+  // ===== HOME =====
+  homeStats: [
+    { value: '1,200+', label: '数据集资源' },
+    { value: '350+', label: '预训练模型' },
+    { value: '80+', label: '认证企业' },
+    { value: '5,000+', label: '活跃开发者' }
+  ],
+  coreModules: [
+    { id: 'dataset', name: '数据集中心', icon: 'dataset', desc: '海量高质量训练数据' },
+    { id: 'model', name: '模型库', icon: 'model', desc: 'URDF & AI 模型资源' },
+    { id: 'course', name: '课程中心', icon: 'course', desc: '系统化学习路径' },
+    { id: 'simulation', name: '云仿真平台', icon: 'simulation', desc: '高精度物理仿真' },
+    { id: 'devtool', name: '研发工具', icon: 'devtool', desc: '智能选型引导' },
+    { id: 'monitor', name: '云监控平台', icon: 'monitor', desc: '实时设备监控' },
+    { id: 'devzone', name: '二次开发', icon: 'devzone', desc: '完整开发工具链' },
+    { id: 'standard', name: '标准认证', icon: 'standard', desc: '权威认证路径' },
+    { id: 'mall', name: '供应链商城', icon: 'mall', desc: '优质零部件采购' },
+    { id: 'community', name: '众创社区', icon: 'community', desc: '开发者交流平台' },
+  ],
+  latestNews: [
+    { id:1, date:'2025-05-18', title:'平台数据集突破1200个，涵盖灵巧手、双足等多类本体', excerpt:'本次新增200+机器人操作类数据集，支持云端一键训练，显著提升研发效率。', tag:'平台公告', tagType:'primary' },
+    { id:2, date:'2025-05-12', title:'具身智能云仿真平台2.0发布，支持Isaac Sim集成', excerpt:'新版本引入NVIDIA Isaac Sim引擎，仿真精度提升300%，支持100+机器人型号。', tag:'版本更新', tagType:'success' },
+    { id:3, date:'2025-05-05', title:'2025具身智能创新大赛报名开启，奖金池100万元', excerpt:'聚焦家庭服务、工业装配、医疗辅助三大赛道，欢迎全球开发者参赛。', tag:'赛事活动', tagType:'warning' },
+    { id:4, date:'2025-04-28', title:'华为、宇树科技等20家企业正式入驻供应链商城', excerpt:'平台供应链生态持续扩大，累计合作供应商突破100家。', tag:'生态合作', tagType:'' },
+    { id:5, date:'2025-04-20', title:'具身智能国家标准（征求意见稿）发布，平台率先适配', excerpt:'首批5项行业标准已上线，支持在线自查与认证申请。', tag:'标准动态', tagType:'info' },
+  ],
+  partners: ['华为技术', '宇树科技', '智元机器人', '傅利叶智能', '宇泛智能', '中科院自动化所', '北京航空航天大学', '清华大学', '腾讯云', '阿里云', '百度飞桨', '英特尔'],
+
+  // ===== HOME — 平台优势 =====
+  advantages: [
+    { icon: 'bolt', title: '一站式全链路', desc: '从数据采集、模型训练到仿真测试、设备部署，打通研发全流程，无需在多平台间切换' },
+    { icon: 'cloud', title: '弹性云端算力', desc: '支持阿里云百炼与昆仑元双算力调度，按需弹性扩缩容，任务并发效率提升10倍' },
+    { icon: 'shield', title: '权威标准认证', desc: '内置ISO/GB/CE等国内外标准库，提供在线自测工具，加速产品认证与市场准入' },
+    { icon: 'puzzle', title: '开放二次开发', desc: '提供完整SDK与API接口，支持URDF模型导入、自定义算法集成，灵活适配各类场景' },
+  ],
+  featuredDatasets: [
+    { name:'Open X-Embodiment (OXE)', count:'100万+ 轨迹', source:'Google DeepMind', tags:['全球最大','跨机器人'], scene:'通用操作', img:'https://picsum.photos/400/220?random=10' },
+    { name:'智元 Agibot World', count:'1M+ 轨迹', source:'智元机器人', tags:['国内首个','人形机器人'], scene:'具身操作', img:'https://picsum.photos/400/220?random=11' },
+    { name:'GraspNet-1Billion', count:'11亿 抓取姿态', source:'清华大学', tags:['清华开源','全球最大'], scene:'抓取感知', img:'https://picsum.photos/400/220?random=12' },
+  ],
+  techEcosystem: [
+    { name:'PyTorch', type:'框架' }, { name:'TensorFlow', type:'框架' }, { name:'JAX', type:'框架' },
+    { name:'ROS2', type:'系统' }, { name:'Isaac Sim', type:'仿真' }, { name:'MuJoCo', type:'仿真' },
+    { name:'OpenCV', type:'视觉' }, { name:'YOLO', type:'视觉' }, { name:'PCL', type:'点云' },
+    { name:'CUDA', type:'加速' }, { name:'ONNX', type:'部署' }, { name:'Docker', type:'容器' },
+    { name:'ElasticSearch', type:'数据' }, { name:'Prometheus', type:'监控' }, { name:'Kubernetes', type:'编排' },
+    { name:'OPC UA', type:'通信' },
+  ],
+  testimonials: [
+    { name:'李博士', role:'清华大学机器人实验室 · 研究员', avatar:'L', content:'平台的数据集质量和数量远超预期，特别是多模态融合类数据集，让我们的模仿学习研究效率提升了3倍。', rating:5 },
+    { name:'张工', role:'宇树科技 · 高级算法工程师', avatar:'Z', content:'云仿真平台的Isaac Sim集成非常流畅，从URDF导入到分布式训练一键完成，极大缩短了我们的开发周期。', rating:5 },
+    { name:'王总', role:'某协作机器人企业 · CTO', avatar:'W', content:'标准认证中心的在线自测工具帮我们提前发现了多个合规问题，产品CE认证周期从6个月缩短到了3个月。', rating:5 },
+  ],
+
+  // ===== DATASET（真实外站数据集，点击跳转官方链接）=====
+  datasetCategories: ['全部', '通用机械臂/具身操作', '国内开源', '抓取与6D姿态', '移动机器人/室内导航', '灵巧手/人形机器人', '仿真数据集'],
+  datasetCategoryMap: {
+    '通用机械臂/具身操作': { color: '#1565C0', icon: '🦾' },
+    '国内开源': { color: '#E65100', icon: '🇨🇳' },
+    '抓取与6D姿态': { color: '#6A1B9A', icon: '🤏' },
+    '移动机器人/室内导航': { color: '#00695C', icon: '🧭' },
+    '灵巧手/人形机器人': { color: '#BF360C', icon: '🤖' },
+    '仿真数据集': { color: '#4527A0', icon: '💻' },
+  },
+  datasets: [
+    // 一、通用机械臂 / 具身操作
+    { id:1, name:'Open X-Embodiment (OXE)', category:'通用机械臂/具身操作', count:'100万+ 真实轨迹', source:'Google DeepMind', url:'https://robotics-transformer-x.github.io/', tags:['跨机器人','预训练','VLA'], desc:'全球最大跨机器人通用预训练数据集，22种机器人，60个数据源，支持视觉-语言-动作模型训练。' },
+    { id:2, name:'DROID', category:'通用机械臂/具身操作', count:'7.6万 野外轨迹', source:'ETH Zürich / CMU', url:'https://droid-dataset.github.io/', tags:['真实环境','鲁棒操控','单臂'], desc:'真实杂乱环境、动态干扰下的鲁棒操控数据集，基于Franka Panda单臂采集。' },
+    { id:3, name:'RT-1 / RT-2', category:'通用机械臂/具身操作', count:'13.5万 轨迹', source:'Google DeepMind', url:'https://robotics-transformer-x.github.io/', tags:['VLA标杆','语言指令','桌面操作'], desc:'视觉-语言-动作（VLA）技术标杆数据集，覆盖桌面日常操作任务。' },
+    { id:4, name:'BridgeData V2', category:'通用机械臂/具身操作', count:'6万+ 轨迹', source:'UC Berkeley', url:'https://rail.eecs.berkeley.edu/datasets/bridge_release/', tags:['低成本机器人','开放词汇'], desc:'低成本机器人适配，开放词汇任务，适合具身智能入门研究。' },
+    { id:5, name:'RoboSet', category:'通用机械臂/具身操作', count:'28500 条完整轨迹', source:'MIT', url:'https://robopen.github.io/roboset/', tags:['多视角','自然语言','厨房任务'], desc:'28500条完整轨迹（9500遥操作+19000动觉），4视角，厨房多任务，含自然语言指令标注。' },
+    // 二、国内开源
+    { id:6, name:'智元 Agibot World', category:'国内开源', count:'1M+ 轨迹 / 2976.4小时', source:'智元机器人', url:'https://huggingface.co/agibot-world', tags:['国内首个','百万级','人形机器人'], desc:'国内首个百万级真实人形机器人数据集，217个任务，3000+物体，持续更新中。' },
+    { id:7, name:'宇树 UnifoLM-WBT-Dataset', category:'国内开源', count:'189万条 真实轨迹', source:'宇树科技', url:'https://huggingface.co/collections/unitreerobotics/unifolm-wbt-dataset', tags:['2026最新','全身遥操作','G1/H1'], desc:'支持G1/H1人形机器人，全身遥操作数据，2026年3月最新开源，持续更新。' },
+    { id:8, name:'宇树 G1 精细操作数据集', category:'国内开源', count:'5类核心操作任务', source:'宇树科技', url:'https://huggingface.co/unitreerobotics', tags:['灵巧手','多模态','精细动作'], desc:'三指灵巧手多模态数据，含拧瓶盖、叠积木、物品收纳等精细动作任务。' },
+    { id:9, name:'华为白虎数据集', category:'国内开源', count:'10万+ 高质量任务数据', source:'华为', url:'https://www.openloong.org.cn/cn/datasets/baihu', tags:['异构机器人','视触觉','百万量级'], desc:'全球首个百万量级异构机器人数据集，跨本体视触觉数据。' },
+    { id:10, name:'大疆 RoboMaster 2019', category:'国内开源', count:'比赛场景标注', source:'大疆创新', url:'https://www.robomaster.com/zh-CN/resource/download', tags:['竞技机器人','视觉感知','基准测试'], desc:'竞技机器人视觉感知基准，装甲板检测标注，1920×1080分辨率。' },
+    // 三、抓取与 6D 姿态
+    { id:11, name:'GraspNet-1Billion', category:'抓取与6D姿态', count:'11亿 抓取姿态', source:'清华大学', url:'https://graspnet.net/', tags:['全球最大','清华开源','真实场景'], desc:'清华开源，全球最大真实场景抓取数据集，190个场景，97280张图像。' },
+    { id:12, name:'Dex-Net', category:'抓取与6D姿态', count:'百万级 抓取数据', source:'UC Berkeley', url:'https://berkeleyautomation.github.io/dex-net/', tags:['抓取质量','夹爪/吸盘','仿真+真实'], desc:'百万级抓取数据（仿真+真实），支持夹爪/吸盘，抓取质量评估与策略训练基准。' },
+    // 四、移动机器人 / 室内导航
+    { id:13, name:'ALFRED', category:'移动机器人/室内导航', count:'家庭环境 长流程任务', source:'Facebook AI', url:'https://github.com/askforalfred/alfred', tags:['具身推理','任务规划','语言指令'], desc:'家庭环境语言指令+长流程任务数据集，具身推理与任务规划标杆。' },
+    { id:14, name:'RoboTHOR', category:'移动机器人/室内导航', count:'仿真室内 视觉导航', source:'Allen AI (AI2)', url:'https://ai2thor.allenai.org/robothor/', tags:['sim2real','语言交互','虚实配对'], desc:'虚实配对场景，支持sim2real迁移，视觉导航+语言交互。' },
+    { id:15, name:'iGibson', category:'移动机器人/室内导航', count:'15个真实交互场景', source:'Stanford', url:'https://github.com/StanfordVL/iGibson', tags:['高保真仿真','VR采集','8000+场景'], desc:'高保真物理仿真，支持VR数据采集，兼容8000+第三方场景。' },
+    // 五、灵巧手 / 人形机器人
+    { id:16, name:'DexYCB', category:'灵巧手/人形机器人', count:'119GB', source:'Stanford', url:'https://dex-ycb.github.io/', tags:['人手交互','多视角','6D姿态标注'], desc:'119GB人手-物体交互与灵巧操作基准数据集，88个物体，多视角6D姿态标注。' },
+    // 六、仿真数据集
+    { id:17, name:'Meta-World', category:'仿真数据集', count:'50+ 机械臂任务', source:'UC Berkeley', url:'https://meta-world.github.io/', tags:['元学习','多任务迁移','RL基准'], desc:'50+机械臂任务，元学习基准，支持多任务迁移与元强化学习研究。' },
+    { id:18, name:'RLBench', category:'仿真数据集', count:'100+ 仿真任务', source:'Stanford / Imperial', url:'https://github.com/stepjam/RLBench', tags:['长时序','少样本','模仿学习'], desc:'100+仿真任务，长时序操作，少样本学习与模仿学习基准。' },
+  ],
+
+  // ===== MODEL =====
+  modelTree: [
+    { id:'1', label:'工业机器人', children:[{id:'1-1',label:'六轴机械臂'},{id:'1-2',label:'SCARA机器人'},{id:'1-3',label:'Delta机器人'}] },
+    { id:'2', label:'协作机器人', children:[{id:'2-1',label:'轻量型协作臂'},{id:'2-2',label:'双臂协作机器人'}] },
+    { id:'3', label:'移动机器人', children:[{id:'3-1',label:'差速驱动'},{id:'3-2',label:'全向移动'},{id:'3-3',label:'四足机器人'}] },
+    { id:'4', label:'人形机器人', children:[{id:'4-1',label:'仿人全身模型'},{id:'4-2',label:'灵巧手模型'}] },
+  ],
+  urdfModels: [
+    { id:1, name:'UR5e 协作机械臂', category:'协作机器人', format:'URDF', icon:'🦾', desc:'Universal Robots UR5e 标准URDF模型，含完整碰撞体', version:'2.1.0', downloads:'12,430', size:'8.2 MB' },
+    { id:2, name:'Franka Panda', category:'协作机器人', format:'URDF', icon:'🤖', desc:'Franka Emika Panda 7DOF协作臂，带Robotiq夹爪', version:'1.3.2', downloads:'9,876', size:'12.4 MB' },
+    { id:3, name:'Boston Dynamics Spot', category:'四足机器人', format:'URDF', icon:'🐕', desc:'Boston Dynamics Spot 四足机器人高精度模型', version:'3.0.0', downloads:'7,654', size:'45.2 MB' },
+    { id:4, name:'Unitree H1 人形机器人', category:'人形机器人', format:'URDF+MJCF', icon:'🚶', desc:'宇树科技H1人形机器人，包含19个驱动关节', version:'1.0.5', downloads:'5,321', size:'38.6 MB' },
+    { id:5, name:'Shadow Dexterous Hand', category:'灵巧手', format:'URDF', icon:'✋', desc:'Shadow Robot灵巧手，含24个关节完整模型', version:'2.0.1', downloads:'4,210', size:'6.8 MB' },
+    { id:6, name:'KUKA iiwa 14', category:'工业机器人', format:'URDF', icon:'🏭', desc:'KUKA iiwa 14 轻量型工业机器人，7自由度', version:'1.2.0', downloads:'8,901', size:'9.1 MB' },
+  ],
+  aiModels: [
+    { id:101, name:'RT-2 机器人变换器', category:'端到端控制', framework:'JAX', icon:'🧠', desc:'Google DeepMind RT-2，视觉-语言-动作联合模型', accuracy:'89.4%', params:'55B', version:'1.0.0', downloads:'3,210' },
+    { id:102, name:'ACT 行为克隆', category:'模仿学习', framework:'PyTorch', icon:'🎭', desc:'Action Chunking with Transformers，高精度双臂操作', accuracy:'92.1%', params:'86M', version:'1.2.0', downloads:'6,540' },
+    { id:103, name:'Diffusion Policy', category:'生成式策略', framework:'PyTorch', icon:'🌊', desc:'扩散模型驱动的机器人操作策略，鲁棒性出色', accuracy:'87.6%', params:'120M', version:'0.9.5', downloads:'4,320' },
+    { id:104, name:'DreamerV3 世界模型', category:'强化学习', framework:'JAX', icon:'💭', desc:'基于世界模型的无模型强化学习，样本效率高', accuracy:'85.2%', params:'200M', version:'3.0.0', downloads:'2,890' },
+    { id:105, name:'OpenVLA 视觉语言动作', category:'多模态', framework:'PyTorch', icon:'👁️', desc:'开源视觉-语言-动作模型，支持自然语言指令控制', accuracy:'91.3%', params:'7B', version:'1.0.0', downloads:'5,670' },
+    { id:106, name:'SAM2-Robot 分割模型', category:'视觉感知', framework:'PyTorch', icon:'🎯', desc:'Meta SAM2机器人版，实时目标分割与追踪', accuracy:'96.8%', params:'636M', version:'2.0.0', downloads:'8,120' },
+  ],
+
+  // ===== COURSE =====
+  courseCategories: ['全部', '入门基础', '运动控制', '感知算法', '强化学习', '仿真平台', '行业前沿'],
+  courses: [
+    { id:1, title:'【稚晖君】2024智元年度新品发布会全程回顾', uploader:'稚晖君', views:'43.8万', level:'入门', levelType:'success', category:'行业前沿', cover:'https://i1.hdslb.com/bfs/archive/b6dfa92e9e7e1e813264699c73f9a029fdbcb124.jpg', url:'https://www.bilibili.com/video/BV1xU411U7PW', desc:'智元机器人创始人稚晖君发布远征A2/A2-W/A2-Max、灵犀X1等5款商用人形机器人，全面展示具身智能最新成果。' },
+    { id:2, title:'ROS机器人入门教程（49小时·367集）', uploader:'Autolabor官方', views:'337.4万', level:'入门', levelType:'success', category:'入门基础', cover:'https://i1.hdslb.com/bfs/archive/263597dc23433e2b4019557cc5b06e7e96303cb3.png', url:'https://www.bilibili.com/video/BV1Ci4y1L7ZZ', desc:'全网最经典的ROS入门课程，367集系统教学覆盖通信机制、导航、建图、SLAM等核心知识，配套GitHub代码仓库。' },
+    { id:3, title:'2025公认最通俗易懂的具身智能实战入门教程', uploader:'RoboTech·机器人之心', views:'18.5万', level:'入门', levelType:'success', category:'入门基础', cover:'https://i2.hdslb.com/bfs/archive/19cd9c0725ef6edec6e4ee573e930eb228cb251b.jpg', url:'https://www.bilibili.com/video/BV1sdfoBEEgq', desc:'从零部署Isaac Gym强化学习环境，覆盖多模态大模型、自然语言交互、强化学习、模仿学习，AI开发者实战指南。' },
+    { id:4, title:'Unitree 2024 ROS暑期学校课程：四足机器人Go2开发', uploader:'宇树科技Support', views:'5.2万', level:'进阶', levelType:'warning', category:'运动控制', cover:'https://i0.hdslb.com/bfs/archive/79be987dbde3c6d144bb26f8e37fe1b70d07aa6a.jpg', url:'https://www.bilibili.com/video/BV1HSEQz1E1M', desc:'宇树科技官方课程，深入讲解四足机器人Go2的ROS开发、运动控制与二次开发，含实机演示。' },
+    { id:5, title:'基于NVIDIA Isaac Lab的人形机器人步态训练全流程', uploader:'Maker_AI', views:'3.1万', level:'进阶', levelType:'warning', category:'仿真平台', cover:'https://i2.hdslb.com/bfs/archive/6a5d6d5477239099784366bd9903e6c3240308d5.jpg', url:'https://www.bilibili.com/video/BV1pCXHYBEcU', desc:'完整演示通过NVIDIA Isaac Lab训练双足机器人实现稳定行走，含关节扭矩反馈与目标速度奖励函数设计。' },
+    { id:6, title:'【整整200集】2025最全最细的ROS2机器人零基础入门全套教程', uploader:'是机器人饲养员', views:'89.3万', level:'入门', levelType:'success', category:'入门基础', cover:'https://i1.hdslb.com/bfs/archive/00f9320dffd767493c3ca8ec7a65d9c4c4757d26.png', url:'https://www.bilibili.com/video/BV1HSEQz1E1M', desc:'ROS2零基础入门到实践，从环境搭建、项目构建到开发者工具配置，200集全程通俗易懂。' },
+    { id:7, title:'【山猫M20】具身智能开发第一期：ROS2结构介绍与盲走运控', uploader:'云深处实验室', views:'4436', level:'高级', levelType:'danger', category:'运动控制', cover:'https://i1.hdslb.com/bfs/archive/87595f7ccb433f53d6058fa59354ea00c9f21a48.jpg', url:'https://www.bilibili.com/video/BV17S2VBJEN2', desc:'云深处科技官方课程，以山猫M20四轮足机器人为例，讲解ROS2程序结构与强化学习策略部署流程。' },
+    { id:8, title:'【2026最新具身智能入门】融合强化学习与机器人训练', uploader:'大模型全栈', views:'242', level:'入门', levelType:'success', category:'强化学习', cover:'https://i0.hdslb.com/bfs/archive/3099b4d53f1e27af4a81867e5f6812e177ddd277.jpg', url:'https://www.bilibili.com/video/BV153Lw6BEAL', desc:'徐博士精讲具身智能入门路径，涵盖PPO算法公式推导、机器人强化学习训练，适合零基础到进阶。' },
+    { id:9, title:'双足机器人强化学习：humanoid-gym sim2sim详细学习过程', uploader:'youyou_huang', views:'1.9万', level:'进阶', levelType:'warning', category:'强化学习', cover:'https://i0.hdslb.com/bfs/archive/c6d37497741ddcd4185b3ed5035e626f91c9c832.jpg', url:'https://www.bilibili.com/video/BV1k2aUemE7p', desc:'以Openloong人形机器人为例，详细讲解humanoid-gym的sim2sim强化学习训练过程，含URDF配置。' },
+    { id:10, title:'B站强推！2025公认最通俗易懂的人形机器人教程', uploader:'具身机器人开发', views:'3.4万', level:'中级', levelType:'', category:'运动控制', cover:'https://i2.hdslb.com/bfs/archive/bbed0c390b2479f42b7110b23ede01be3fb77ff3.jpg', url:'https://www.bilibili.com/video/BV18sSaBFEqs', desc:'涵盖人形机器人操作学习、强化学习、二次开发实战，系统讲解从建模到落地的完整技术链路。' },
+  ],
+
+  // ===== SIMULATION =====
+  simScenes: ['工厂装配线','仓储取货场景','室内家庭环境','医疗手术室','户外复杂地形','楼梯攀爬场景'],
+  robotModels: ['UR5e 协作臂','Franka Panda','Unitree H1 人形','Boston Spot 四足','Shadow Hand 灵巧手','KUKA iiwa 14'],
+  computePackages: [
+    { id:'basic', name:'基础版', price:'¥0.5/小时', desc:'4核CPU，8G内存，适合轻量仿真调试' },
+    { id:'pro', name:'专业版', price:'¥2/小时', desc:'16核CPU+GPU，32G内存，适合大规模仿真' },
+    { id:'enterprise', name:'企业版', price:'¥8/小时', desc:'64核CPU+A100，128G内存，适合分布式仿真' },
+  ],
+
+  // ===== DEVTOOL =====
+  devtoolSceneOptions: [
+    { label:'工业装配', value:'assembly' },
+    { label:'仓储物流', value:'logistics' },
+    { label:'医疗辅助', value:'medical' },
+    { label:'家庭服务', value:'home' },
+    { label:'农业采摘', value:'agriculture' },
+    { label:'特种作业', value:'special' },
+  ],
+  devtoolDofOptions: [
+    { label:'4 DOF（基础型）', value:'4' },
+    { label:'6 DOF（标准型）', value:'6' },
+    { label:'7 DOF（冗余型）', value:'7' },
+    { label:'双臂 14 DOF', value:'14' },
+  ],
+  devtoolPrecisionOptions: [
+    { label:'±1mm（普通级）', value:'1mm' },
+    { label:'±0.1mm（精密级）', value:'0.1mm' },
+    { label:'±0.02mm（超精密）', value:'0.02mm' },
+  ],
+  devtoolBudgetOptions: [
+    { label:'10万以下', value:'lt10' },
+    { label:'10-50万', value:'10-50' },
+    { label:'50-200万', value:'50-200' },
+    { label:'200万以上', value:'gt200' },
+  ],
+  devtoolLocationOptions: [
+    { label:'深圳测试中心', value:'shenzhen' },
+    { label:'北京展示中心', value:'beijing' },
+    { label:'上海创新基地', value:'shanghai' },
+    { label:'成都研究院', value:'chengdu' },
+  ],
+
+  // ===== MONITOR =====
+  monitorStats: [
+    { label:'在线设备', value:'24', icon:'🖥️', bg:'rgba(21,101,192,0.1)', color:'#1565C0' },
+    { label:'离线设备', value:'3', icon:'⚠️', bg:'rgba(229,57,53,0.1)', color:'#E53935' },
+    { label:'今日运行时长', value:'186h', icon:'⏱️', bg:'rgba(67,160,71,0.1)', color:'#43A047' },
+    { label:'异常告警', value:'5', icon:'🔔', bg:'rgba(255,167,38,0.1)', color:'#FFA726' },
+  ],
+  devices: [
+    { id:'DEV-001', name:'UR5e 协作臂 #1', type:'机械臂', location:'A区产线', online:true, cpu:'42%', memory:'3.2G', uptime:'72h 15m' },
+    { id:'DEV-002', name:'Unitree H1 #3', type:'人形机器人', location:'B区展示厅', online:true, cpu:'67%', memory:'8.1G', uptime:'24h 03m' },
+    { id:'DEV-003', name:'AGV 叉车 #7', type:'移动机器人', location:'仓储区', online:true, cpu:'31%', memory:'1.8G', uptime:'168h 42m' },
+    { id:'DEV-004', name:'Shadow Hand #2', type:'灵巧手', location:'C区实验室', online:false, cpu:'0%', memory:'0G', uptime:'已离线' },
+    { id:'DEV-005', name:'Boston Spot #1', type:'四足机器人', location:'D区测试场', online:true, cpu:'55%', memory:'4.6G', uptime:'36h 11m' },
+    { id:'DEV-006', name:'Franka Panda #4', type:'机械臂', location:'E区研究室', online:true, cpu:'28%', memory:'2.1G', uptime:'48h 55m' },
+  ],
+  monitorAlerts: [
+    { time:'2025-05-20 14:32', device:'UR5e 协作臂 #1', type:'关节温度', message:'关节2温度超限，当前78℃，阈值75℃', level:'警告', resolved:false },
+    { time:'2025-05-20 13:15', device:'AGV 叉车 #7', type:'电量不足', message:'电池电量低于15%，建议立即充电', level:'警告', resolved:true },
+    { time:'2025-05-20 11:48', device:'Shadow Hand #2', type:'通信中断', message:'设备心跳包超时，连接已断开', level:'严重', resolved:false },
+    { time:'2025-05-20 09:22', device:'Unitree H1 #3', type:'碰撞检测', message:'步态规划器检测到碰撞风险，已自动停机', level:'严重', resolved:true },
+    { time:'2025-05-19 17:05', device:'Franka Panda #4', type:'关节限位', message:'关节3接近软限位边界，建议重新规划路径', level:'提示', resolved:false },
+  ],
+  historyData: [
+    { time:'2025-05-20 14:00', device:'UR5e 协作臂 #1', metric:'关节2温度', value:'72', unit:'℃', status:'正常' },
+    { time:'2025-05-20 13:30', device:'UR5e 协作臂 #1', metric:'末端速度', value:'0.45', unit:'m/s', status:'正常' },
+    { time:'2025-05-20 13:00', device:'AGV 叉车 #7', metric:'行驶速度', value:'1.2', unit:'m/s', status:'正常' },
+    { time:'2025-05-20 12:30', device:'Boston Spot #1', metric:'步行速度', value:'1.5', unit:'m/s', status:'正常' },
+    { time:'2025-05-20 12:00', device:'Franka Panda #4', metric:'负载力矩', value:'28.4', unit:'Nm', status:'偏高' },
+    { time:'2025-05-20 11:30', device:'Shadow Hand #2', metric:'指尖力', value:'8.2', unit:'N', status:'正常' },
+  ],
+
+  // ===== DEVZONE =====
+  robotBodies: [
+    { id:'arm', name:'工业机械臂', icon:'🦾', desc:'6/7自由度工业级机械臂，负载5-200kg', tags:['云端训练','开箱即用'] },
+    { id:'cobot', name:'协作机器人', icon:'🤝', desc:'人机协作设计，功率限制安全认证', tags:['开箱即用'] },
+    { id:'humanoid', name:'人形机器人', icon:'🚶', desc:'双足人形，20+自由度，全身协调运动', tags:['云端训练'] },
+    { id:'quadruped', name:'四足机器人', icon:'🐕', desc:'全地形适应，户外复杂环境探索', tags:['本地部署'] },
+    { id:'mobile', name:'移动底盘', icon:'🛞', desc:'差速/全向轮底盘，含SLAM导航', tags:['开箱即用','本地部署'] },
+    { id:'hand', name:'灵巧手', icon:'✋', desc:'16-24自由度灵巧手，精细操作', tags:['云端训练'] },
+  ],
+  devScenes: [
+    { value:'pick_place', label:'抓取放置' },
+    { value:'assembly', label:'精密装配' },
+    { value:'nav', label:'自主导航' },
+    { value:'hri', label:'人机协作' },
+    { value:'inspection', label:'视觉检测' },
+  ],
+  devKitsMap: {
+    pick_place: [
+      { id:1, icon:'📷', name:'GraspNet 抓取算法包', desc:'基于点云的6D位姿估计与抓取规划SDK' },
+      { id:2, icon:'🎮', name:'力控末端执行器SDK', desc:'精细力控接口，支持柔顺抓取' },
+      { id:3, icon:'🗃️', name:'物体识别数据集', desc:'10万+工业零件RGBD数据集' },
+    ],
+    assembly: [
+      { id:4, icon:'🔩', name:'精密装配视觉系统', desc:'亚毫米级视觉对准与插入引导' },
+      { id:5, icon:'📐', name:'力矩控制库', desc:'螺纹装配力矩反馈控制' },
+      { id:6, icon:'🤖', name:'装配任务规划器', desc:'基于任务和运动规划的TAMP框架' },
+    ],
+    nav: [
+      { id:7, icon:'🗺️', name:'Nav2导航框架', desc:'ROS2 Nav2全栈自主导航配置包' },
+      { id:8, icon:'📡', name:'多传感器融合SLAM', desc:'LiDAR+IMU+视觉融合建图' },
+      { id:9, icon:'🚧', name:'动态障碍物预测', desc:'基于深度学习的行人轨迹预测' },
+    ],
+    hri: [
+      { id:10, icon:'🗣️', name:'语音指令SDK', desc:'自然语言到机器人动作映射' },
+      { id:11, icon:'👁️', name:'人体姿态估计', desc:'实时人体关节点检测与追踪' },
+      { id:12, icon:'🛡️', name:'安全监控模块', desc:'人机安全距离监控与紧急停机' },
+    ],
+    inspection: [
+      { id:13, icon:'🔍', name:'工业缺陷检测SDK', desc:'基于YOLOv10的实时缺陷识别' },
+      { id:14, icon:'📊', name:'检测报告生成器', desc:'自动生成结构化质检报告' },
+      { id:15, icon:'🌐', name:'3D重建工具包', desc:'基于深度相机的在线3D重建' },
+    ],
+  },
+  devCases: [
+    { id:1, icon:'🏭', name:'宇树H1仓储自主作业系统', desc:'基于H1人形机器人实现仓储货物搬运与整理，日均处理1200件', tags:['云端训练','开箱即用'], stars:'342' },
+    { id:2, icon:'🔬', name:'腹腔镜手术辅助机器人', desc:'7DOF协作臂精密辅助手术，误差<0.5mm，已通过NMPA认证', tags:['本地部署'], stars:'218' },
+    { id:3, icon:'🌾', name:'智慧农业草莓采摘机器人', desc:'四足+机械臂融合系统，采摘效率是人工的3倍，损伤率<0.5%', tags:['云端训练','本地部署'], stars:'156' },
+  ],
+
+  // ===== STANDARD（真实标准文档库，13类86项）=====
+  standardCategoryColors: {
+    '电磁兼容': '#1565C0',
+    '电气安全': '#C62828',
+    '各领域性能测试': '#2E7D32',
+    '功能安全': '#6A1B9A',
+    '机械安全': '#E65100',
+    '可靠': '#00695C',
+    '能效': '#AD1457',
+    '算法可信': '#283593',
+    '碳足迹': '#558B2F',
+    '协同安全': '#0277BD',
+    '协议兼容': '#4527A0',
+    '信息安全': '#D84315',
+    '预期功能安全': '#37474F',
+  },
+  standardTree: [
+    { label: '全部标准' },
+    { label: '电磁兼容' },
+    { label: '电气安全' },
+    { label: '各领域性能测试' },
+    { label: '功能安全' },
+    { label: '机械安全' },
+    { label: '可靠' },
+    { label: '能效' },
+    { label: '算法可信' },
+    { label: '碳足迹' },
+    { label: '协同安全' },
+    { label: '协议兼容' },
+    { label: '信息安全' },
+    { label: '预期功能安全' },
+  ],
+  standards: [
+    // ===== 电磁兼容 (14) =====
+    { code:'GB/T 17799.1-2017', name:'电磁兼容 通用标准 居住、商业和轻工业环境中的抗扰度试验', category:'电磁兼容', type:'国标', status:'现行' },
+    { code:'GB/T 37284-2019', name:'服务机器人 电磁兼容 通用标准 发射要求和限值', category:'电磁兼容', type:'国标', status:'现行' },
+    { code:'GB/T 38326-2019', name:'工业、科学和医疗机器人电磁兼容 发射测试方法和限值', category:'电磁兼容', type:'国标', status:'现行' },
+    { code:'GB/T 38336-2019', name:'工业、科学和医疗机器人电磁兼容 发射测试方法和限值', category:'电磁兼容', type:'国标', status:'现行' },
+    { code:'GB/T 39004-2020', name:'工业机器人电磁兼容设计规范', category:'电磁兼容', type:'国标', status:'现行' },
+    { code:'IEC 61000-6-1:2016', name:'电磁兼容 第6-1部分 通用标准 居住、商业和轻工业环境中的抗扰度', category:'电磁兼容', type:'国际', status:'现行' },
+    { code:'IEC 61000-6-2:2016', name:'电磁兼容 第6-2部分 通用标准 工业环境中的抗扰度试验', category:'电磁兼容', type:'国际', status:'现行' },
+    { code:'IEC 61000-6-3:2020', name:'电磁兼容 第6-3部分 通用标准 居住、商业和轻工业环境中的发射', category:'电磁兼容', type:'国际', status:'现行' },
+    { code:'IEC 61000-6-4:2018', name:'电磁兼容 第6-4部分 通用标准 工业环境中的发射', category:'电磁兼容', type:'国际', status:'现行' },
+    { code:'ISO 10605:2023', name:'道路车辆 电气电子部件对静电放电抗扰性的试验方法', category:'电磁兼容', type:'国际', status:'现行' },
+    { code:'ISO 11452-4:2020', name:'道路车辆 来自窄带辐射电磁能的电气骚扰的组件试验方法 第4部分', category:'电磁兼容', type:'国际', status:'现行' },
+    { code:'ISO 11452-8:2015', name:'道路车辆 窄带辐射电磁能量引起的零部件电磁骚扰试验方法 第8部分', category:'电磁兼容', type:'国际', status:'现行' },
+    { code:'ISO 11452-9:2021', name:'道路车辆 窄带辐射电磁能电气干扰的组分试验方法 第9部分', category:'电磁兼容', type:'国际', status:'现行' },
+    { code:'ISO 16750-2:2023', name:'道路车辆 电气和电子设备的环境条件和试验 第2部分：电气负荷', category:'电磁兼容', type:'国际', status:'现行' },
+
+    // ===== 电气安全 (6) =====
+    { code:'GB 28526-2012', name:'机械电气安全 安全相关电气、电子和可编程电子控制系统的功能安全', category:'电气安全', type:'国标', status:'现行' },
+    { code:'GB/T 20438.1-2017', name:'电气/电子/可编程电子安全相关系统的功能安全 第1部分：一般要求', category:'电气安全', type:'国标', status:'现行' },
+    { code:'GB/T 25295-2010', name:'电气设备安全设计导则', category:'电气安全', type:'国标', status:'现行' },
+    { code:'GB/T 31498-2021', name:'电动汽车碰撞后安全要求', category:'电气安全', type:'国标', status:'现行' },
+    { code:'GB/T 38244-2019', name:'机器人安全总则', category:'电气安全', type:'国标', status:'现行' },
+    { code:'GB/T 5226.1-2019', name:'机械电气安全机械电气设备 第1部分：通用技术条件', category:'电气安全', type:'国标', status:'现行' },
+
+    // ===== 各领域性能测试 (27) =====
+    { code:'DB35/T 2091-2022', name:'移动服务机器人运用技术要求', category:'各领域性能测试', type:'地标', status:'现行' },
+    { code:'DL/T 2239-2021', name:'变电站巡检机器人检测技术规范', category:'各领域性能测试', type:'行标', status:'现行' },
+    { code:'DL/T 1610-2016', name:'变电站机器人巡检系统通用技术条件', category:'各领域性能测试', type:'行标', status:'现行' },
+    { code:'GB/T 12642-2013', name:'工业机器人 性能规范及其试验方法', category:'各领域性能测试', type:'国标', status:'现行' },
+    { code:'GB/T 20721-2022', name:'自动导引车 通用技术条件', category:'各领域性能测试', type:'国标', status:'现行' },
+    { code:'GB/T 36530-2018', name:'机器人与机器人装备 个人助理机器人的安全要求', category:'各领域性能测试', type:'国标', status:'现行' },
+    { code:'GB/T 37475-2019', name:'内河水面清扫船尺度系列和作业设备', category:'各领域性能测试', type:'国标', status:'现行' },
+    { code:'GB/T 38124-2019', name:'服务机器人性能测试方法', category:'各领域性能测试', type:'国标', status:'现行' },
+    { code:'GB/T 38834.1-2020', name:'机器人 服务机器人性能规范及其试验方法 第1部分：轮式机器人运动', category:'各领域性能测试', type:'国标', status:'现行' },
+    { code:'GB/T 38834.2-2023', name:'机器人 服务机器人性能规范及其试验方法 第2部分：导航', category:'各领域性能测试', type:'国标', status:'现行' },
+    { code:'GB/T 38834.3-2023', name:'机器人 服务机器人性能规范及其试验方法 第3部分：操作', category:'各领域性能测试', type:'国标', status:'现行' },
+    { code:'GB/T 38873-2020', name:'分拣机器人通用技术条件', category:'各领域性能测试', type:'国标', status:'现行' },
+    { code:'GB/T 40327-2021', name:'轮式移动机器人导引运动性能测试方法', category:'各领域性能测试', type:'国标', status:'现行' },
+    { code:'GB/T 41402-2022', name:'物流机器人 信息系统通用技术规范', category:'各领域性能测试', type:'国标', status:'现行' },
+    { code:'GB/T 43119-2023', name:'自动驾驶封闭测试场地建设技术要求', category:'各领域性能测试', type:'国标', status:'现行' },
+    { code:'GB/T 43849-2024', name:'水下机器人整机及零部件基本环境试验方法 水静压力试验方法', category:'各领域性能测试', type:'国标', status:'现行' },
+    { code:'GB/T 44251-2024', name:'腿式机器人性能及试验方法', category:'各领域性能测试', type:'国标', status:'现行' },
+    { code:'GB/T 45579-2025', name:'机器人智能化视觉评价方法及等级划分', category:'各领域性能测试', type:'国标', status:'现行' },
+    { code:'GB/T 44253-2024', name:'巡检机器人安全要求', category:'各领域性能测试', type:'国标', status:'现行' },
+    { code:'GB/T 44312-2024', name:'巡检机器人集中监控系统技术要求', category:'各领域性能测试', type:'国标', status:'现行' },
+    { code:'GD14-2021', name:'水面智能搜救机器人技术指南', category:'各领域性能测试', type:'地标', status:'现行' },
+    { code:'T/CAMETA XXX—2025', name:'机器人技术专业教学能力评价规范', category:'各领域性能测试', type:'团标', status:'现行' },
+    { code:'T/QGCML XXXX—XXXX', name:'泳池清洁机器人通用技术规范', category:'各领域性能测试', type:'团标', status:'现行' },
+    { code:'T/SSITS 507-2024', name:'防爆叉车类移动机器人 技术要求', category:'各领域性能测试', type:'团标', status:'现行' },
+    { code:'T/SZROBOT 0001-2021', name:'商用清洁机器人通用技术规范', category:'各领域性能测试', type:'团标', status:'现行' },
+    { code:'T/ZZB 1371-2019', name:'泳池水下清洗机器人用电动机', category:'各领域性能测试', type:'团标', status:'现行' },
+    { code:'YD/T 6770-2025', name:'人工智能 关键基础技术 具身智能基准测试方法', category:'各领域性能测试', type:'行标', status:'现行' },
+
+    // ===== 功能安全 (13) =====
+    { code:'GB 11291.1-2011', name:'工业环境用机器人 安全要求 第1部分 机器人', category:'功能安全', type:'国标', status:'现行' },
+    { code:'GB 11291.2-2011', name:'机器人与机器人装备 安全要求 第2部分 工业机器人的安全', category:'功能安全', type:'国标', status:'现行' },
+    { code:'GB 28526-2012', name:'机械电气安全 安全相关电气、电子和可编程电子控制系统的功能安全', category:'功能安全', type:'国标', status:'现行' },
+    { code:'GB/T 25000.51-2016', name:'系统与软件工程 系统与软件质量要求和评价（SQuaRE） 第51部分', category:'功能安全', type:'国标', status:'现行' },
+    { code:'GB/T 25000.51', name:'系统与软件工程质量要求和评价（补充版本）', category:'功能安全', type:'国标', status:'现行' },
+    { code:'GB/T 20438.1-2006', name:'电气/电子/可编程电子安全相关系统的功能安全 第1部分', category:'功能安全', type:'国标', status:'现行' },
+    { code:'GB/T 20438.2-2006', name:'电气/电子/可编程电子安全相关系统的功能安全 第2部分', category:'功能安全', type:'国标', status:'现行' },
+    { code:'GB/T 20438.3-2006', name:'电气/电子/可编程电子安全相关系统的功能安全 第3部分', category:'功能安全', type:'国标', status:'现行' },
+    { code:'GB/T 20438.4-2006', name:'电气/电子/可编程电子安全相关系统的功能安全 第4部分', category:'功能安全', type:'国标', status:'现行' },
+    { code:'GB/T 20438.5-2006', name:'电气/电子/可编程电子安全相关系统的功能安全 第5部分', category:'功能安全', type:'国标', status:'现行' },
+    { code:'GB/T 20438.6-2006', name:'电气/电子/可编程电子安全相关系统的功能安全 第6部分', category:'功能安全', type:'国标', status:'现行' },
+    { code:'GB/T 20438.7-2006', name:'电气/电子/可编程电子安全相关系统的功能安全 第7部分', category:'功能安全', type:'国标', status:'现行' },
+    { code:'ISO 26262', name:'道路车辆 功能安全', category:'功能安全', type:'国际', status:'现行' },
+
+    // ===== 机械安全 (8) =====
+    { code:'EN ISO 12100:2010', name:'机械安全 设计通则（带书签）', category:'机械安全', type:'国际', status:'现行' },
+    { code:'GB 11291.2-2013', name:'机器人与机器人装备 工业机器人的安全要求 第2部分：机器人系统与集成', category:'机械安全', type:'国标', status:'现行' },
+    { code:'GB 16754-2021', name:'机械安全 急停功能 设计原则', category:'机械安全', type:'国标', status:'现行' },
+    { code:'GB/T 16855.1-2025', name:'机械安全 安全控制系统 第1部分 设计通则', category:'机械安全', type:'国标', status:'现行' },
+    { code:'GB/T 38244-2019', name:'机器人安全总则', category:'机械安全', type:'国标', status:'现行' },
+    { code:'GB/T 39785-2021', name:'服务机器人 机械安全评估与测试方法', category:'机械安全', type:'国标', status:'现行' },
+    { code:'GB/T 41393-2022', name:'娱乐机器人 安全要求及测试方法', category:'机械安全', type:'国标', status:'现行' },
+    { code:'GB/T 44253-2024', name:'巡检机器人安全要求', category:'机械安全', type:'国标', status:'现行' },
+
+    // ===== 可靠 (1) =====
+    { code:'GB/T 7828-1987', name:'可靠性设计导则', category:'可靠', type:'国标', status:'现行' },
+
+    // ===== 能效 (1) =====
+    { code:'GB/T 40575-2021', name:'巡检机器人能效要求与测试方法', category:'能效', type:'国标', status:'现行' },
+
+    // ===== 算法可信 (3) =====
+    { code:'GB/T 42888-2023', name:'信息安全技术 机器学习算法安全评估规范', category:'算法可信', type:'国标', status:'现行' },
+    { code:'GB/T 45225-2025', name:'人工智能 深度学习算法评估', category:'算法可信', type:'国标', status:'现行' },
+    { code:'可信白皮书', name:'机器人算法可信度评估白皮书', category:'算法可信', type:'其他', status:'现行' },
+
+    // ===== 碳足迹 (1) =====
+    { code:'GB/T 24067-2024', name:'温室气体 产品碳足迹量化要求和指南', category:'碳足迹', type:'国标', status:'现行' },
+
+    // ===== 协同安全 (4) =====
+    { code:'ISO 10218 解读', name:'工业机器人安全标准 ISO 10218 解读', category:'协同安全', type:'国际', status:'参考' },
+    { code:'ISO/TS 15066 解读', name:'协作机器人安全标准 ISO/TS 15066 解读', category:'协同安全', type:'国际', status:'参考' },
+    { code:'ISO/TS 15066 解读（续）', name:'协作机器人安全标准 ISO/TS 15066 解读（续）', category:'协同安全', type:'国际', status:'参考' },
+    { code:'GB/T 39402-2020', name:'面向人机协作的工业机器人设计规范', category:'协同安全', type:'国标', status:'现行' },
+
+    // ===== 协议兼容 (4) =====
+    { code:'通信协议参考文档', name:'机器人通信协议参考文档', category:'协议兼容', type:'其他', status:'参考' },
+    { code:'GB/T 32197-2025', name:'工业机器人控制器开放式通信接口规范', category:'协议兼容', type:'国标', status:'现行' },
+    { code:'GB/T 33267-2016', name:'机器人仿真开发环境接口', category:'协议兼容', type:'国标', status:'现行' },
+    { code:'GB/T 35144-2017', name:'机器人仿真开发环境接口（补充）', category:'协议兼容', type:'国标', status:'现行' },
+
+    // ===== 信息安全 (2) =====
+    { code:'GB/T 38244-2019', name:'机器人安全总则（信息安全相关条款）', category:'信息安全', type:'国标', status:'现行' },
+    { code:'GB/T 45502-2025', name:'服务机器人信息安全通用要求', category:'信息安全', type:'国标', status:'现行' },
+
+    // ===== 预期功能安全 (2) =====
+    { code:'GB/T 43267-2023', name:'道路车辆 预期功能安全', category:'预期功能安全', type:'国标', status:'现行' },
+    { code:'ISO 21448', name:'道路车辆 预期功能安全（SOTIF）', category:'预期功能安全', type:'国际', status:'现行' },
+  ],
+  certPathData: {
+    cobot_china: [
+      { step:1, name:'产品设计审查', body:'认证机构', duration:'2周', cost:'¥2-5万', remark:'提交技术文件包' },
+      { step:2, name:'GB/T 12642 性能测试', body:'中国计量院', duration:'4周', cost:'¥8-15万', remark:'含重复定位精度等测试' },
+      { step:3, name:'安全功能认证', body:'机器人测试中心', duration:'3周', cost:'¥5-10万', remark:'符合GB 11291' },
+      { step:4, name:'CCC认证申请', body:'CNCA指定机构', duration:'6-12周', cost:'¥3-8万', remark:'国强制认证' },
+    ],
+    cobot_eu: [
+      { step:1, name:'风险评估报告', body:'内部/第三方', duration:'2-4周', cost:'¥2-6万', remark:'符合ISO 10218' },
+      { step:2, name:'ISO/TS 15066 测试', body:'TÜV/SGS', duration:'4-6周', cost:'¥10-20万', remark:'人机协作安全验证' },
+      { step:3, name:'EMC电磁兼容测试', body:'欧盟公告机构', duration:'2-3周', cost:'¥5-10万', remark:'符合EMC指令' },
+      { step:4, name:'CE符合性声明', body:'申请方自声明', duration:'1周', cost:'¥0.5万', remark:'附贴CE标志' },
+    ],
+  },
+  testCases: [
+    { id:'TC-001', name:'重复定位精度测试', standard:'GB/T 12642', type:'性能', desc:'按ISO 9283标准在工作空间内5个点各重复测量30次' },
+    { id:'TC-002', name:'最大速度测试', standard:'GB/T 12642', type:'性能', desc:'在额定负载下测试各轴最大线速度和角速度' },
+    { id:'TC-003', name:'急停制动测试', standard:'ISO 10218-1', type:'安全', desc:'在最高速度下触发急停，测量制动距离和时间' },
+    { id:'TC-004', name:'碰撞力测试', standard:'ISO/TS 15066', type:'安全', desc:'使用标准测力仪测量碰撞力，不超过规定阈值' },
+    { id:'TC-005', name:'通信延迟测试', standard:'GB/T 36239', type:'功能', desc:'测量控制指令从发送到执行的端到端延迟，要求<5ms' },
+    { id:'TC-006', name:'负载精度测试', standard:'GB/T 12642', type:'性能', desc:'在额定负载、50%负载、空载条件下各测试精度指标' },
+  ],
+
+  // ===== MALL（真实产品）=====
+  mallCategoryTree: [
+    { label:'整机', isLeaf:false, children:[{label:'协作机械臂',isLeaf:true},{label:'人形机器人',isLeaf:true},{label:'四足机器人',isLeaf:true},{label:'移动底盘',isLeaf:true}] },
+    { label:'传感器', isLeaf:false, children:[{label:'深度相机',isLeaf:true},{label:'力/力矩传感器',isLeaf:true},{label:'激光雷达',isLeaf:true}] },
+    { label:'末端执行器', isLeaf:false, children:[{label:'夹爪',isLeaf:true},{label:'灵巧手',isLeaf:true}] },
+    { label:'驱动与传动', isLeaf:false, children:[{label:'谐波减速器',isLeaf:true},{label:'伺服电机',isLeaf:true}] },
+    { label:'计算平台', isLeaf:false, children:[{label:'边缘计算',isLeaf:true},{label:'运动控制器',isLeaf:true}] },
+  ],
+  mallProducts: [
+    { id:1, name:'Unitree Go2 四足机器人', brand:'宇树科技', spec:'标配4D LiDAR L2，最高3.5m/s，续航2h，IP65，支持ROS2二次开发', price:9970, originalPrice:11600, sales:'3.2K', rating:'4.9', img:'https://www.unitree.com/images/b5fffd3e4fc04e6f9fcafedb9516b341_3840x2146.jpg', category:'四足机器人' },
+    { id:2, name:'Unitree H1 人形机器人', brand:'宇树科技', spec:'身高1.8m，全身19关节，最高5.5km/h奔跑，360°LiDAR+深度相机', price:198000, originalPrice:220000, sales:'128', rating:'4.9', img:'https://www.unitree.com/images/d01aae29f6ed4165b0b2e01c811fb3b8_1419x852.png', category:'人形机器人' },
+    { id:3, name:'Intel RealSense D435i 深度相机', brand:'Intel', spec:'RGB 1080P + 立体深度 + IMU，深度精度2%@2m，USB3.1，全局快门', price:3200, originalPrice:3800, sales:'5.6K', rating:'4.7', img:'https://www.realsenseai.com/wp-content/uploads/2025/07/D435i.png', category:'深度相机' },
+    { id:4, name:'OAK-D Lite 智能深度相机', brand:'Luxonis', spec:'4K RGB + 立体深度 + 神经推理，1.4 TOPS AI算力，USB-C，仅40g', price:1499, originalPrice:1699, sales:'4.1K', rating:'4.8', img:'https://www.oakchina.cn/wp-content/uploads/2021/11/lite-1.png', category:'深度相机' },
+    { id:5, name:'NVIDIA Jetson Orin Nano Super 开发者套件', brand:'NVIDIA', spec:'40 TOPS AI算力，8GB LPDDR5，Gen4 PCIe，千兆以太网，Ubuntu 22.04', price:2999, originalPrice:3499, sales:'8.3K', rating:'5.0', img:'https://www.nvidia.cn/content/dam/en-zz/Solutions/autonomous-machines/embedded-systems/nano-super-developer-kit/jetson-orin-nano-super-developer-kit-bbm-d.jpg', category:'边缘计算' },
+    { id:6, name:'Robotiq 2F-85 自适应夹爪', brand:'Robotiq', spec:'行程85mm，夹持力20-220N，重复精度±0.03mm，UR即插即用', price:28500, originalPrice:32000, sales:'1.8K', rating:'4.9', img:'https://idec-fs.com/robotiq/image/products/products02/l-img-2f.png', category:'夹爪' },
+    { id:7, name:'ATI Mini45 力/力矩传感器', brand:'ATI', spec:'6轴力矩传感，Fx/Fy±145N Fz±290N，IP65，EtherCAT/RS-485', price:65000, originalPrice:72000, sales:'486', rating:'5.0', img:'https://ati.novanta.com/wp-content/uploads/sites/2/2025/06/9105-TW-MINI45-AE-X_X.jpg', category:'力/力矩传感器' },
+    { id:8, name:'谐波减速器 CSG-17-50', brand:'来福谐波', spec:'减速比50:1，额定扭矩24Nm，重复精度≤1角秒，杯型柔轮结构', price:6800, originalPrice:8200, sales:'2.3K', rating:'4.8', img:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Harmonic_Drive_AG_strain_wave_gear_set.jpg/250px-Harmonic_Drive_AG_strain_wave_gear_set.jpg', category:'谐波减速器' },
+    { id:9, name:'UR5e 协作机械臂', brand:'优傲机器人', spec:'负载5kg，工作半径850mm，6关节，±0.1mm重复定位精度，安全碰撞检测', price:268000, originalPrice:298000, sales:'356', rating:'5.0', img:'https://cdn.robodk.com/robot/img/UR5e-robot.png', category:'协作机械臂' },
+    { id:10, name:'Franka Emika Panda 7DOF 协作臂', brand:'Franka Emika', spec:'7自由度，负载3kg，工作半径855mm，±0.1mm精度，指尖力控', price:312000, originalPrice:350000, sales:'89', rating:'4.9', img:'https://cdn.robodk.com/robot/img/Franka-Emika-Panda-robot.png', category:'协作机械臂' },
+    { id:11, name:'灵巧触觉传感器 DexHand-16', brand:'因时机器人', spec:'16自由度仿人灵巧手，6维力传感，ROS2 SDK，支持Python/C++', price:48600, originalPrice:56000, sales:'432', rating:'4.7', img:'https://www.inspire-robots.com/d/file/p/2026/01-05/d1f196a3e976fafeccf954234871a6de.jpg', category:'灵巧手' },
+    { id:12, name:'思岚 A2 激光雷达', brand:'思岚科技', spec:'360°扫描，0.25°角分辨率，12m测距半径，USB/UART双接口', price:1580, originalPrice:1890, sales:'6.7K', rating:'4.8', img:'https://dfimg.dfrobot.com/enshop/DFR0445/DFR0445_Main_01_150x100.jpg.webp', category:'激光雷达' },
+  ],
+  initialOrders: [
+    { id:'ORD-20250501', product:'Unitree Go2 四足机器人', amount:9970, date:'2025-05-01', status:'已完成' },
+    { id:'ORD-20250415', product:'NVIDIA Jetson Orin Nano Super', amount:2999, date:'2025-04-15', status:'已完成' },
+    { id:'ORD-20250310', product:'Intel RealSense D435i x3', amount:9600, date:'2025-03-10', status:'已完成' },
+    { id:'ORD-20250220', product:'灵巧触觉传感器 DexHand-16', amount:48600, date:'2025-02-20', status:'配送中' },
+  ],
+
+  // ===== COMMUNITY =====
+  postCategories: ['全部', '技术讨论', '项目分享', '求职招聘', '资源分享', '赛事活动'],
+  posts: [
+    { id:1, title:'[开源] 基于ACT的双臂协作数据采集系统，已采集10万条轨迹', excerpt:'本系统采用Franka双臂+Apple Vision Pro遥操作方案，已成功采集10万条精细操作轨迹数据，正式开源！', author:'张工', date:'2025-05-19', views:'1.2万', replies:86, category:'项目分享', categoryType:'success' },
+    { id:2, title:'Unitree H1 MuJoCo仿真环境搭建踩坑记录', excerpt:'记录了从URDF导入到全身控制MPC调试的完整踩坑经历，希望帮助大家少走弯路。', author:'李博士', date:'2025-05-18', views:'8.6K', replies:43, category:'技术讨论', categoryType:'primary' },
+    { id:3, title:'求职：具身智能算法工程师，5年RL+ROS经验', excerpt:'寻求具身智能领域算法工程师/研究员职位，熟悉Isaac Gym、MuJoCo，有多篇ICRA/IROS论文。', author:'王算法', date:'2025-05-17', views:'4.3K', replies:18, category:'求职招聘', categoryType:'warning' },
+    { id:4, title:'分享：100GB四足机器人运动数据集免费下载', excerpt:'整理了开源社区中最完整的四足机器人运动数据集合集，包含ANYmal/Spot等5种机型共300万帧。', author:'数据侠', date:'2025-05-16', views:'2.1万', replies:124, category:'资源分享', categoryType:'' },
+    { id:5, title:'2025具身智能创新挑战赛 - 家庭服务赛道经验分享', excerpt:'我们团队在初赛中取得第3名，分享完整的技术方案：视觉感知+LLM任务规划+策略模仿学习。', author:'创新团队', date:'2025-05-15', views:'6.7K', replies:57, category:'赛事活动', categoryType:'danger' },
+  ],
+  qaList: [
+    { id:1, question:'MuJoCo中如何正确设置关节阻尼和摩擦力参数以匹配真实机器人？', votes:47, answers:6, tags:['MuJoCo','仿真','参数调整'], asker:'新手小王', date:'2025-05-18' },
+    { id:2, question:'ROS2 Nav2在动态环境中频繁重规划导致抖动，如何优化？', votes:31, answers:4, tags:['ROS2','Nav2','导航'], asker:'导航小李', date:'2025-05-17' },
+    { id:3, question:'Diffusion Policy训练收敛很慢，有哪些调参技巧？', votes:28, answers:3, tags:['DiffusionPolicy','模仿学习','调参'], asker:'策略研究员', date:'2025-05-16' },
+    { id:4, question:'如何评估灵巧手操作任务的泛化能力？有哪些benchmark？', votes:19, answers:2, tags:['灵巧手','评估','benchmark'], asker:'灵巧手实验室', date:'2025-05-15' },
+  ],
+  communityProjects: [
+    { id:1, icon:'🤖', name:'EmbodiedBench-2025', desc:'具身智能任务全面评测框架，含50个任务，支持12种机器人', tags:['开箱即用'], stars:'1.2K', forks:234, author:'具身评测组' },
+    { id:2, icon:'🌊', name:'FlowBot-Manipulation', desc:'基于Flow Matching的灵巧操作策略学习框架，ICRA 2025 Best Paper', tags:['云端训练'], stars:'876', forks:143, author:'灵巧操作Lab' },
+    { id:3, icon:'🗺️', name:'OpenNav-Humanoid', desc:'人形机器人开放导航框架，支持场景理解与语义地图构建', tags:['本地部署','开箱即用'], stars:'654', forks:98, author:'导航研究院' },
+    { id:4, icon:'📊', name:'RoboEval-Suite', desc:'统一的具身智能模型评估平台，支持仿真与真实机器人双场景', tags:['开箱即用'], stars:'432', forks:67, author:'评估工具组' },
+  ],
+  communityEvents: [
+    { id:1, name:'2025具身智能创新挑战赛', status:'报名中', statusType:'success', desc:'聚焦家庭服务、工业装配、医疗辅助三大赛道，面向全球开发者', startDate:'2025-06-01', endDate:'2025-08-31', prize:'100万元', participants:'1,248' },
+    { id:2, name:'ICRA 2025 具身智能专题研讨会', status:'即将开始', statusType:'warning', desc:'汇聚全球顶级具身智能研究者，共享最前沿研究成果', startDate:'2025-05-28', endDate:'2025-05-29', prize:'无', participants:'500' },
+    { id:3, name:'具身智能数据集构建马拉松', status:'进行中', statusType:'primary', desc:'48小时众包数据标注马拉松，完成目标任务即可获得平台积分奖励', startDate:'2025-05-15', endDate:'2025-05-22', prize:'等价积分8万元', participants:'3,127' },
+  ],
+  hotTopics: ['强化学习', '模仿学习', 'MuJoCo', 'ROS2', 'ACT策略', 'Diffusion Policy', '灵巧手', '双足行走', 'Isaac Sim', '具身大模型', 'URDF', '视触觉融合'],
+  topUsers: [
+    { name:'张工程师', level:8, desc:'具身智能全栈开发者，ICRA论文5篇' },
+    { name:'李博士', level:9, desc:'清华机器人实验室，运动规划专家' },
+    { name:'王算法', level:7, desc:'强化学习工程师，开源贡献者' },
+    { name:'数据侠', level:6, desc:'机器人数据采集与标注专家' },
+  ],
+
+  // ===== PROFILE =====
+  permissions: [
+    { module:'数据集中心', permission:'完整读写', permType:'success', expire:'永久', remark:'认证企业用户，不限量访问' },
+    { module:'云仿真平台', permission:'Pro版', permType:'primary', expire:'2026-05-19', remark:'年付Pro套餐，含200小时算力' },
+    { module:'模型库', permission:'完整读写', permType:'success', expire:'永久', remark:'可上传、下载、商用' },
+    { module:'API 访问', permission:'企业级', permType:'warning', expire:'2026-05-19', remark:'QPS 1000，每月1000万次调用' },
+  ],
+};
+
+/** 工具函数 */
+window.AppUtils = {
+  tagTypeMap: function(tag) {
+    var m = { '云端训练': 'primary', '本地部署': 'success', '开箱即用': 'warning', '精密级': 'danger' };
+    return m[tag] || '';
+  },
+  orderStatusType: function(s) {
+    var m = { '已完成': 'success', '待支付': 'warning', '已取消': 'info', '配送中': 'primary' };
+    return m[s] || '';
+  },
+};
+
+/** SVG 图标库 — 现代线条风格 */
+window.AppIcons = {
+  dataset: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.66 3.58 3 8 3s8-1.34 8-3V5"/><path d="M4 11v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6"/><path d="M4 17v2c0 1.66 3.58 3 8 3s8-1.34 8-3v-2"/></svg>',
+  model: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>',
+  course: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>',
+  simulation: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/><circle cx="12" cy="10" r="3"/><path d="M12 7v1"/><path d="M12 12v1"/></svg>',
+  devtool: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>',
+  monitor: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>',
+  devzone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>',
+  standard: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>',
+  mall: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>',
+  community: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>',
+  bolt: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
+  cloud: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z"/></svg>',
+  shield: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>',
+  puzzle: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19.439 7.85c-.049.322.059.648.289.878l1.568 1.568c.47.47.706 1.087.706 1.704s-.235 1.233-.706 1.704l-1.611 1.611a.98.98 0 01-.837.276c-.47-.07-.802-.48-.968-.925a2.501 2.501 0 10-3.214 3.214c.446.166.855.497.925.968a.979.979 0 01-.276.837l-1.61 1.61a2.404 2.404 0 01-1.705.707 2.402 2.402 0 01-1.704-.706l-1.568-1.568a1.026 1.026 0 00-.877-.29c-.493.074-.84.504-1.02.968a2.5 2.5 0 11-3.237-3.237c.464-.18.894-.527.967-1.02a1.026 1.026 0 00-.289-.877l-1.568-1.568A2.402 2.402 0 010 12.003c0-.618.236-1.234.706-1.704L2.32 8.688a.98.98 0 01.837-.276c.47.07.802.48.968.925a2.501 2.501 0 103.214-3.214c-.446-.166-.855-.497-.925-.968a.979.979 0 01.276-.837l1.61-1.61a2.404 2.404 0 011.705-.707c.618 0 1.234.236 1.704.706l1.568 1.568c.23.23.556.338.877.29.493-.074.84-.504 1.02-.968a2.5 2.5 0 113.237 3.237c-.464.18-.894.527-.967 1.02z"/></svg>',
+};
+
+/** 组件注册容器 */
+window.AppComponents = window.AppComponents || [];
