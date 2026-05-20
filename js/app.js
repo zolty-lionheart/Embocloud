@@ -18,6 +18,7 @@
     userName: '张工程师',
     userEmail: 'zhang@embodied.ai',
     cart: [],
+    mobileMenuOpen: false,
     orders: window.AppData.initialOrders.map(function(o) {
       return Object.assign({}, o);
     }),
@@ -27,7 +28,7 @@
   var tagTypeMap = window.AppUtils.tagTypeMap;
   var orderStatusType = window.AppUtils.orderStatusType;
 
-  // 导航菜单项映射
+  // 导航菜单项映射（带图标类型，用于手机菜单）
   var menuItems = [
     { index: 'home', label: '首页' },
     { index: 'dataset', label: '数据集中心' },
@@ -42,12 +43,30 @@
     { index: 'community', label: '众创社区' },
   ];
 
+  // 菜单图标颜色映射
+  var menuColors = {
+    home: 'linear-gradient(135deg,#1565C0,#42A5F5)',
+    dataset: 'linear-gradient(135deg,#1565C0,#42A5F5)',
+    model: 'linear-gradient(135deg,#6A1B9A,#AB47BC)',
+    course: 'linear-gradient(135deg,#00695C,#26A69A)',
+    simulation: 'linear-gradient(135deg,#0D47A1,#2196F3)',
+    devtool: 'linear-gradient(135deg,#E65100,#FF9800)',
+    monitor: 'linear-gradient(135deg,#1B5E20,#66BB6A)',
+    devzone: 'linear-gradient(135deg,#4E342E,#8D6E63)',
+    standard: 'linear-gradient(135deg,#BF360C,#FF7043)',
+    mall: 'linear-gradient(135deg,#0277BD,#29B6F6)',
+    community: 'linear-gradient(135deg,#4527A0,#7E57C2)',
+  };
+
   // 创建应用
   var app = createApp({
     template: '\
       <div>\
         <!-- Navbar -->\
         <header class="top-navbar">\
+          <button class="hamburger-btn" :class="{active: appState.mobileMenuOpen}" @click="toggleMobileMenu" aria-label="菜单">\
+            <span></span>\
+          </button>\
           <div class="navbar-logo" @click="navigate(\'page-home\')">\
             <div class="logo-icon" v-html="logoSvg"></div>\
             <span class="logo-text">具身智能<span class="logo-accent">众创云空间</span></span>\
@@ -80,6 +99,39 @@
             </el-dropdown>\
           </div>\
         </header>\
+        <!-- Mobile Nav Overlay -->\
+        <div class="mobile-nav-overlay" :style="{display: appState.mobileMenuOpen ? \'block\' : \'none\'}" @click="closeMobileMenu"></div>\
+        <div class="mobile-nav-drawer" :class="{open: appState.mobileMenuOpen}">\
+          <div class="mobile-nav-logo">\
+            <div class="logo-icon" v-html="logoSvg"></div>\
+            <span class="logo-text">具身智能众创云空间</span>\
+          </div>\
+          <div class="mobile-nav-items">\
+            <div\
+              v-for="item in menuItems"\
+              :key="item.index"\
+              class="mobile-nav-item"\
+              :class="{active: activeMenu === item.index}"\
+              @click="handleMobileNav(item.index)"\
+            >\
+              <div class="mobile-nav-item-icon" :style="{background: menuColors[item.index] || \'linear-gradient(135deg,#1565C0,#42A5F5)\'}">\
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>\
+              </div>\
+              {{ item.label }}\
+            </div>\
+          </div>\
+          <div class="mobile-nav-divider"></div>\
+          <div style="padding:12px 18px;">\
+            <el-button type="primary" style="width:100%;" v-if="!appState.isLoggedIn" @click="handleLogin">登录 / 注册</el-button>\
+            <div v-else style="display:flex;align-items:center;gap:10px;">\
+              <el-avatar :size="36" style="background:var(--primary-blue);">{{ appState.userName[0] }}</el-avatar>\
+              <div>\
+                <div style="font-size:14px;font-weight:600;color:var(--dark-gray);">{{ appState.userName }}</div>\
+                <div style="font-size:12px;color:var(--light-gray);">{{ appState.userEmail }}</div>\
+              </div>\
+            </div>\
+          </div>\
+        </div>\
         <!-- Main -->\
         <main class="main-content">\
           <component :is="currentPage"></component>\
@@ -150,6 +202,19 @@
         navigate('page-' + key);
       };
 
+      var toggleMobileMenu = function() {
+        appState.mobileMenuOpen = !appState.mobileMenuOpen;
+      };
+
+      var closeMobileMenu = function() {
+        appState.mobileMenuOpen = false;
+      };
+
+      var handleMobileNav = function(key) {
+        closeMobileMenu();
+        navigate('page-' + key);
+      };
+
       var handleLogin = function() {
         appState.isLoggedIn = true;
         ElMessage.success('登录成功，欢迎回来！');
@@ -178,10 +243,14 @@
         activeMenu: activeMenu,
         navigate: navigate,
         handleMenuSelect: handleMenuSelect,
+        toggleMobileMenu: toggleMobileMenu,
+        closeMobileMenu: closeMobileMenu,
+        handleMobileNav: handleMobileNav,
         handleLogin: handleLogin,
         handleUserCommand: handleUserCommand,
         appState: appState,
         menuItems: menuItems,
+        menuColors: menuColors,
         logoSvg: '<svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="36" height="36" rx="8" fill="url(#lg)"/><defs><linearGradient id="lg" x1="0" y1="0" x2="36" y2="36"><stop stop-color="#1565C0"/><stop offset="1" stop-color="#42A5F5"/></linearGradient></defs><path d="M10 16a8 8 0 0116 0" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/><rect x="9" y="16" width="18" height="11" rx="3" stroke="#fff" stroke-width="1.8"/><circle cx="14" cy="21.5" r="1.5" fill="#fff"/><circle cx="22" cy="21.5" r="1.5" fill="#fff"/><path d="M16 25h4" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/><line x1="6" y1="19" x2="9" y2="19" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/><line x1="27" y1="19" x2="30" y2="19" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/><path d="M22 12c1.2-3 4.2-4.2 6.6-3 2.4 1.2 3 4.2 1.8 6.6" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" stroke-linecap="round"/></svg>',
       };
     }

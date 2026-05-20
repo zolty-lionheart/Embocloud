@@ -24,7 +24,7 @@
               <div class="ds-stat-item"><div class="ds-stat-num">{{ filteredDatasets.length }}</div><div class="ds-stat-label">数据集</div></div>
               <div class="ds-stat-item"><div class="ds-stat-num">{{ totalTrajectories }}</div><div class="ds-stat-label">覆盖轨迹</div></div>
               <div class="ds-stat-item"><div class="ds-stat-num">{{ uniqueSources }}</div><div class="ds-stat-label">数据来源</div></div>
-              <div class="ds-stat-item"><div class="ds-stat-num">6</div><div class="ds-stat-label">分类方向</div></div>
+              <div class="ds-stat-item"><div class="ds-stat-num">7</div><div class="ds-stat-label">分类方向</div></div>
             </div>
             <!-- 数据集 Grid -->
             <div class="dataset-grid">

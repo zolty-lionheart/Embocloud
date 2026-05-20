@@ -58,7 +58,7 @@ window.AppData = {
   ],
 
   // ===== DATASET（真实外站数据集，点击跳转官方链接）=====
-  datasetCategories: ['全部', '通用机械臂/具身操作', '国内开源', '抓取与6D姿态', '移动机器人/室内导航', '灵巧手/人形机器人', '仿真数据集'],
+  datasetCategories: ['全部', '通用机械臂/具身操作', '国内开源', '抓取与6D姿态', '移动机器人/室内导航', '灵巧手/人形机器人', '仿真数据集', '巡检识别'],
   datasetCategoryMap: {
     '通用机械臂/具身操作': { color: '#1565C0', icon: '🦾' },
     '国内开源': { color: '#E65100', icon: '🇨🇳' },
@@ -66,6 +66,7 @@ window.AppData = {
     '移动机器人/室内导航': { color: '#00695C', icon: '🧭' },
     '灵巧手/人形机器人': { color: '#BF360C', icon: '🤖' },
     '仿真数据集': { color: '#4527A0', icon: '💻' },
+    '巡检识别': { color: '#2E7D32', icon: '🔍' },
   },
   datasets: [
     // 一、通用机械臂 / 具身操作
@@ -92,22 +93,61 @@ window.AppData = {
     // 六、仿真数据集
     { id:17, name:'Meta-World', category:'仿真数据集', count:'50+ 机械臂任务', source:'UC Berkeley', url:'https://meta-world.github.io/', tags:['元学习','多任务迁移','RL基准'], desc:'50+机械臂任务，元学习基准，支持多任务迁移与元强化学习研究。' },
     { id:18, name:'RLBench', category:'仿真数据集', count:'100+ 仿真任务', source:'Stanford / Imperial', url:'https://github.com/stepjam/RLBench', tags:['长时序','少样本','模仿学习'], desc:'100+仿真任务，长时序操作，少样本学习与模仿学习基准。' },
+    // 七、巡检识别
+    // — 火灾/烟雾 —
+    { id:19, name:'FIRE (Fire Image Recognition)', category:'巡检识别', count:'1000+ 张火情图像', source:'Kaggle', url:'https://www.kaggle.com/datasets/phylake1337/fire-dataset', tags:['火灾检测','烟雾识别','二分类'], desc:'1000+张火情/非火情标注图像，含室内外多种场景，支持火灾早期预警模型训练。' },
+    { id:20, name:'BoWFire 烟雾火灾数据集', category:'巡检识别', count:'2类 火灾/正常场景', source:'IEEE DataPort', url:'https://ieee-dataport.org/open-access/bowfire-dataset', tags:['烟雾检测','早期预警','监控视频'], desc:'火灾烟雾检测专用数据集，含火焰和烟雾双类别标注，适合烟雾识别与早期火灾预警。' },
+    // — 遗弃物品 —
+    { id:21, name:'PETS 2006 遗弃行李检测', category:'巡检识别', count:'多视角 监控视频', source:'University of Reading', url:'http://www.reading.ac.uk/~peopletrng/peds.html', tags:['遗弃行李','监控视频','多视角'], desc:'PETS基准数据集，含物品遗留（unattended luggage）检测任务，支持公共安全监控算法评估。' },
+    { id:22, name:'AVSS 2007 遗弃物品', category:'巡检识别', count:'110+ 视频序列', source:'IEEE AVSS', url:'https://github.com/sekwonlee00/Abandoned-Object-Detection', tags:['遗弃检测','安防监控','视频分析'], desc:'IEEE AVSS 2007挑战赛数据集，含遗弃行李场景，多场景复杂度标注，适合安防检测研究。' },
+    // — 行人/跌倒 —
+    { id:23, name:'UR Fall Detection Dataset', category:'巡检识别', count:'30 跌倒 + 40 日常活动', source:'University of Rzeszów', url:'https://fenix.ur.edu.pl/~mkepski/ds/uf.html', tags:['跌倒检测','行为识别','Kinect深度'], desc:'含跌倒事件30段 + 日常活动40段，Kinect双视角 + 加速度计数据，支持老人看护与溺水预警。' },
+    { id:24, name:'FallVision 跌倒检测基准', category:'巡检识别', count:'1000+ 跌倒/非跌倒视频', source:'ScienceDirect', url:'https://www.sciencedirect.com/science/article/pii/S2352340925001726', tags:['跌倒基准','视频理解','室内看护'], desc:'2025年最新跌倒检测视频基准，含室内外多场景跌倒与非跌倒分类，适合智能看护系统。' },
+    // — 行人计数 —
+    { id:25, name:'Shanghai Tech 人群计数', category:'巡检识别', count:'1198张 33.8万标注人头', source:'ShanghaiTech University', url:'https://github.com/luxiangqiang/Shanghaitech', tags:['人群计数','密度图','大规模'], desc:'上海科技大学大规模人群计数数据集，Part_A/B两部分，含密度图标注，适合公共场所人数统计。' },
+    { id:26, name:'UCSD 行人计数基准', category:'巡检识别', count:'连续帧 行人标注', source:'UC San Diego', url:'https://www.kaggle.com/datasets/annisauswasufia/shanghai-tech-crowd-counting-dataset', tags:['行人计数','密度估计','视频分析'], desc:'UCSD校园监控视频，含透视密度图与人数标注，适合边缘密度估计与实时行人计数研究。' },
+    // — 果实成熟度 —
+    { id:27, name:'FruitVision 水果品质基准', category:'巡检识别', count:'81K+ 张 5类水果', source:'Mendeley Data', url:'https://data.mendeley.com/datasets/xkbjx8959c/2', tags:['成熟度检测','多分类','81K规模'], desc:'涵盖苹果/香蕉/芒果/橙子/葡萄5类，含新鲜/腐败/福尔马林浸泡检测，81K+高分辨率图像。' },
+    { id:28, name:'芒果香蕉成熟度检测数据集', category:'巡检识别', count:'YOLO格式 室外自然光', source:'Mendeley / HuggingFace', url:'https://huggingface.co/datasets/darthraider/fruit-ripeness-detection-dataset', tags:['YOLO格式','自然光','芒果香蕉'], desc:'芒果和香蕉成熟度检测YOLO格式数据集，自然室外光照条件，含raw/ripe/rotten三分类标注。' },
+    // — 无人机巡检 —
+    { id:29, name:'Blade30 风机叶片缺陷数据集', category:'巡检识别', count:'1065张 6类缺陷图像', source:'Scientific Data', url:'https://github.com/cong-yang/Blade30', tags:['风机叶片','无人机巡检','缺陷检测'], desc:'风机叶片表面缺陷多分类数据集（缺口/裂纹/污渍等6类），Nature子刊发表，支持无人机巡检。' },
+    { id:30, name:'DroneCrowd 无人机人群计数', category:'巡检识别', count:'33个场景 2.3万标注人头', source:'GitHub', url:'https://github.com/VisDrone/DroneCrowd', tags:['航拍人群','无人机','密度回归'], desc:'VisDrone子系列，33个不同场景航拍视频，含多种密度级别，支持无人机视角人群密度估计。' },
+    // — 工业缺陷 —
+    { id:31, name:'MVTEC Anomaly Detection', category:'巡检识别', count:'15类工业产品 5000+ 缺陷图', source:'MVTec / KIT', url:'https://www.mvtec.com/company/research/datasets/mvtec-ad', tags:['工业缺陷','异常检测','无监督'], desc:'MVTec工业异常检测基准，含金属/木材/纺织品等15类产品，含正常/缺陷双类别，适合制造质量检测。' },
   ],
 
   // ===== MODEL =====
   modelTree: [
-    { id:'1', label:'工业机器人', children:[{id:'1-1',label:'六轴机械臂'},{id:'1-2',label:'SCARA机器人'},{id:'1-3',label:'Delta机器人'}] },
-    { id:'2', label:'协作机器人', children:[{id:'2-1',label:'轻量型协作臂'},{id:'2-2',label:'双臂协作机器人'}] },
-    { id:'3', label:'移动机器人', children:[{id:'3-1',label:'差速驱动'},{id:'3-2',label:'全向移动'},{id:'3-3',label:'四足机器人'}] },
-    { id:'4', label:'人形机器人', children:[{id:'4-1',label:'仿人全身模型'},{id:'4-2',label:'灵巧手模型'}] },
+    { id:'1', label:'四足机器人', children:[{id:'1-1',label:'宇树 Go系列'},{id:'1-2',label:'宇树 Aliengo/B系列'},{id:'1-3',label:'ANYmal 系列'}] },
+    { id:'2', label:'人形机器人', children:[{id:'2-1',label:'宇树 H/G系列'},{id:'2-2',label:'Agility Digit'},{id:'2-3',label:'其他通用人形'}] },
+    { id:'3', label:'工业/协作机械臂', children:[{id:'3-1',label:'Franka Panda'},{id:'3-2',label:'Universal Robots'},{id:'3-3',label:'FANUC'}] },
+    { id:'4', label:'灵巧手/末端执行器', children:[{id:'4-1',label:'Dexterous Hand'},{id:'4-2',label:'Robotiq 夹爪'}] },
+    { id:'5', label:'移动操作机器人', children:[{id:'5-1',label:'Hello Robot Stretch'},{id:'5-2',label:'TIAGo'}] },
+    { id:'6', label:'教育/开源', children:[{id:'6-1',label:'Poppy 系列'},{id:'6-2',label:'其他教具'}] },
   ],
   urdfModels: [
-    { id:1, name:'UR5e 协作机械臂', category:'协作机器人', format:'URDF', icon:'🦾', desc:'Universal Robots UR5e 标准URDF模型，含完整碰撞体', version:'2.1.0', downloads:'12,430', size:'8.2 MB' },
-    { id:2, name:'Franka Panda', category:'协作机器人', format:'URDF', icon:'🤖', desc:'Franka Emika Panda 7DOF协作臂，带Robotiq夹爪', version:'1.3.2', downloads:'9,876', size:'12.4 MB' },
-    { id:3, name:'Boston Dynamics Spot', category:'四足机器人', format:'URDF', icon:'🐕', desc:'Boston Dynamics Spot 四足机器人高精度模型', version:'3.0.0', downloads:'7,654', size:'45.2 MB' },
-    { id:4, name:'Unitree H1 人形机器人', category:'人形机器人', format:'URDF+MJCF', icon:'🚶', desc:'宇树科技H1人形机器人，包含19个驱动关节', version:'1.0.5', downloads:'5,321', size:'38.6 MB' },
-    { id:5, name:'Shadow Dexterous Hand', category:'灵巧手', format:'URDF', icon:'✋', desc:'Shadow Robot灵巧手，含24个关节完整模型', version:'2.0.1', downloads:'4,210', size:'6.8 MB' },
-    { id:6, name:'KUKA iiwa 14', category:'工业机器人', format:'URDF', icon:'🏭', desc:'KUKA iiwa 14 轻量型工业机器人，7自由度', version:'1.2.0', downloads:'8,901', size:'9.1 MB' },
+    // 四足机器人
+    { id:1,  name:'Unitree Go1',      category:'四足机器人',     format:'URDF',     icon:'🐕', desc:'Unitree Go1 四足机器人，12自由度，适合科研与教育。',                                      version:'1.0',   downloads:'3,200',  size:'32 KB',  file:'models/urdf/quadruped/unitree_go1.urdf' },
+    { id:2,  name:'Unitree Go2',      category:'四足机器人',     format:'URDF',     icon:'🐕', desc:'Unitree Go2 四足机器人，标配4D LiDAR，高性能运动控制。',                                version:'1.0',   downloads:'5,100',  size:'27 KB',  file:'models/urdf/quadruped/unitree_go2.urdf' },
+    { id:3,  name:'Unitree A1',       category:'四足机器人',     format:'URDF',     icon:'🐕', desc:'Unitree A1 高速四足机器人，极大加速度，适合强化学习研究。',                      version:'1.0',   downloads:'2,800',  size:'23 KB',  file:'models/urdf/quadruped/unitree_a1.urdf' },
+    { id:4,  name:'Unitree AlienGo',  category:'四足机器人',     format:'URDF',     icon:'🐕', desc:'Unitree AlienGo 工业级四足机器人，IP65防护，支持室外作业。',                  version:'1.0',   downloads:'1,900',  size:'22 KB',  file:'models/urdf/quadruped/unitree_aliengo.urdf' },
+    { id:5,  name:'Unitree Laikago',  category:'四足机器人',     format:'URDF',     icon:'🐕', desc:'Unitree Laikago 经典四足平台，开源社区支持广泛。',                              version:'1.0',   downloads:'4,500',  size:'16 KB',  file:'models/urdf/quadruped/unitree_laikago.urdf' },
+    { id:6,  name:'Unitree B1',       category:'四足机器人',     format:'URDF',     icon:'🐕', desc:'Unitree B1 工业防水四足机器人，适用于复杂地形巡检。',                        version:'1.0',   downloads:'1,200',  size:'41 KB',  file:'models/urdf/quadruped/unitree_b1.urdf' },
+    { id:7,  name:'Unitree B2',       category:'四足机器人',     format:'URDF',     icon:'🐕', desc:'Unitree B2 最新工业四足机器人，续航与承载力全面升级。',                          version:'1.0',   downloads:'980',    size:'26 KB',  file:'models/urdf/quadruped/unitree_b2.urdf' },
+    // 人形机器人
+    { id:8,  name:'Unitree H1',       category:'人形机器人',     format:'URDF',     icon:'🤖', desc:'Unitree H1 通用人形机器人，19自由度，全身运动控制。',                              version:'1.0',   downloads:'2,100',  size:'23 KB',  file:'models/urdf/humanoid/unitree_h1.urdf' },
+    { id:9,  name:'Unitree H1-2',     category:'人形机器人',     format:'URDF',     icon:'🤖', desc:'Unitree H1-2 升级版，支持灵巧手，全身29自由度。',                              version:'1.0',   downloads:'1,500',  size:'52 KB',  file:'models/urdf/humanoid/unitree_h1_2.urdf' },
+    { id:10, name:'Unitree G1 (29DoF)',category:'人形机器人',     format:'URDF',     icon:'🤖', desc:'Unitree G1 轻量人形机器人，29自由度含灵巧手，适合具身智能研究。',        version:'1.0',   downloads:'3,800',  size:'33 KB',  file:'models/urdf/humanoid/unitree_g1_29dof.urdf' },
+    { id:11, name:'Unitree H2',       category:'人形机器人',     format:'URDF',     icon:'🤖', desc:'Unitree H2 全尺寸通用人形机器人，大负载高精度。',                                version:'1.0',   downloads:'860',    size:'30 KB',  file:'models/urdf/humanoid/unitree_h2.urdf' },
+    { id:12, name:'Agility Digit',     category:'人形机器人',     format:'URDF',     icon:'🤖', desc:'Agility Robotics Digit 双足机器人，稼动式腿部，适合物流场景。',                  version:'1.0',   downloads:'1,100',  size:'24 KB',  file:'models/urdf/humanoid/digit.urdf' },
+    // 机械臂
+    { id:13, name:'Franka Panda',     category:'工业/协作机械臂', format:'URDF',     icon:'🦾', desc:'Franka Emika Panda 7自由度协作机械臂，关节力矩传感，适合人机协作。',      version:'1.0',   downloads:'8,900',  size:'7 KB',   file:'models/urdf/arm/franka_panda.urdf' },
+    { id:14, name:'FANUC M-710iC',  category:'工业/协作机械臂', format:'URDF',     icon:'🦾', desc:'FANUC M-710iC 工业机械臂，大负载焊接/搬运场景。',                          version:'1.0',   downloads:'1,200',  size:'5 KB',   file:'models/urdf/arm/fanuc_m10ia.urdf' },
+    { id:15, name:'Unitree Z1',       category:'工业/协作机械臂', format:'URDF',     icon:'🦾', desc:'Unitree Z1 6自由度机械臂，轻量化设计，可搭载于四足机器人。',                  version:'1.0',   downloads:'2,100',  size:'8 KB',   file:'models/urdf/arm/unitree_z1.urdf' },
+    // 灵巧手
+    { id:16, name:'Dexterous Hand v1',category:'灵巧手/末端执行器',format:'URDF',   icon:'✋', desc:'Unitree Dexterous Hand v1 16自由度灵巧手，适配G1/H1-2。',                     version:'1.0',   downloads:'780',    size:'6 KB',   file:'models/urdf/hand/unitree_dex1_1.urdf' },
+    // 教育
+    { id:17, name:'Poppy Ergo Jr',    category:'教育/开源',       format:'URDF',     icon:'🤖', desc:'Poppy Ergo Jr 开源教育机械臂，3D打印低成本，适合教学演示。',                  version:'1.0',   downloads:'3,400',  size:'8 KB',   file:'models/urdf/education/poppy_ergo_jr.urdf' },
   ],
   aiModels: [
     { id:101, name:'RT-2 机器人变换器', category:'端到端控制', framework:'JAX', icon:'🧠', desc:'Google DeepMind RT-2，视觉-语言-动作联合模型', accuracy:'89.4%', params:'55B', version:'1.0.0', downloads:'3,210' },
