@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>实时监控 & 报告 · 机器人仿真测试平台</title>
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+  <script src="https://unpkg.com/vue@2/dist/vue.js"></script>
+  <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'PingFang SC','Microsoft YaHei',sans-serif; background:#0a0e1a; color:#e2e8f0; min-height:100vh; }
+    .app-layout { display:flex; min-height:100vh; }
+
+    /* Sidebar */
+    .sidebar { width:240px; min-height:100vh; flex-shrink:0; background:linear-gradient(180deg,#0d1224,#111827); border-right:1px solid rgba(99,179,237,0.12); display:flex; flex-direction:column; position:fixed; top:0; left:0; height:100vh; z-index:100; }
+    .sidebar-logo { padding:24px 20px 20px; border-bottom:1px solid rgba(99,179,237,0.1); }
+    .logo-icon { width:40px; height:40px; background:linear-gradient(135deg,#3b82f6,#8b5cf6); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; margin-bottom:10px; box-shadow:0 4px 15px rgba(59,130,246,0.4); }
+    .sidebar-logo h1 { font-size:14px; font-weight:700; color:#e2e8f0; line-height:1.4; }
+    .sidebar-logo p { font-size:11px; color:#64748b; margin-top:2px; }
+    .sidebar-nav { flex:1; padding:16px 12px; overflow-y:auto; }
+    .nav-section-title { font-size:10px; font-weight:600; color:#475569; text-transform:uppercase; letter-spacing:1px; padding:8px 8px 6px; margin-top:8px; }
+    .nav-item { display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:8px; cursor:pointer; margin-bottom:2px; text-decoration:none; color:#94a3b8; font-size:13px; font-weight:500; transition:all 0.2s; }
+    .nav-item:hover { background:rgba(59,130,246,0.12); color:#93c5fd; }
+    .nav-item.active { background:linear-gradient(135deg,rgba(59,130,246,0.2),rgba(139,92,246,0.15)); color:#60a5fa; border:1px solid rgba(59,130,246,0.25); }
+    .nav-icon { font-size:16px; width:20px; text-align:center; }
+    .nav-badge { margin-left:auto; background:#ef4444; color:#fff; font-size:10px; padding:1px 6px; border-radius:10px; font-weight:600; }
+    .nav-badge.green { background:#10b981; }
+    .nav-badge.yellow { background:#f59e0b; }
+    .sidebar-footer { padding:16px; border-top:1px solid rgba(99,179,237,0.08); }
+    .system-status { background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.2); border-radius:8px; padding:10px 12px; font-size:12px; }
+    .status-dot { display:inline-block; width:7px; height:7px; border-radius:50%; background:#10b981; margin-right:6px; animation:pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(16,185,129,0.4);}50%{box-shadow:0 0 0 4px rgba(16,185,129,0);} }
+    .status-text { color:#6ee7b7; font-weight:600; }
+
+    /* Main */
+    .main-content { margin-left:240px; flex:1; min-height:100vh; }
+    .topbar { height:60px; background:rgba(13,18,36,0.95); backdrop-filter:blur(12px); border-bottom:1px solid rgba(99,179,237,0.1); display:flex; align-items:center; padding:0 28px; gap:16px; position:sticky; top:0; z-index:90; }
+    .topbar-title { font-size:16px; font-weight:700; color:#e2e8f0; }
+    .topbar-sub { font-size:12px; color:#64748b; }
+    .topbar-spacer { flex:1; }
+    .topbar-btn { padding:8px 18px; border-radius:8px; font-size:13px; font-weight:600; border:none; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:6px; }
+    .btn-primary { background:linear-gradient(135deg,#3b82f6,#6366f1); color:#fff; box-shadow:0 4px 12px rgba(59,130,246,0.35); }
+    .btn-primary:hover { transform:translateY(-1px); }
+    .btn-ghost { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:#94a3b8; }
+    .btn-ghost:hover { background:rgba(255,255,255,0.08); color:#e2e8f0; }
+    .btn-danger { background:linear-gradient(135deg,#ef4444,#dc2626); color:#fff; box-shadow:0 4px 12px rgba(239,68,68,0.3); }
+    .avatar { width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,#3b82f6,#8b5cf6); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; color:#fff; cursor:pointer; }
+
+    .page-body { padding:20px 28px; }
+
+    /* Live Indicator */
+    .live-badge { display:inline-flex; align-items:center; gap:6px; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:#fca5a5; padding:4px 12px; border-radius:20px; font-size:11px; font-weight:700; }
+    .live-dot { width:6px; height:6px; border-radius:50%; background:#ef4444; animation:livePulse 1s ease-in-out infinite; }
+    @keyframes livePulse { 0%,100%{transform:scale(1);}50%{transform:scale(1.6);opacity:0.5;} }
+
+    /* Header Row */
+    .monitor-header { display:flex; align-items:center; gap:16px; margin-bottom:20px; flex-wrap:wrap; }
+    .task-selector { background:rgba(30,41,59,0.8); border:1px solid rgba(99,179,237,0.15); border-radius:8px; padding:8px 14px; color:#e2e8f0; font-size:13px; outline:none; cursor:pointer; min-width:260px; }
+    .task-selector option { background:#1e293b; }
+
+    /* Scene Queue */
+    .scene-queue { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; }
+    .queue-item { padding:6px 14px; border-radius:8px; font-size:12px; font-weight:600; border:1px solid transparent; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:6px; }
+    .queue-item.done { background:rgba(16,185,129,0.1); color:#6ee7b7; border-color:rgba(16,185,129,0.2); }
+    .queue-item.running { background:rgba(59,130,246,0.15); color:#93c5fd; border-color:rgba(59,130,246,0.3); box-shadow:0 0 12px rgba(59,130,246,0.2); }
+    .queue-item.queued { background:rgba(30,41,59,0.5); color:#64748b; border-color:rgba(255,255,255,0.06); }
+    .queue-item.failed { background:rgba(239,68,68,0.1); color:#fca5a5; border-color:rgba(239,68,68,0.2); }
+    .queue-num { width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:800; background:rgba(255,255,255,0.1); }
+
+    /* Main Grid */
+    .monitor-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:20px; }
+    .monitor-grid-wide { grid-template-columns:2fr 1fr; }
+
+    /* Realtime Metric Cards */
+    .rt-card { background:linear-gradient(135deg,rgba(30,41,59,0.8),rgba(15,23,42,0.9)); border:1px solid rgba(99,179,237,0.1); border-radius:14px; padding:16px 18px; position:relative; overflow:hidden; }
+    .rt-card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+    .rt-card-title { font-size:11px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.7px; }
+    .rt-card-unit { font-size:10px; color:#475569; }
+    .rt-val { font-size:32px; font-weight:800; line-height:1; margin-bottom:4px; }
+    .rt-val.green { color:#6ee7b7; }
+    .rt-val.blue { color:#93c5fd; }
+    .rt-val.yellow { color:#fcd34d; }
+    .rt-val.red { color:#fca5a5; }
+    .rt-sub { font-size:11px; color:#475569; display:flex; align-items:center; gap:6px; }
+    .rt-trend-up { color:#10b981; font-size:12px; }
+    .rt-trend-down { color:#ef4444; font-size:12px; }
+    .rt-sparkline { height:40px; margin-top:8px; }
+    .rt-progress { height:4px; background:rgba(255,255,255,0.06); border-radius:2px; margin-top:8px; }
+    .rt-progress-fill { height:100%; border-radius:2px; transition:width 0.5s; }
+
+    /* Charts */
+    .chart-card { background:linear-gradient(160deg,rgba(15,23,42,0.95),rgba(10,14,26,0.98)); border:1px solid rgba(99,179,237,0.12); border-radius:16px; padding:20px; position:relative; overflow:hidden; }
+    .chart-card::before { content:''; position:absolute; top:0; right:0; width:180px; height:180px; background:radial-gradient(circle,rgba(59,130,246,0.05) 0%,transparent 70%); pointer-events:none; }
+    .chart-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
+    .chart-title { font-size:13px; font-weight:700; color:#e2e8f0; display:flex; align-items:center; gap:8px; }
+    .chart-title::before { content:''; display:block; width:3px; height:16px; background:linear-gradient(180deg,#3b82f6,#8b5cf6); border-radius:2px; }
+    .chart-actions { display:flex; gap:6px; }
+    .chart-btn { padding:5px 12px; border-radius:7px; font-size:11px; font-weight:600; background:rgba(30,41,59,0.7); border:1px solid rgba(99,179,237,0.12); color:#64748b; cursor:pointer; transition:all 0.2s; }
+    .chart-btn:hover { color:#94a3b8; background:rgba(30,41,59,0.9); }
+    .chart-btn.active { background:linear-gradient(135deg,rgba(59,130,246,0.25),rgba(99,102,241,0.2)); color:#93c5fd; border-color:rgba(59,130,246,0.4); box-shadow:0 0 10px rgba(59,130,246,0.15); }
+    canvas { display:block; }
+    .main-chart-wrap { position:relative; height:220px; width:100%; }
+    .report-chart-wrap { position:relative; height:190px; width:100%; }
+
+    /* Joint Table */
+    .joint-table { width:100%; border-collapse:collapse; }
+    .joint-table th { padding:9px 12px; text-align:left; font-size:10px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:0.7px; border-bottom:1px solid rgba(99,179,237,0.08); }
+    .joint-table td { padding:9px 12px; font-size:12px; color:#94a3b8; border-bottom:1px solid rgba(99,179,237,0.05); }
+    .joint-table tbody tr:hover { background:rgba(59,130,246,0.04); }
+    .joint-table tbody tr:last-child td { border-bottom:none; }
+    .joint-name { font-weight:700; color:#e2e8f0; }
+    .val-normal { color:#6ee7b7; font-weight:600; }
+    .val-warn { color:#fcd34d; font-weight:600; }
+    .val-err { color:#fca5a5; font-weight:600; }
+    .mini-bar { width:60px; height:4px; background:rgba(255,255,255,0.06); border-radius:2px; display:inline-block; vertical-align:middle; position:relative; }
+    .mini-bar-fill { height:100%; border-radius:2px; position:absolute; top:0; left:0; }
+
+    /* 3D Viewer */
+    .viewer-3d { background:#000; border:1px solid rgba(99,179,237,0.12); border-radius:14px; height:320px; display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative; overflow:hidden; }
+    .viewer-3d img { width:100%; height:100%; object-fit:cover; border-radius:13px; display:block; }
+    .viewer-badge { position:absolute; top:12px; right:12px; background:rgba(0,0,0,0.55); backdrop-filter:blur(6px); border:1px solid rgba(59,130,246,0.35); color:#93c5fd; padding:4px 10px; border-radius:6px; font-size:11px; font-weight:600; }
+    .viewer-badge-live { position:absolute; top:12px; left:12px; display:inline-flex; align-items:center; gap:5px; background:rgba(239,68,68,0.18); backdrop-filter:blur(6px); border:1px solid rgba(239,68,68,0.35); color:#fca5a5; padding:4px 10px; border-radius:6px; font-size:11px; font-weight:700; }
+    .viewer-badge-live-dot { width:6px; height:6px; border-radius:50%; background:#ef4444; animation:livePulse 1s ease-in-out infinite; }
+
+    /* Log stream */
+    .log-stream { background:rgba(0,0,0,0.5); border:1px solid rgba(99,179,237,0.08); border-radius:10px; padding:14px; font-family:'SF Mono','Fira Code',monospace; font-size:11px; line-height:1.9; height:180px; overflow-y:auto; }
+    .log-stream::-webkit-scrollbar { width:3px; }
+    .log-stream::-webkit-scrollbar-thumb { background:rgba(99,179,237,0.15); }
+    .log-line { display:flex; gap:12px; }
+    .log-ts { color:#374151; white-space:nowrap; }
+    .log-info { color:#6ee7b7; }
+    .log-warn { color:#fcd34d; }
+    .log-err { color:#fca5a5; }
+    .log-dbg { color:#4b5563; }
+
+    /* Report Section */
+    .report-section { margin-top:20px; }
+    .report-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:20px; }
+    .report-metric { background:linear-gradient(135deg,rgba(30,41,59,0.8),rgba(15,23,42,0.9)); border:1px solid rgba(99,179,237,0.1); border-radius:12px; padding:18px; text-align:center; }
+    .report-val { font-size:28px; font-weight:800; margin-bottom:4px; }
+    .report-key { font-size:11px; color:#64748b; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; }
+    .report-pass { color:#6ee7b7; }
+    .report-fail { color:#fca5a5; }
+    .report-neutral { color:#93c5fd; }
+
+    .report-table-wrap { background:rgba(15,23,42,0.8); border:1px solid rgba(99,179,237,0.1); border-radius:14px; overflow:hidden; margin-bottom:20px; }
+    .report-table { width:100%; border-collapse:collapse; }
+    .report-table th { padding:11px 16px; text-align:left; font-size:10px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:0.8px; border-bottom:1px solid rgba(99,179,237,0.08); background:rgba(30,41,59,0.4); }
+    .report-table td { padding:13px 16px; font-size:12px; color:#94a3b8; border-bottom:1px solid rgba(99,179,237,0.05); }
+    .report-table tbody tr:hover { background:rgba(59,130,246,0.03); }
+    .report-table tbody tr:last-child td { border-bottom:none; }
+
+    .result-pass { display:inline-flex; align-items:center; gap:4px; color:#6ee7b7; font-weight:700; font-size:12px; }
+    .result-fail { display:inline-flex; align-items:center; gap:4px; color:#fca5a5; font-weight:700; font-size:12px; }
+
+    .generate-btn { display:flex; align-items:center; justify-content:center; gap:10px; padding:14px 32px; border-radius:12px; font-size:15px; font-weight:700; border:none; cursor:pointer; background:linear-gradient(135deg,#3b82f6,#8b5cf6); color:#fff; box-shadow:0 6px 20px rgba(59,130,246,0.4); transition:all 0.3s; }
+    .generate-btn:hover { transform:translateY(-2px); box-shadow:0 10px 30px rgba(59,130,246,0.5); }
+
+    .section-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+    .section-title { font-size:15px; font-weight:700; color:#e2e8f0; display:flex; align-items:center; gap:8px; }
+    .section-title::before { content:''; display:block; width:4px; height:18px; background:linear-gradient(180deg,#3b82f6,#8b5cf6); border-radius:2px; }
+
+    /* Tabs */
+    .main-tabs { display:flex; gap:2px; background:rgba(15,23,42,0.8); border:1px solid rgba(99,179,237,0.1); border-radius:12px; padding:4px; width:fit-content; margin-bottom:20px; }
+    .main-tab { padding:9px 20px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; color:#64748b; transition:all 0.2s; }
+    .main-tab.active { background:linear-gradient(135deg,rgba(59,130,246,0.2),rgba(99,102,241,0.15)); color:#60a5fa; }
+    .main-tab:hover:not(.active) { color:#94a3b8; }
+
+    ::-webkit-scrollbar { width:5px; height:5px; }
+    ::-webkit-scrollbar-track { background:transparent; }
+    ::-webkit-scrollbar-thumb { background:rgba(99,179,237,0.15); border-radius:3px; }
+  </style>
+<style id="iframe-override">
+  /* When embedded in iframe, hide sidebar and adjust layout */
+</style>
+<script>
+  // Detect iframe embedding and adjust layout
+  if (window !== window.top) {
+    document.documentElement.classList.add("in-iframe");
+    var style = document.getElementById("iframe-override");
+    if (style) {
+      style.textContent = ".sidebar{display:none!important}.main-content{margin-left:0!important}";
+    }
+  }
+</script>
+</head>
+<body>
+<div id="app">
+<div class="app-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">🤖</div>
+      <h1>机器人仿真<br>测试平台</h1>
+      <p>RoboSim v2.0</p>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">概览</div>
+      <a href="index.html" class="nav-item"><span class="nav-icon">🏠</span> 控制台总览</a>
+      <div class="nav-section-title">测试管理</div>
+      <a href="scene-library.html" class="nav-item"><span class="nav-icon">🗂️</span> 测试场景库 <span class="nav-badge green">48</span></a>
+      <a href="task-manager.html" class="nav-item"><span class="nav-icon">📋</span> 测试任务管理 <span class="nav-badge yellow">3</span></a>
+      <a href="monitor.html" class="nav-item active"><span class="nav-icon">📡</span> 实时监控 <span class="nav-badge">运行中</span></a>
+      <div class="nav-section-title">数据与报告</div>
+      <a href="dataset-manager.html" class="nav-item"><span class="nav-icon">🗃️</span> 数据集管理 <span class="nav-badge" style="background:#8b5cf6;">New</span></a>
+      <a href="#" class="nav-item"><span class="nav-icon">📊</span> 测试报告</a>
+      <a href="#" class="nav-item"><span class="nav-icon">🗄️</span> 历史数据</a>
+      <div class="nav-section-title">系统</div>
+      <a href="#" class="nav-item"><span class="nav-icon">⚙️</span> 系统配置</a>
+      <a href="#" class="nav-item"><span class="nav-icon">🔧</span> MuJoCo 配置</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="system-status">
+        <span class="status-dot"></span>
+        <span class="status-text">MuJoCo 引擎在线</span><br>
+        <span style="font-size:11px;color:#475569;margin-top:4px;display:block">v3.1.6 · GPU加速已启用</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main-content">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title">实时监控</div>
+        <div class="topbar-sub">MuJoCo 仿真数据实时推送 · {{ currentTime }}</div>
+      </div>
+      <div class="topbar-spacer"></div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="live-badge"><div class="live-dot"></div>LIVE</div>
+        <button class="topbar-btn btn-ghost" @click="activeMainTab='report'">📄 生成报告</button>
+        <button class="topbar-btn btn-danger" @click="stopSim">⏹ 停止仿真</button>
+        <div class="avatar">管</div>
+      </div>
+    </div>
+
+    <div class="page-body">
+      <!-- Task selector & scene queue -->
+      <div class="monitor-header">
+        <span style="font-size:12px;color:#64748b;font-weight:600;">当前任务：</span>
+        <select class="task-selector" v-model="selectedTask">
+          <option value="T-2026-042">T-2026-042 · 双足步态综合测试 #42 (运行中)</option>
+          <option value="T-2026-041">T-2026-041 · 机械臂抓取精度评估 #41 (运行中)</option>
+        </select>
+        <span style="font-size:12px;color:#64748b;margin-left:8px;">场景进度：</span>
+        <div class="scene-queue">
+          <span v-for="(s,i) in sceneQueue" :key="i" class="queue-item" :class="s.status">
+            <span class="queue-num">{{ i+1 }}</span> {{ s.name }}
+            <span v-if="s.status==='done'">✓</span>
+            <span v-if="s.status==='failed'">✗</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Main Tabs -->
+      <div class="main-tabs">
+        <div class="main-tab" :class="{active:activeMainTab==='monitor'}" @click="activeMainTab='monitor'">📡 实时监控</div>
+        <div class="main-tab" :class="{active:activeMainTab==='report'}" @click="activeMainTab='report'">📄 测试报告</div>
+      </div>
+
+      <!-- ═══ MONITOR TAB ═══ -->
+      <div v-if="activeMainTab==='monitor'">
+        <!-- RT Metric Cards -->
+        <div class="monitor-grid" style="margin-bottom:16px;">
+          <div class="rt-card">
+            <div class="rt-card-header"><span class="rt-card-title">仿真时间</span><span class="rt-card-unit">秒</span></div>
+            <div class="rt-val blue">{{ simTime.toFixed(1) }}</div>
+            <div class="rt-sub"><span class="rt-trend-up">+{{ simStep.toFixed(2) }}s/tick</span> 实时推进</div>
+            <div class="rt-progress"><div class="rt-progress-fill" style="background:linear-gradient(90deg,#3b82f6,#6366f1);" :style="{width:(simTime/maxSimTime*100)+'%'}"></div></div>
+          </div>
+          <div class="rt-card">
+            <div class="rt-card-header"><span class="rt-card-title">仿真帧率</span><span class="rt-card-unit">FPS</span></div>
+            <div class="rt-val green">{{ simFPS }}</div>
+            <div class="rt-sub"><span class="rt-trend-up">↑</span> GPU 加速运行</div>
+          </div>
+          <div class="rt-card">
+            <div class="rt-card-header"><span class="rt-card-title">质心高度</span><span class="rt-card-unit">m</span></div>
+            <div class="rt-val" :class="comHeight>0.5?'green':'red'">{{ comHeight.toFixed(3) }}</div>
+            <div class="rt-sub">阈值 &gt; 0.30m <span :class="comHeight>0.5?'rt-trend-up':'rt-trend-down'">{{ comHeight>0.5?'正常':'警告' }}</span></div>
+          </div>
+          <div class="rt-card">
+            <div class="rt-card-header"><span class="rt-card-title">最大力矩</span><span class="rt-card-unit">Nm</span></div>
+            <div class="rt-val" :class="maxTorque>180?'red':maxTorque>150?'yellow':'green'">{{ maxTorque.toFixed(1) }}</div>
+            <div class="rt-sub">限制 200Nm <span :class="maxTorque>180?'rt-trend-down':'rt-trend-up'">{{ maxTorque>180?'超限':'正常' }}</span></div>
+          </div>
+          <div class="rt-card">
+            <div class="rt-card-header"><span class="rt-card-title">接触力</span><span class="rt-card-unit">N</span></div>
+            <div class="rt-val blue">{{ contactForce.toFixed(0) }}</div>
+            <div class="rt-sub">地面反力</div>
+          </div>
+          <div class="rt-card">
+            <div class="rt-card-header"><span class="rt-card-title">能耗功率</span><span class="rt-card-unit">W</span></div>
+            <div class="rt-val yellow">{{ power.toFixed(1) }}</div>
+            <div class="rt-sub">累计 {{ totalEnergy.toFixed(2) }} kJ</div>
+          </div>
+        </div>
+
+        <!-- Charts + 3D Viewer -->
+        <div class="monitor-grid monitor-grid-wide" style="margin-bottom:16px;">
+          <!-- Chart Area -->
+          <div class="chart-card">
+            <div class="chart-header">
+              <div class="chart-title">关节角度 / 力矩 实时曲线</div>
+              <div class="chart-actions">
+                <span class="chart-btn" :class="{active:chartMode==='angle'}" @click="switchChart('angle')">角度</span>
+                <span class="chart-btn" :class="{active:chartMode==='torque'}" @click="switchChart('torque')">力矩</span>
+                <span class="chart-btn" :class="{active:chartMode==='velocity'}" @click="switchChart('velocity')">速度</span>
+              </div>
+            </div>
+            <div class="main-chart-wrap">
+              <canvas id="mainChart"></canvas>
+            </div>
+          </div>
+
+          <!-- MuJoCo Viewer -->
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div class="viewer-3d">
+              <img src="pic/B1-T2.gif" alt="MuJoCo 仿真视图">
+              <div class="viewer-badge-live"><div class="viewer-badge-live-dot"></div>LIVE</div>
+              <div class="viewer-badge">⚡ MuJoCo 渲染</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Joint Table + Log -->
+        <div class="monitor-grid" style="grid-template-columns:3fr 2fr;">
+          <div class="chart-card">
+            <div class="chart-header">
+              <div class="chart-title">关节实时状态</div>
+              <span style="font-size:11px;color:#475569;">自动刷新 100Hz</span>
+            </div>
+            <table class="joint-table">
+              <thead>
+                <tr>
+                  <th>关节</th>
+                  <th>角度 (°)</th>
+                  <th>速度 (rad/s)</th>
+                  <th>力矩 (Nm)</th>
+                  <th>负载率</th>
+                  <th>状态</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="j in joints" :key="j.name">
+                  <td class="joint-name">{{ j.name }}</td>
+                  <td :class="Math.abs(j.angle)>30?'val-warn':'val-normal'">{{ j.angle.toFixed(2) }}</td>
+                  <td class="val-normal">{{ j.vel.toFixed(3) }}</td>
+                  <td :class="j.torque>180?'val-err':j.torque>140?'val-warn':'val-normal'">{{ j.torque.toFixed(1) }}</td>
+                  <td>
+                    <div style="display:flex;align-items:center;gap:6px;">
+                      <div class="mini-bar">
+                        <div class="mini-bar-fill" :style="{width:(j.torque/200*100)+'%',background:j.torque>180?'#ef4444':j.torque>140?'#f59e0b':'#10b981'}"></div>
+                      </div>
+                      <span style="font-size:10px;">{{ (j.torque/200*100).toFixed(0) }}%</span>
+                    </div>
+                  </td>
+                  <td>
+                    <span style="font-size:11px;font-weight:600;" :style="{color:j.torque>180?'#fca5a5':j.torque>140?'#fcd34d':'#6ee7b7'}">
+                      {{ j.torque>180?'⚠️超限':j.torque>140?'⚡警告':'✓正常' }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-header">
+              <div class="chart-title">实时日志流</div>
+              <span style="font-size:11px;color:#10b981;font-weight:600;">● 推流中</span>
+            </div>
+            <div class="log-stream" ref="logStream">
+              <div class="log-line" v-for="(l,i) in realtimeLogs" :key="i">
+                <span class="log-ts">{{ l.ts }}</span>
+                <span :class="'log-'+l.level">{{ l.msg }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ REPORT TAB ═══ -->
+      <div v-if="activeMainTab==='report'" class="report-section">
+        <div class="section-header">
+          <div class="section-title">测试报告 · T-2026-042</div>
+          <div style="display:flex;gap:10px;">
+            <button class="topbar-btn btn-ghost">⬇️ 下载 CSV</button>
+            <button class="generate-btn" @click="generateReport">📄 生成 PDF 报告</button>
+          </div>
+        </div>
+
+        <!-- Report Summary Cards -->
+        <div class="report-grid">
+          <div class="report-metric">
+            <div class="report-val report-pass">5/5</div>
+            <div class="report-key">场景通过数</div>
+          </div>
+          <div class="report-metric">
+            <div class="report-val report-pass">100%</div>
+            <div class="report-key">综合通过率</div>
+          </div>
+          <div class="report-metric">
+            <div class="report-val report-neutral">00:42:15</div>
+            <div class="report-key">总测试时长</div>
+          </div>
+          <div class="report-metric">
+            <div class="report-val report-neutral">3.4 kJ</div>
+            <div class="report-key">总能耗</div>
+          </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="monitor-grid" style="margin-bottom:20px;">
+          <div class="chart-card">
+            <div class="chart-header"><div class="chart-title">各场景成功率对比</div></div>
+            <div class="report-chart-wrap"><canvas id="reportBarChart"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-header"><div class="chart-title">能耗分布</div></div>
+            <div class="report-chart-wrap"><canvas id="reportPieChart"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-header"><div class="chart-title">力矩统计</div></div>
+            <div class="report-chart-wrap"><canvas id="reportTorqueChart"></canvas></div>
+          </div>
+        </div>
+
+        <!-- Detailed Results Table -->
+        <div class="section-header"><div class="section-title">场景详细结果</div></div>
+        <div class="report-table-wrap">
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>场景名称</th>
+                <th>结果</th>
+                <th>用时</th>
+                <th>最大力矩 (Nm)</th>
+                <th>步态偏差 (°)</th>
+                <th>质心最低 (m)</th>
+                <th>能耗 (J)</th>
+                <th>备注</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(r,i) in reportRows" :key="i">
+                <td style="color:#475569;font-weight:600;">{{ i+1 }}</td>
+                <td style="font-weight:700;color:#e2e8f0;">{{ r.name }}</td>
+                <td><span :class="r.pass?'result-pass':'result-fail'">{{ r.pass?'✓ 通过':'✗ 失败' }}</span></td>
+                <td>{{ r.duration }}</td>
+                <td :style="{color:r.maxTorque>180?'#fca5a5':r.maxTorque>140?'#fcd34d':'#6ee7b7',fontWeight:'700'}">{{ r.maxTorque }}</td>
+                <td :style="{color:r.angleDev>5?'#fcd34d':'#6ee7b7',fontWeight:'700'}">{{ r.angleDev }}</td>
+                <td :style="{color:r.minCom<0.3?'#fca5a5':'#6ee7b7',fontWeight:'700'}">{{ r.minCom }}</td>
+                <td style="color:#93c5fd;font-weight:600;">{{ r.energy }}</td>
+                <td style="color:#475569;font-size:11px;">{{ r.note }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Conclusion -->
+        <div style="background:rgba(16,185,129,0.07);border:1px solid rgba(16,185,129,0.2);border-radius:14px;padding:20px 24px;margin-bottom:20px;">
+          <div style="font-size:14px;font-weight:800;color:#6ee7b7;margin-bottom:10px;">✅ 测试结论</div>
+          <div style="font-size:13px;color:#94a3b8;line-height:1.8;">
+            本次双足步态综合测试（T-2026-042）全部 5 个场景均通过，整体成功率 <strong style="color:#6ee7b7;">100%</strong>。
+            机器人在平地、斜坡、颠簸路面、跑步及楼梯场景下均表现出良好的稳定性与能效。
+            关节力矩最大值 182.3 Nm（臀关节右侧），接近限制值，建议优化臀关节力矩控制策略。
+            平均能耗 156W，处于合理范围内。<br>
+            <strong style="color:#fcd34d;">建议：</strong> 针对斜坡场景的臀关节力矩问题进行专项优化，并重复测试验证。
+          </div>
+        </div>
+
+        <!-- Generate Button -->
+        <div style="text-align:center;">
+          <button class="generate-btn" @click="generateReport">
+            📄 生成完整 PDF 测试报告
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</div>
+
+<script>
+// Report data
+const REPORT_ROWS = [
+  {name:'双足步态稳定性测试', pass:true, duration:'6m12s', maxTorque:124.5, angleDev:2.3, minCom:0.72, energy:580, note:'步态稳定，轻微侧摆'},
+  {name:'跑步步态测试', pass:true, duration:'5m40s', maxTorque:156.2, angleDev:3.8, minCom:0.65, energy:730, note:'最高速度 4.7m/s'},
+  {name:'颠簸路面行走', pass:true, duration:'8m30s', maxTorque:182.3, angleDev:4.1, minCom:0.58, energy:940, note:'臀关节力矩偏高'},
+  {name:'斜坡上坡行走', pass:true, duration:'12m20s', maxTorque:178.9, angleDev:3.6, minCom:0.61, energy:820, note:'30°坡顺利通过'},
+  {name:'楼梯上下行测试', pass:true, duration:'9m33s', maxTorque:168.4, angleDev:5.2, minCom:0.54, energy:720, note:'踏步点选取准确'},
+];
+
+const LOG_POOL = [
+  {ts:'11:18:34', level:'dbg', msg:'[SIM] step=67800, time=135.60s, fps=498'},
+  {ts:'11:18:35', level:'info', msg:'[JOINT] hip_right torque=182.3Nm ⚠ 接近上限'},
+  {ts:'11:18:36', level:'dbg', msg:'[COM] height=0.623m, vel_x=0.87m/s'},
+  {ts:'11:18:37', level:'dbg', msg:'[CTRL] RL policy inference 0.8ms'},
+  {ts:'11:18:38', level:'info', msg:'[STEP] 仿真步进 t=137.60s'},
+  {ts:'11:18:39', level:'dbg', msg:'[CONTACT] left_foot F=342N, right_foot F=178N'},
+  {ts:'11:18:40', level:'warn', msg:'[IMU] angular_vel pitch=0.18 rad/s'},
+  {ts:'11:18:41', level:'dbg', msg:'[SIM] step=68600, fps=501'},
+  {ts:'11:18:42', level:'info', msg:'[ENERGY] power=158.4W, total=3.24kJ'},
+];
+
+new Vue({
+  el: '#app',
+  data() {
+    return {
+      selectedTask: 'T-2026-042',
+      activeMainTab: 'monitor',
+      chartMode: 'angle',
+      currentTime: '',
+      simTime: 135.6,
+      maxSimTime: 300,
+      simStep: 0.002,
+      simFPS: 498,
+      comHeight: 0.623,
+      maxTorque: 182.3,
+      contactForce: 342,
+      power: 158.4,
+      totalEnergy: 3.24,
+      sceneQueue: [
+        {name:'步态稳定', status:'done'},
+        {name:'跑步测试', status:'done'},
+        {name:'颠簸路面', status:'done'},
+        {name:'斜坡行走', status:'running'},
+        {name:'楼梯测试', status:'queued'},
+      ],
+      joints: [
+        {name:'hip_left', angle:-12.4, vel:0.234, torque:118.2},
+        {name:'hip_right', angle:-11.8, vel:0.228, torque:182.3},
+        {name:'knee_left', angle:25.6, vel:1.456, torque:95.4},
+        {name:'knee_right', angle:24.9, vel:1.412, torque:92.1},
+        {name:'ankle_left', angle:-8.2, vel:0.612, torque:54.3},
+        {name:'ankle_right', angle:-7.9, vel:0.598, torque:52.8},
+      ],
+      realtimeLogs: [...LOG_POOL],
+      reportRows: REPORT_ROWS,
+      mainChart: null,
+      chartLabels: [],
+      chartDataSets: { angle: [], torque: [], velocity: [] },
+    };
+  },
+  mounted() {
+    this.updateTime();
+    setInterval(this.updateTime, 1000);
+    this.initChartData();
+    this.$nextTick(() => {
+      this.initMainChart();
+      this.initReportCharts();
+      this.startSimulation();
+    });
+  },
+  methods: {
+    updateTime() {
+      const now = new Date();
+      this.currentTime = now.toLocaleTimeString('zh-CN');
+    },
+    initChartData() {
+      for (let i = 0; i < 60; i++) {
+        this.chartLabels.push(i + 's');
+        this.chartDataSets.angle.push([(Math.sin(i/10)*15).toFixed(2), (Math.sin(i/10+1)*14).toFixed(2)]);
+        this.chartDataSets.torque.push([(120 + Math.sin(i/8)*40).toFixed(1), (110 + Math.sin(i/9)*35).toFixed(1)]);
+        this.chartDataSets.velocity.push([(Math.cos(i/10)*1.2).toFixed(3), (Math.cos(i/10+0.5)*1.1).toFixed(3)]);
+      }
+    },
+    initMainChart() {
+      const ctx = document.getElementById('mainChart');
+      if (!ctx) return;
+
+      const makeGradient = (canvas, color) => {
+        const gradient = canvas.getContext('2d').createLinearGradient(0, 0, 0, 220);
+        gradient.addColorStop(0, color + '40');
+        gradient.addColorStop(1, color + '00');
+        return gradient;
+      };
+
+      const colorMap = {
+        angle:    { line: ['#3b82f6','#a78bfa'], label: ['hip_left (°)','hip_right (°)'] },
+        torque:   { line: ['#f87171','#fb923c'], label: ['hip_left (Nm)','hip_right (Nm)'] },
+        velocity: { line: ['#34d399','#22d3ee'], label: ['hip_left (rad/s)','hip_right (rad/s)'] },
+      };
+      const cm = colorMap[this.chartMode];
+      const d  = this.chartDataSets[this.chartMode];
+
+      this.mainChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: this.chartLabels,
+          datasets: [
+            {
+              label: cm.label[0],
+              data: d.map(x => x[0]),
+              borderColor: cm.line[0],
+              backgroundColor: makeGradient(ctx, cm.line[0]),
+              borderWidth: 2,
+              pointRadius: 0,
+              pointHoverRadius: 4,
+              pointHoverBackgroundColor: cm.line[0],
+              tension: 0.45,
+              fill: true,
+            },
+            {
+              label: cm.label[1],
+              data: d.map(x => x[1]),
+              borderColor: cm.line[1],
+              backgroundColor: makeGradient(ctx, cm.line[1]),
+              borderWidth: 2,
+              pointRadius: 0,
+              pointHoverRadius: 4,
+              pointHoverBackgroundColor: cm.line[1],
+              tension: 0.45,
+              fill: true,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: { duration: 0 },
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top',
+              align: 'end',
+              labels: {
+                color: '#94a3b8',
+                font: { size: 11, family: "'PingFang SC', sans-serif" },
+                boxWidth: 20,
+                boxHeight: 2,
+                usePointStyle: true,
+                pointStyle: 'line',
+                padding: 16,
+              },
+            },
+            tooltip: {
+              backgroundColor: 'rgba(15,23,42,0.95)',
+              titleColor: '#e2e8f0',
+              bodyColor: '#94a3b8',
+              borderColor: 'rgba(99,179,237,0.2)',
+              borderWidth: 1,
+              padding: 10,
+              cornerRadius: 8,
+              displayColors: true,
+              boxWidth: 8,
+              boxHeight: 8,
+            },
+          },
+          scales: {
+            x: {
+              ticks: {
+                color: '#475569',
+                maxTicksLimit: 10,
+                font: { size: 10 },
+                maxRotation: 0,
+              },
+              grid: {
+                color: 'rgba(99,179,237,0.06)',
+                drawBorder: false,
+              },
+              border: { display: false },
+            },
+            y: {
+              ticks: {
+                color: '#475569',
+                font: { size: 10 },
+                padding: 8,
+              },
+              grid: {
+                color: 'rgba(99,179,237,0.07)',
+                drawBorder: false,
+              },
+              border: { display: false, dash: [4, 4] },
+            },
+          },
+        },
+      });
+    },
+    switchChart(mode) {
+      this.chartMode = mode;
+      if (!this.mainChart) return;
+      const ctx = document.getElementById('mainChart');
+      const makeGradient = (canvas, color) => {
+        const gradient = canvas.getContext('2d').createLinearGradient(0, 0, 0, 220);
+        gradient.addColorStop(0, color + '40');
+        gradient.addColorStop(1, color + '00');
+        return gradient;
+      };
+      const colorMap = {
+        angle:    { line: ['#3b82f6','#a78bfa'], label: ['hip_left (°)','hip_right (°)'] },
+        torque:   { line: ['#f87171','#fb923c'], label: ['hip_left (Nm)','hip_right (Nm)'] },
+        velocity: { line: ['#34d399','#22d3ee'], label: ['hip_left (rad/s)','hip_right (rad/s)'] },
+      };
+      const cm = colorMap[mode];
+      const d = this.chartDataSets[mode];
+      this.mainChart.data.datasets[0].data = d.map(x => x[0]);
+      this.mainChart.data.datasets[0].borderColor = cm.line[0];
+      this.mainChart.data.datasets[0].backgroundColor = makeGradient(ctx, cm.line[0]);
+      this.mainChart.data.datasets[0].label = cm.label[0];
+      this.mainChart.data.datasets[1].data = d.map(x => x[1]);
+      this.mainChart.data.datasets[1].borderColor = cm.line[1];
+      this.mainChart.data.datasets[1].backgroundColor = makeGradient(ctx, cm.line[1]);
+      this.mainChart.data.datasets[1].label = cm.label[1];
+      this.mainChart.update();
+    },
+    initReportCharts() {
+      // ── Bar chart: 成功率对比 ──
+      const barCtx = document.getElementById('reportBarChart');
+      if (barCtx) {
+        new Chart(barCtx, {
+          type: 'bar',
+          data: {
+            labels: ['步态稳定', '跑步测试', '颠簸路面', '斜坡行走', '楼梯测试'],
+            datasets: [{
+              label: '成功率 (%)',
+              data: [100, 100, 100, 100, 100],
+              backgroundColor: ['#10b981','#3b82f6','#f59e0b','#10b981','#3b82f6'],
+              borderRadius: 8,
+              borderSkipped: false,
+              barPercentage: 0.55,
+            }],
+          },
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: { backgroundColor:'rgba(15,23,42,0.95)', titleColor:'#e2e8f0', bodyColor:'#94a3b8', borderColor:'rgba(99,179,237,0.2)', borderWidth:1, cornerRadius:8 },
+            },
+            scales: {
+              x: { ticks:{color:'#64748b',font:{size:10}}, grid:{display:false}, border:{display:false} },
+              y: { ticks:{color:'#475569',font:{size:10},padding:6}, grid:{color:'rgba(99,179,237,0.07)',drawBorder:false}, border:{display:false}, max:115,
+                   title:{display:true,text:'成功率 (%)',color:'#475569',font:{size:10}} },
+            },
+          },
+        });
+      }
+
+      // ── Doughnut chart: 能耗分布 ──
+      const pieCtx = document.getElementById('reportPieChart');
+      if (pieCtx) {
+        new Chart(pieCtx, {
+          type: 'doughnut',
+          data: {
+            labels: ['步态稳定', '跑步', '颠簸路面', '斜坡', '楼梯'],
+            datasets: [{
+              data: [580, 730, 940, 820, 720],
+              backgroundColor: ['#3b82f6','#a78bfa','#34d399','#fbbf24','#f87171'],
+              borderColor: 'rgba(10,14,26,0.8)',
+              borderWidth: 3,
+              hoverOffset: 8,
+            }],
+          },
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            cutout: '60%',
+            plugins: {
+              legend: {
+                position: 'right',
+                labels: { color:'#94a3b8', font:{size:10}, padding:10, boxWidth:10, boxHeight:10, usePointStyle:true },
+              },
+              tooltip: { backgroundColor:'rgba(15,23,42,0.95)', titleColor:'#e2e8f0', bodyColor:'#94a3b8', borderColor:'rgba(99,179,237,0.2)', borderWidth:1, cornerRadius:8 },
+            },
+          },
+        });
+      }
+
+      // ── Bar chart: 力矩统计 ──
+      const tCtx = document.getElementById('reportTorqueChart');
+      if (tCtx) {
+        const torqueData = [124.5, 156.2, 182.3, 178.9, 168.4];
+        new Chart(tCtx, {
+          type: 'bar',
+          data: {
+            labels: ['步态稳定', '跑步', '颠簸路面', '斜坡', '楼梯'],
+            datasets: [{
+              label: '最大力矩 (Nm)',
+              data: torqueData,
+              backgroundColor: torqueData.map(v => v > 180 ? '#f87171' : v > 150 ? '#fbbf24' : '#34d399'),
+              borderRadius: 8,
+              borderSkipped: false,
+              barPercentage: 0.55,
+            }],
+          },
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: { backgroundColor:'rgba(15,23,42,0.95)', titleColor:'#e2e8f0', bodyColor:'#94a3b8', borderColor:'rgba(99,179,237,0.2)', borderWidth:1, cornerRadius:8 },
+            },
+            scales: {
+              x: { ticks:{color:'#64748b',font:{size:10}}, grid:{display:false}, border:{display:false} },
+              y: {
+                ticks:{color:'#475569',font:{size:10},padding:6},
+                grid:{color:'rgba(99,179,237,0.07)',drawBorder:false},
+                border:{display:false, dash:[4,4]},
+                max: 220,
+                title:{display:true,text:'Nm',color:'#475569',font:{size:10}},
+              },
+            },
+          },
+        });
+      }
+    },
+    startSimulation() {
+      setInterval(() => {
+        this.simTime += 0.1;
+        this.simFPS = 490 + Math.floor(Math.random() * 20);
+        this.comHeight = 0.58 + Math.random() * 0.1;
+        this.maxTorque = 165 + Math.random() * 25;
+        this.contactForce = 300 + Math.random() * 80;
+        this.power = 145 + Math.random() * 25;
+        this.totalEnergy += this.power * 0.0001;
+
+        // Animate joints
+        this.joints.forEach(j => {
+          j.angle += (Math.random() - 0.5) * 0.5;
+          j.vel += (Math.random() - 0.5) * 0.1;
+          j.torque += (Math.random() - 0.5) * 5;
+          j.torque = Math.max(0, Math.min(j.torque, 200));
+        });
+
+        // Push log
+        if (Math.random() > 0.7) {
+          const msg = [
+            {ts:new Date().toLocaleTimeString('zh-CN'), level:'dbg', msg:`[SIM] step=${Math.floor(this.simTime/0.002)}, fps=${this.simFPS}`},
+            {ts:new Date().toLocaleTimeString('zh-CN'), level:'info', msg:`[COM] height=${this.comHeight.toFixed(3)}m`},
+            {ts:new Date().toLocaleTimeString('zh-CN'), level:'dbg', msg:`[ENERGY] power=${this.power.toFixed(1)}W`},
+          ][Math.floor(Math.random()*3)];
+          this.realtimeLogs.push(msg);
+          if (this.realtimeLogs.length > 50) this.realtimeLogs.shift();
+          this.$nextTick(() => {
+            const el = this.$refs.logStream;
+            if (el) el.scrollTop = el.scrollHeight;
+          });
+        }
+
+        // Update chart
+        if (this.mainChart) {
+          const d = this.chartDataSets[this.chartMode];
+          const newA = (Math.sin(this.simTime/10)*15).toFixed(2);
+          const newB = (Math.sin(this.simTime/10+1)*14).toFixed(2);
+          d.push([newA, newB]);
+          if (d.length > 80) d.shift();
+          this.mainChart.data.datasets[0].data = d.map(x=>x[0]);
+          this.mainChart.data.datasets[1].data = d.map(x=>x[1]);
+          this.mainChart.update('none');
+        }
+      }, 200);
+    },
+    stopSim() {
+      this.$confirm('确定要停止当前仿真任务吗？未完成的场景将被取消。', '停止仿真', {
+        confirmButtonText: '确定停止', cancelButtonText: '继续运行', type: 'warning'
+      }).then(() => {
+        this.$message({ type: 'warning', message: '仿真任务已停止' });
+        this.activeMainTab = 'report';
+      }).catch(() => {});
+    },
+    generateReport() {
+      this.$message({ message: '📄 正在生成 PDF 测试报告，请稍候…', type: 'info', duration: 2000 });
+      setTimeout(() => {
+        this.$message({ message: '✅ 报告生成完成，已保存至 /reports/T-2026-042.pdf', type: 'success', duration: 3000 });
+      }, 2500);
+    },
+  },
+});
+</script>
+
+<script>
+  // Intercept internal navigation links and notify parent
+  if (window !== window.top) {
+    document.addEventListener('click', function(e) {
+      var link = e.target.closest('a[href]');
+      if (!link) return;
+      var href = link.getAttribute('href');
+      if (!href) return;
+      // Only intercept links to local simulation pages
+      var simPages = ['index.html','scene-library.html','task-manager.html','monitor.html','dataset-manager.html'];
+      var page = href.split('/').pop().split('?')[0].split('#')[0];
+      if (simPages.indexOf(page) !== -1) {
+        e.preventDefault();
+        window.parent.postMessage({type: 'sim-navigate', target: page}, '*');
+      }
+    });
+  }
+</script>
+</body>
+</html>

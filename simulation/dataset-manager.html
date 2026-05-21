@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>数据集管理 · 机器人仿真测试平台</title>
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+  <script src="https://unpkg.com/vue@2/dist/vue.js"></script>
+  <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'PingFang SC','Microsoft YaHei',sans-serif; background:#0a0e1a; color:#e2e8f0; min-height:100vh; }
+    .app-layout { display:flex; min-height:100vh; }
+
+    /* ── Sidebar ── */
+    .sidebar { width:240px; min-height:100vh; flex-shrink:0; background:linear-gradient(180deg,#0d1224 0%,#111827 100%); border-right:1px solid rgba(99,179,237,0.12); display:flex; flex-direction:column; position:fixed; top:0; left:0; height:100vh; z-index:100; }
+    .sidebar-logo { padding:24px 20px 20px; border-bottom:1px solid rgba(99,179,237,0.1); }
+    .logo-icon { width:40px; height:40px; background:linear-gradient(135deg,#3b82f6,#8b5cf6); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; margin-bottom:10px; box-shadow:0 4px 15px rgba(59,130,246,0.4); }
+    .sidebar-logo h1 { font-size:14px; font-weight:700; color:#e2e8f0; line-height:1.4; }
+    .sidebar-logo p { font-size:11px; color:#64748b; margin-top:2px; }
+    .sidebar-nav { flex:1; padding:16px 12px; overflow-y:auto; }
+    .nav-section-title { font-size:10px; font-weight:600; color:#475569; text-transform:uppercase; letter-spacing:1px; padding:8px 8px 6px; margin-top:8px; }
+    .nav-item { display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:8px; cursor:pointer; margin-bottom:2px; text-decoration:none; color:#94a3b8; font-size:13px; font-weight:500; transition:all 0.2s; }
+    .nav-item:hover { background:rgba(59,130,246,0.12); color:#93c5fd; }
+    .nav-item.active { background:linear-gradient(135deg,rgba(59,130,246,0.2),rgba(139,92,246,0.15)); color:#60a5fa; border:1px solid rgba(59,130,246,0.25); }
+    .nav-icon { font-size:16px; width:20px; text-align:center; }
+    .nav-badge { margin-left:auto; background:#ef4444; color:#fff; font-size:10px; padding:1px 6px; border-radius:10px; font-weight:600; }
+    .nav-badge.green { background:#10b981; }
+    .nav-badge.yellow { background:#f59e0b; }
+    .nav-badge.purple { background:#8b5cf6; }
+    .sidebar-footer { padding:16px; border-top:1px solid rgba(99,179,237,0.08); }
+    .system-status { background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.2); border-radius:8px; padding:10px 12px; font-size:12px; }
+    .status-dot { display:inline-block; width:7px; height:7px; border-radius:50%; background:#10b981; margin-right:6px; animation:pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(16,185,129,0.4);} 50%{box-shadow:0 0 0 4px rgba(16,185,129,0);} }
+    .status-text { color:#6ee7b7; font-weight:600; }
+
+    /* ── Main ── */
+    .main-content { margin-left:240px; flex:1; min-height:100vh; }
+    .topbar { height:60px; background:rgba(13,18,36,0.95); backdrop-filter:blur(12px); border-bottom:1px solid rgba(99,179,237,0.1); display:flex; align-items:center; padding:0 28px; gap:16px; position:sticky; top:0; z-index:90; }
+    .topbar-title { font-size:16px; font-weight:700; color:#e2e8f0; }
+    .topbar-sub { font-size:12px; color:#64748b; }
+    .topbar-spacer { flex:1; }
+    .topbar-btn { padding:8px 18px; border-radius:8px; font-size:13px; font-weight:600; border:none; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:6px; }
+    .btn-primary { background:linear-gradient(135deg,#3b82f6,#6366f1); color:#fff; box-shadow:0 4px 12px rgba(59,130,246,0.35); }
+    .btn-primary:hover { transform:translateY(-1px); box-shadow:0 6px 18px rgba(59,130,246,0.45); }
+    .btn-success { background:linear-gradient(135deg,#10b981,#059669); color:#fff; box-shadow:0 4px 12px rgba(16,185,129,0.3); }
+    .btn-success:hover { transform:translateY(-1px); }
+    .btn-ghost { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:#94a3b8; }
+    .btn-ghost:hover { background:rgba(255,255,255,0.08); color:#e2e8f0; }
+    .avatar { width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,#3b82f6,#8b5cf6); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; color:#fff; cursor:pointer; }
+
+    .page-body { padding:24px 28px; }
+
+    /* ── Stats ── */
+    .stat-row { display:grid; grid-template-columns:repeat(5,1fr); gap:14px; margin-bottom:24px; }
+    .stat-card { background:linear-gradient(135deg,rgba(30,41,59,0.8),rgba(15,23,42,0.9)); border:1px solid rgba(99,179,237,0.1); border-radius:12px; padding:16px 18px; position:relative; overflow:hidden; transition:all 0.3s; cursor:pointer; }
+    .stat-card:hover { border-color:rgba(99,179,237,0.25); transform:translateY(-2px); }
+    .stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; }
+    .stat-card.blue::before { background:linear-gradient(90deg,#3b82f6,#6366f1); }
+    .stat-card.green::before { background:linear-gradient(90deg,#10b981,#34d399); }
+    .stat-card.yellow::before { background:linear-gradient(90deg,#f59e0b,#fbbf24); }
+    .stat-card.purple::before { background:linear-gradient(90deg,#8b5cf6,#a78bfa); }
+    .stat-card.teal::before { background:linear-gradient(90deg,#06b6d4,#22d3ee); }
+    .stat-label { font-size:11px; color:#64748b; font-weight:500; margin-bottom:6px; }
+    .stat-value { font-size:26px; font-weight:800; color:#e2e8f0; }
+    .stat-sub { font-size:10px; color:#475569; margin-top:3px; }
+    .stat-icon { position:absolute; right:14px; top:50%; transform:translateY(-50%); font-size:32px; opacity:0.15; }
+
+    /* ── Tab Bar ── */
+    .tab-bar { display:flex; gap:2px; background:rgba(15,23,42,0.8); border:1px solid rgba(99,179,237,0.1); border-radius:12px; padding:4px; margin-bottom:20px; width:fit-content; }
+    .tab-item { padding:8px 20px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; color:#64748b; transition:all 0.2s; display:flex; align-items:center; gap:6px; }
+    .tab-item.active { background:linear-gradient(135deg,rgba(59,130,246,0.2),rgba(99,102,241,0.15)); color:#60a5fa; }
+    .tab-item:hover:not(.active) { color:#94a3b8; background:rgba(255,255,255,0.04); }
+    .tab-count { background:rgba(255,255,255,0.1); color:#94a3b8; font-size:10px; padding:1px 6px; border-radius:10px; }
+    .tab-item.active .tab-count { background:rgba(59,130,246,0.3); color:#93c5fd; }
+
+    /* ── Toolbar ── */
+    .toolbar { display:flex; align-items:center; gap:12px; margin-bottom:18px; flex-wrap:wrap; }
+    .toolbar-search { flex:1; min-width:220px; position:relative; }
+    .toolbar-search input { width:100%; background:rgba(30,41,59,0.8); border:1px solid rgba(99,179,237,0.15); border-radius:8px; padding:9px 12px 9px 36px; color:#e2e8f0; font-size:13px; outline:none; transition:border-color 0.2s; }
+    .toolbar-search input:focus { border-color:rgba(59,130,246,0.5); }
+    .toolbar-search input::placeholder { color:#475569; }
+    .search-icon-abs { position:absolute; left:11px; top:50%; transform:translateY(-50%); color:#475569; font-size:14px; }
+    .toolbar-select { background:rgba(30,41,59,0.8); border:1px solid rgba(99,179,237,0.15); border-radius:8px; padding:9px 14px; color:#94a3b8; font-size:13px; outline:none; cursor:pointer; min-width:130px; }
+    .toolbar-select option { background:#1e293b; }
+
+    /* ── Dataset Grid ── */
+    .dataset-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(380px,1fr)); gap:16px; }
+
+    .dataset-card {
+      background:linear-gradient(135deg,rgba(15,23,42,0.95),rgba(30,41,59,0.8));
+      border:1px solid rgba(99,179,237,0.1); border-radius:16px; overflow:hidden;
+      transition:all 0.3s; cursor:pointer; position:relative;
+    }
+    .dataset-card:hover { border-color:rgba(99,179,237,0.3); transform:translateY(-3px); box-shadow:0 12px 40px rgba(0,0,0,0.4); }
+    .dataset-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
+    .card-source-agibot::before { background:linear-gradient(90deg,#f59e0b,#ef4444); }
+    .card-source-unitree::before { background:linear-gradient(90deg,#3b82f6,#8b5cf6); }
+    .card-source-sim::before { background:linear-gradient(90deg,#10b981,#06b6d4); }
+    .card-source-custom::before { background:linear-gradient(90deg,#8b5cf6,#ec4899); }
+
+    .card-header { padding:16px 18px 12px; display:flex; align-items:flex-start; gap:12px; }
+    .card-robot-icon { width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
+    .icon-agibot { background:linear-gradient(135deg,rgba(245,158,11,0.2),rgba(239,68,68,0.2)); border:1px solid rgba(245,158,11,0.3); }
+    .icon-unitree { background:linear-gradient(135deg,rgba(59,130,246,0.2),rgba(139,92,246,0.2)); border:1px solid rgba(59,130,246,0.3); }
+    .icon-sim { background:linear-gradient(135deg,rgba(16,185,129,0.2),rgba(6,182,212,0.2)); border:1px solid rgba(16,185,129,0.3); }
+    .icon-custom { background:linear-gradient(135deg,rgba(139,92,246,0.2),rgba(236,72,153,0.2)); border:1px solid rgba(139,92,246,0.3); }
+
+    .card-info { flex:1; min-width:0; }
+    .card-title { font-size:14px; font-weight:700; color:#e2e8f0; margin-bottom:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .card-meta { font-size:11px; color:#64748b; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+
+    .source-badge { display:inline-flex; align-items:center; gap:4px; padding:2px 8px; border-radius:20px; font-size:10px; font-weight:700; white-space:nowrap; }
+    .badge-agibot { background:rgba(245,158,11,0.15); color:#fcd34d; border:1px solid rgba(245,158,11,0.25); }
+    .badge-unitree { background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.25); }
+    .badge-sim { background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.25); }
+    .badge-custom { background:rgba(139,92,246,0.15); color:#c4b5fd; border:1px solid rgba(139,92,246,0.25); }
+    .badge-new { background:rgba(239,68,68,0.15); color:#fca5a5; border:1px solid rgba(239,68,68,0.25); }
+
+    .card-body { padding:0 18px 14px; }
+    .card-desc { font-size:12px; color:#64748b; line-height:1.6; margin-bottom:12px; }
+
+    .card-tags { display:flex; gap:5px; flex-wrap:wrap; margin-bottom:12px; }
+    .tag { padding:2px 8px; border-radius:4px; font-size:10px; font-weight:600; background:rgba(30,41,59,0.9); color:#64748b; border:1px solid rgba(255,255,255,0.06); }
+    .tag-robot { color:#93c5fd; background:rgba(59,130,246,0.1); border-color:rgba(59,130,246,0.15); }
+    .tag-task { color:#c4b5fd; background:rgba(139,92,246,0.1); border-color:rgba(139,92,246,0.15); }
+    .tag-modality { color:#6ee7b7; background:rgba(16,185,129,0.1); border-color:rgba(16,185,129,0.15); }
+
+    .card-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:12px; }
+    .cs-item { background:rgba(30,41,59,0.5); border:1px solid rgba(99,179,237,0.08); border-radius:8px; padding:8px; text-align:center; }
+    .cs-val { font-size:15px; font-weight:800; color:#e2e8f0; }
+    .cs-key { font-size:9px; color:#475569; margin-top:2px; text-transform:uppercase; letter-spacing:0.5px; }
+
+    .card-footer { padding:10px 18px 14px; display:flex; align-items:center; justify-content:space-between; border-top:1px solid rgba(99,179,237,0.06); }
+    .card-size { font-size:11px; color:#475569; display:flex; align-items:center; gap:4px; }
+    .card-actions { display:flex; gap:6px; }
+    .card-btn { padding:5px 12px; border-radius:6px; font-size:11px; font-weight:600; border:none; cursor:pointer; transition:all 0.2s; }
+    .card-btn:hover { transform:translateY(-1px); }
+    .cbtn-view { background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.2); }
+    .cbtn-view:hover { background:rgba(59,130,246,0.25); }
+    .cbtn-download { background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.2); }
+    .cbtn-download:hover { background:rgba(16,185,129,0.25); }
+    .cbtn-collect { background:rgba(245,158,11,0.15); color:#fcd34d; border:1px solid rgba(245,158,11,0.2); }
+    .cbtn-collect:hover { background:rgba(245,158,11,0.25); }
+    .cbtn-edit { background:rgba(139,92,246,0.15); color:#c4b5fd; border:1px solid rgba(139,92,246,0.2); }
+    .cbtn-edit:hover { background:rgba(139,92,246,0.25); }
+    .cbtn-del { background:rgba(100,116,139,0.1); color:#64748b; border:1px solid rgba(100,116,139,0.15); }
+    .cbtn-del:hover { background:rgba(239,68,68,0.1); color:#f87171; }
+
+    /* Storage bar */
+    .storage-bar-wrap { margin-top:6px; }
+    .storage-bar { height:3px; background:rgba(255,255,255,0.06); border-radius:2px; overflow:hidden; }
+    .storage-fill { height:100%; border-radius:2px; transition:width 0.6s ease; }
+
+    /* ── Collect Panel (Simulation Build) ── */
+    .collect-section { background:linear-gradient(135deg,rgba(16,185,129,0.08),rgba(6,182,212,0.05)); border:1px solid rgba(16,185,129,0.2); border-radius:16px; padding:20px 24px; margin-bottom:24px; }
+    .collect-header { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+    .collect-icon { width:40px; height:40px; background:linear-gradient(135deg,#10b981,#06b6d4); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; }
+    .collect-title { font-size:15px; font-weight:700; color:#6ee7b7; }
+    .collect-sub { font-size:12px; color:#64748b; margin-top:2px; }
+    .collect-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+    .collect-task { background:rgba(15,23,42,0.7); border:1px solid rgba(16,185,129,0.15); border-radius:10px; padding:12px 14px; }
+    .ct-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+    .ct-name { font-size:12px; font-weight:600; color:#e2e8f0; }
+    .ct-status { font-size:10px; font-weight:700; padding:2px 7px; border-radius:10px; }
+    .cts-collecting { background:rgba(16,185,129,0.2); color:#6ee7b7; }
+    .cts-ready { background:rgba(59,130,246,0.2); color:#93c5fd; }
+    .cts-paused { background:rgba(245,158,11,0.2); color:#fcd34d; }
+    .cts-idle { background:rgba(100,116,139,0.15); color:#94a3b8; }
+    .ct-bar { height:4px; background:rgba(255,255,255,0.06); border-radius:2px; margin-bottom:6px; }
+    .ct-bar-fill { height:100%; border-radius:2px; background:linear-gradient(90deg,#10b981,#06b6d4); transition:width 0.8s; }
+    .ct-meta { display:flex; justify-content:space-between; font-size:10px; color:#475569; }
+    .ct-actions { display:flex; gap:6px; margin-top:8px; }
+    .ct-btn { flex:1; padding:4px 0; border-radius:5px; font-size:10px; font-weight:600; border:none; cursor:pointer; text-align:center; transition:all 0.2s; }
+    .ctb-start { background:rgba(16,185,129,0.2); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); }
+    .ctb-start:hover { background:rgba(16,185,129,0.3); }
+    .ctb-stop { background:rgba(239,68,68,0.15); color:#fca5a5; border:1px solid rgba(239,68,68,0.2); }
+    .ctb-stop:hover { background:rgba(239,68,68,0.25); }
+    .ctb-save { background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.2); }
+    .ctb-save:hover { background:rgba(59,130,246,0.25); }
+
+    /* ── Detail Panel (Right Drawer) ── */
+    .overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); z-index:200; opacity:0; pointer-events:none; transition:opacity 0.3s; }
+    .overlay.show { opacity:1; pointer-events:all; }
+    .detail-panel { position:fixed; right:0; top:0; bottom:0; width:580px; background:linear-gradient(180deg,#0d1224,#111827); border-left:1px solid rgba(99,179,237,0.15); z-index:201; transform:translateX(100%); transition:transform 0.4s cubic-bezier(0.16,1,0.3,1); display:flex; flex-direction:column; overflow:hidden; }
+    .detail-panel.open { transform:translateX(0); }
+    .panel-header { padding:20px 24px 16px; border-bottom:1px solid rgba(99,179,237,0.1); display:flex; align-items:center; gap:12px; }
+    .panel-title { font-size:16px; font-weight:800; color:#e2e8f0; }
+    .panel-sub { font-size:12px; color:#64748b; margin-top:2px; }
+    .panel-close { margin-left:auto; width:30px; height:30px; border-radius:8px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); cursor:pointer; display:flex; align-items:center; justify-content:center; color:#64748b; font-size:16px; transition:all 0.2s; }
+    .panel-close:hover { background:rgba(239,68,68,0.15); color:#f87171; }
+    .panel-tabs { display:flex; padding:0 24px; gap:2px; background:rgba(15,23,42,0.8); border-bottom:1px solid rgba(99,179,237,0.1); }
+    .panel-tab { padding:10px 16px; font-size:12px; font-weight:600; color:#64748b; cursor:pointer; border-bottom:2px solid transparent; transition:all 0.2s; }
+    .panel-tab.active { color:#60a5fa; border-bottom-color:#3b82f6; }
+    .panel-body { flex:1; overflow-y:auto; padding:20px 24px; }
+    .panel-body::-webkit-scrollbar { width:4px; }
+    .panel-body::-webkit-scrollbar-thumb { background:rgba(99,179,237,0.2); border-radius:2px; }
+
+    /* Detail info */
+    .detail-cover { background:linear-gradient(135deg,rgba(30,41,59,0.6),rgba(15,23,42,0.8)); border:1px solid rgba(99,179,237,0.1); border-radius:12px; padding:16px; margin-bottom:16px; }
+    .detail-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:16px; }
+    .ds-item { background:rgba(30,41,59,0.5); border:1px solid rgba(99,179,237,0.1); border-radius:10px; padding:12px; text-align:center; }
+    .ds-val { font-size:18px; font-weight:800; color:#e2e8f0; }
+    .ds-key { font-size:10px; color:#64748b; margin-top:3px; }
+
+    .modality-list { display:flex; flex-direction:column; gap:8px; margin-bottom:16px; }
+    .modality-item { background:rgba(30,41,59,0.4); border:1px solid rgba(99,179,237,0.08); border-radius:8px; padding:10px 14px; display:flex; align-items:center; gap:10px; }
+    .modality-icon { font-size:18px; width:28px; text-align:center; }
+    .modality-name { font-size:12px; font-weight:600; color:#e2e8f0; flex:1; }
+    .modality-detail { font-size:11px; color:#64748b; }
+    .modality-size { font-size:11px; color:#475569; }
+
+    .info-kv { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .kv-item { background:rgba(30,41,59,0.4); border-radius:8px; padding:10px 12px; }
+    .kv-label { font-size:10px; color:#475569; margin-bottom:3px; text-transform:uppercase; letter-spacing:0.5px; }
+    .kv-value { font-size:13px; color:#e2e8f0; font-weight:600; }
+
+    .sample-list { display:flex; flex-direction:column; gap:8px; }
+    .sample-item { background:rgba(30,41,59,0.4); border:1px solid rgba(99,179,237,0.08); border-radius:8px; padding:10px 14px; display:flex; align-items:center; gap:10px; }
+    .sample-idx { font-size:12px; color:#475569; font-weight:700; width:30px; }
+    .sample-info { flex:1; }
+    .sample-name { font-size:12px; color:#e2e8f0; font-weight:600; }
+    .sample-meta { font-size:10px; color:#64748b; margin-top:2px; }
+    .sample-result { font-size:11px; font-weight:700; }
+    .res-pass { color:#6ee7b7; }
+    .res-fail { color:#fca5a5; }
+
+    /* Section header */
+    .section-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+    .section-title { font-size:15px; font-weight:700; color:#e2e8f0; display:flex; align-items:center; gap:8px; }
+    .section-title::before { content:''; display:block; width:4px; height:18px; background:linear-gradient(180deg,#3b82f6,#8b5cf6); border-radius:2px; }
+
+    /* New Dataset Dialog */
+    .el-dialog { background:#0f172a !important; border:1px solid rgba(99,179,237,0.15) !important; border-radius:16px !important; }
+    .el-dialog__header { border-bottom:1px solid rgba(99,179,237,0.1); padding:18px 24px !important; }
+    .el-dialog__title { color:#e2e8f0 !important; font-weight:700 !important; }
+    .el-dialog__body { padding:20px 24px !important; color:#94a3b8 !important; }
+
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
+    .form-group { display:flex; flex-direction:column; gap:6px; }
+    .form-label { font-size:12px; font-weight:600; color:#94a3b8; }
+    .form-input { background:rgba(30,41,59,0.8); border:1px solid rgba(99,179,237,0.2); border-radius:8px; padding:9px 12px; color:#e2e8f0; font-size:13px; outline:none; transition:border-color 0.2s; width:100%; }
+    .form-input:focus { border-color:rgba(59,130,246,0.5); }
+    .form-input option { background:#1e293b; }
+    .form-textarea { resize:vertical; min-height:80px; font-family:inherit; }
+
+    .checkbox-group { display:flex; flex-wrap:wrap; gap:8px; }
+    .checkbox-item { display:flex; align-items:center; gap:5px; padding:5px 10px; border-radius:6px; background:rgba(30,41,59,0.6); border:1px solid rgba(99,179,237,0.1); cursor:pointer; transition:all 0.2s; }
+    .checkbox-item.selected { background:rgba(59,130,246,0.15); border-color:rgba(59,130,246,0.3); color:#93c5fd; }
+    .checkbox-item input { display:none; }
+    .checkbox-item span { font-size:12px; font-weight:600; color:inherit; }
+
+    ::-webkit-scrollbar { width:5px; height:5px; }
+    ::-webkit-scrollbar-track { background:transparent; }
+    ::-webkit-scrollbar-thumb { background:rgba(99,179,237,0.15); border-radius:3px; }
+
+    /* Empty state */
+    .empty-state { text-align:center; padding:60px 20px; color:#475569; }
+    .empty-icon { font-size:48px; margin-bottom:12px; opacity:0.5; }
+    .empty-text { font-size:14px; }
+  </style>
+<style id="iframe-override">
+  /* When embedded in iframe, hide sidebar and adjust layout */
+</style>
+<script>
+  // Detect iframe embedding and adjust layout
+  if (window !== window.top) {
+    document.documentElement.classList.add("in-iframe");
+    var style = document.getElementById("iframe-override");
+    if (style) {
+      style.textContent = ".sidebar{display:none!important}.main-content{margin-left:0!important}";
+    }
+  }
+</script>
+</head>
+<body>
+<div id="app">
+<div class="app-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">🤖</div>
+      <h1>机器人仿真<br>测试平台</h1>
+      <p>RoboSim v2.0</p>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">概览</div>
+      <a href="index.html" class="nav-item"><span class="nav-icon">🏠</span> 控制台总览</a>
+      <div class="nav-section-title">测试管理</div>
+      <a href="scene-library.html" class="nav-item"><span class="nav-icon">🗂️</span> 测试场景库 <span class="nav-badge green">48</span></a>
+      <a href="task-manager.html" class="nav-item"><span class="nav-icon">📋</span> 测试任务管理 <span class="nav-badge yellow">3</span></a>
+      <a href="monitor.html" class="nav-item"><span class="nav-icon">📡</span> 实时监控 <span class="nav-badge">运行中</span></a>
+      <div class="nav-section-title">数据与报告</div>
+      <a href="dataset-manager.html" class="nav-item active"><span class="nav-icon">🗃️</span> 数据集管理 <span class="nav-badge purple">New</span></a>
+      <a href="#" class="nav-item"><span class="nav-icon">📊</span> 测试报告</a>
+      <a href="#" class="nav-item"><span class="nav-icon">🗄️</span> 历史数据</a>
+      <div class="nav-section-title">系统</div>
+      <a href="#" class="nav-item"><span class="nav-icon">⚙️</span> 系统配置</a>
+      <a href="#" class="nav-item"><span class="nav-icon">🔧</span> MuJoCo 配置</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="system-status">
+        <span class="status-dot"></span>
+        <span class="status-text">MuJoCo 引擎在线</span><br>
+        <span style="font-size:11px;color:#475569;margin-top:4px;display:block">v3.1.6 · GPU加速已启用</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main-content">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title">数据集管理</div>
+        <div class="topbar-sub">{{ totalDatasets }} 个数据集 · {{ totalSamples }} 条轨迹 · 已用 {{ usedStorage }}</div>
+      </div>
+      <div class="topbar-spacer"></div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <button class="topbar-btn btn-ghost" @click="syncDialog=true">🔄 同步开源数据集</button>
+        <button class="topbar-btn btn-success" @click="newCollectDialog=true">📥 从仿真采集</button>
+        <button class="topbar-btn btn-primary" @click="newDatasetDialog=true">➕ 新建数据集</button>
+        <div class="avatar">管</div>
+      </div>
+    </div>
+
+    <div class="page-body">
+      <!-- Stats -->
+      <div class="stat-row">
+        <div class="stat-card blue">
+          <div class="stat-label">全部数据集</div>
+          <div class="stat-value">{{ totalDatasets }}</div>
+          <div class="stat-sub">含开源 + 仿真生成</div>
+          <div class="stat-icon">🗃️</div>
+        </div>
+        <div class="stat-card yellow">
+          <div class="stat-label">智元 AgiBot</div>
+          <div class="stat-value">{{ agibotCount }}</div>
+          <div class="stat-sub">真实机器人数据</div>
+          <img class="stat-icon" src="https://agibot-world.cn/logo.png" alt="AgiBot" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);width:40px;height:40px;object-fit:contain;opacity:0.2;" />
+        </div>
+        <div class="stat-card blue">
+          <div class="stat-label">宇树 Unitree</div>
+          <div class="stat-value">{{ unitreeCount }}</div>
+          <div class="stat-sub">真实机器人数据</div>
+          <img class="stat-icon" src="https://latestlogo.com/wp-content/uploads/2024/09/unitree-logo.png" alt="Unitree" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);width:40px;height:40px;object-fit:contain;opacity:0.2;" />
+        </div>
+        <div class="stat-card green">
+          <div class="stat-label">仿真生成</div>
+          <div class="stat-value">{{ simCount }}</div>
+          <div class="stat-sub">MuJoCo 采集</div>
+          <div class="stat-icon">⚙️</div>
+        </div>
+        <div class="stat-card teal">
+          <div class="stat-label">总轨迹条数</div>
+          <div class="stat-value">{{ totalSamples }}</div>
+          <div class="stat-sub">可用于训练</div>
+          <div class="stat-icon">📈</div>
+        </div>
+      </div>
+
+      <!-- Simulation Collect Section -->
+      <div class="collect-section">
+        <div class="collect-header">
+          <div class="collect-icon">⚡</div>
+          <div>
+            <div class="collect-title">仿真数据采集任务</div>
+            <div class="collect-sub">从当前运行的仿真测试中实时采集机器人状态、动作轨迹数据，构建训练数据集</div>
+          </div>
+          <div style="margin-left:auto;">
+            <button class="topbar-btn btn-success" style="font-size:12px;padding:7px 14px;" @click="newCollectDialog=true">+ 新建采集任务</button>
+          </div>
+        </div>
+        <div class="collect-grid">
+          <div class="collect-task" v-for="ct in collectTasks" :key="ct.id">
+            <div class="ct-header">
+              <span class="ct-name">{{ ct.name }}</span>
+              <span class="ct-status" :class="'cts-'+ct.status">{{ {collecting:'采集中',ready:'就绪',paused:'已暂停',idle:'空闲'}[ct.status] }}</span>
+            </div>
+            <div class="ct-bar"><div class="ct-bar-fill" :style="{width: ct.progress+'%'}"></div></div>
+            <div class="ct-meta">
+              <span>{{ ct.collected }} / {{ ct.target }} 条</span>
+              <span style="color:#6ee7b7;">{{ ct.progress }}%</span>
+            </div>
+            <div style="font-size:10px;color:#475569;margin-top:4px;">{{ ct.robot }} · {{ ct.scene }}</div>
+            <div class="ct-actions">
+              <button v-if="ct.status!=='collecting'" class="ct-btn ctb-start" @click="startCollect(ct)">▶ 开始</button>
+              <button v-if="ct.status==='collecting'" class="ct-btn ctb-stop" @click="stopCollect(ct)">⏸ 暂停</button>
+              <button class="ct-btn ctb-save" @click="saveCollect(ct)">💾 存档</button>
+            </div>
+          </div>
+          <!-- Add new -->
+          <div class="collect-task" style="border-style:dashed;display:flex;align-items:center;justify-content:center;cursor:pointer;min-height:120px;" @click="newCollectDialog=true">
+            <div style="text-align:center;color:#475569;">
+              <div style="font-size:24px;margin-bottom:6px;">＋</div>
+              <div style="font-size:11px;">新建采集任务</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dataset List -->
+      <div class="section-header">
+        <div class="section-title">数据集列表</div>
+        <div style="font-size:12px;color:#64748b;">共 {{ filteredDatasets.length }} 个</div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tab-bar">
+        <div class="tab-item" :class="{active:activeTab==='all'}" @click="activeTab='all'">
+          全部 <span class="tab-count">{{ datasets.length }}</span>
+        </div>
+        <div class="tab-item" :class="{active:activeTab==='agibot'}" @click="activeTab='agibot'">
+          <img src="https://agibot-world.cn/logo.png" alt="AgiBot" style="width:16px;height:16px;object-fit:contain;vertical-align:middle;margin-right:4px;" /> 智元 AgiBot <span class="tab-count">{{ agibotCount }}</span>
+        </div>
+        <div class="tab-item" :class="{active:activeTab==='unitree'}" @click="activeTab='unitree'">
+          <img src="https://latestlogo.com/wp-content/uploads/2024/09/unitree-logo.png" alt="Unitree" style="width:16px;height:16px;object-fit:contain;vertical-align:middle;margin-right:4px;" /> 宇树 Unitree <span class="tab-count">{{ unitreeCount }}</span>
+        </div>
+        <div class="tab-item" :class="{active:activeTab==='sim'}" @click="activeTab='sim'">
+          ⚙️ 仿真生成 <span class="tab-count">{{ simCount }}</span>
+        </div>
+        <div class="tab-item" :class="{active:activeTab==='custom'}" @click="activeTab='custom'">
+          📁 自定义 <span class="tab-count">{{ customCount }}</span>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <div class="toolbar-search">
+          <span class="search-icon-abs">🔍</span>
+          <input v-model="search" placeholder="搜索数据集名称、任务类型…" />
+        </div>
+        <select class="toolbar-select" v-model="filterRobot">
+          <option value="">全部机器人</option>
+          <option value="G1">G1 人形</option>
+          <option value="H1">H1 人形</option>
+          <option value="Go2">Go2 四足</option>
+          <option value="Dex3-1">Dex3-1 灵巧手</option>
+          <option value="AgiBot-X1">X1 人形</option>
+          <option value="AgiBot-X2">X2 双臂</option>
+        </select>
+        <select class="toolbar-select" v-model="filterTask">
+          <option value="">全部任务类型</option>
+          <option value="locomotion">运动控制</option>
+          <option value="manipulation">灵巧操作</option>
+          <option value="navigation">导航避障</option>
+          <option value="loco-manipulation">运动+操作</option>
+        </select>
+        <select class="toolbar-select" v-model="sortField">
+          <option value="updatedAt">按更新时间</option>
+          <option value="samples">按数据量</option>
+          <option value="size">按存储大小</option>
+        </select>
+      </div>
+
+      <!-- Grid -->
+      <div class="dataset-grid" v-if="filteredDatasets.length>0">
+        <div class="dataset-card" :class="'card-source-'+ds.source" v-for="ds in filteredDatasets" :key="ds.id" @click="openDetail(ds)">
+          <div class="card-header">
+            <div class="card-robot-icon" :class="'icon-'+ds.source">
+              <img v-if="ds.logo" :src="ds.logo" :alt="ds.name" style="width:32px;height:32px;object-fit:contain;" @error="$event.target.style.display='none'" />
+              <span v-else>{{ ds.emoji }}</span>
+            </div>
+            <div class="card-info">
+              <div class="card-title">{{ ds.name }}</div>
+              <div class="card-meta">
+                <span class="source-badge" :class="sourceBadgeClass(ds.source)">
+                  {{ sourceLabel(ds.source) }}
+                </span>
+                <span v-if="ds.isNew" class="source-badge badge-new">NEW</span>
+                <span style="color:#475569;">{{ ds.updatedAt }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="card-desc">{{ ds.desc }}</div>
+            <div class="card-tags">
+              <span class="tag tag-robot" v-for="r in ds.robots" :key="r">🤖 {{ r }}</span>
+              <span class="tag tag-task" v-for="t in ds.taskTypes" :key="t">{{ t }}</span>
+              <span class="tag tag-modality" v-for="m in ds.modalities.slice(0,3)" :key="m">{{ m }}</span>
+            </div>
+            <div class="card-stats">
+              <div class="cs-item">
+                <div class="cs-val">{{ ds.episodes }}</div>
+                <div class="cs-key">轨迹条数</div>
+              </div>
+              <div class="cs-item">
+                <div class="cs-val">{{ ds.freq }}Hz</div>
+                <div class="cs-key">采集频率</div>
+              </div>
+              <div class="cs-item">
+                <div class="cs-val">{{ ds.avgLen }}s</div>
+                <div class="cs-key">平均时长</div>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div class="card-size">
+              <span>💾 {{ ds.size }}</span>
+              <div class="storage-bar-wrap" style="width:60px;margin-left:8px;">
+                <div class="storage-bar">
+                  <div class="storage-fill" :style="{width: ds.sizeRatio+'%', background: storageColor(ds.source)}"></div>
+                </div>
+              </div>
+            </div>
+            <div class="card-actions" @click.stop>
+              <button class="card-btn cbtn-view" @click="openDetail(ds)">📋 详情</button>
+              <button v-if="ds.source!=='sim'&&ds.source!=='custom'" class="card-btn cbtn-download" @click="downloadDs(ds)">⬇️ 下载</button>
+              <button v-if="ds.source==='sim'||ds.source==='custom'" class="card-btn cbtn-edit" @click="editDs(ds)">✏️ 编辑</button>
+              <button v-if="ds.source==='sim'||ds.source==='custom'" class="card-btn cbtn-del" @click.stop="deleteDs(ds)">🗑</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="empty-state" v-else>
+        <div class="empty-icon">🗃️</div>
+        <div class="empty-text">没有匹配的数据集</div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Overlay -->
+  <div class="overlay" :class="{show: detailOpen}" @click="detailOpen=false"></div>
+
+  <!-- Detail Panel -->
+  <div class="detail-panel" :class="{open: detailOpen}">
+    <div class="panel-header" v-if="activeDs">
+      <div class="card-robot-icon" :class="'icon-'+activeDs.source" style="width:36px;height:36px;font-size:18px;">
+        <img v-if="activeDs.logo" :src="activeDs.logo" :alt="activeDs.name" style="width:28px;height:28px;object-fit:contain;" @error="$event.target.style.display='none'" />
+        <span v-else>{{ activeDs.emoji }}</span>
+      </div>
+      <div>
+        <div class="panel-title">{{ activeDs.name }}</div>
+        <div class="panel-sub">{{ sourceLabel(activeDs.source) }} · {{ activeDs.episodes }} 条轨迹 · {{ activeDs.size }}</div>
+      </div>
+      <div class="panel-close" @click="detailOpen=false">✕</div>
+    </div>
+    <div class="panel-tabs">
+      <div class="panel-tab" :class="{active:detailTab==='overview'}" @click="detailTab='overview'">概览</div>
+      <div class="panel-tab" :class="{active:detailTab==='modality'}" @click="detailTab='modality'">数据模态</div>
+      <div class="panel-tab" :class="{active:detailTab==='samples'}" @click="detailTab='samples'">样本列表</div>
+      <div class="panel-tab" :class="{active:detailTab==='usage'}" @click="detailTab='usage'">使用说明</div>
+    </div>
+    <div class="panel-body" v-if="activeDs">
+
+      <!-- Overview -->
+      <div v-if="detailTab==='overview'">
+        <div class="detail-cover" style="margin-bottom:16px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+            <span class="source-badge" :class="sourceBadgeClass(activeDs.source)">{{ sourceLabel(activeDs.source) }}</span>
+            <span v-if="activeDs.isNew" class="source-badge badge-new">NEW</span>
+            <span style="font-size:11px;color:#64748b;">更新于 {{ activeDs.updatedAt }}</span>
+          </div>
+          <div style="font-size:13px;color:#94a3b8;line-height:1.7;">{{ activeDs.desc }}</div>
+        </div>
+        <div class="detail-stats">
+          <div class="ds-item"><div class="ds-val">{{ activeDs.episodes }}</div><div class="ds-key">轨迹条数</div></div>
+          <div class="ds-item"><div class="ds-val">{{ activeDs.freq }}Hz</div><div class="ds-key">采集频率</div></div>
+          <div class="ds-item"><div class="ds-val">{{ activeDs.avgLen }}s</div><div class="ds-key">平均时长</div></div>
+          <div class="ds-item"><div class="ds-val">{{ activeDs.successRate }}</div><div class="ds-key">成功率</div></div>
+          <div class="ds-item"><div class="ds-val">{{ activeDs.dof }}</div><div class="ds-key">关节DOF</div></div>
+          <div class="ds-item"><div class="ds-val">{{ activeDs.size }}</div><div class="ds-key">存储大小</div></div>
+        </div>
+        <div class="info-kv">
+          <div class="kv-item"><div class="kv-label">机器人型号</div><div class="kv-value">{{ activeDs.robots.join(', ') }}</div></div>
+          <div class="kv-item"><div class="kv-label">数据格式</div><div class="kv-value">{{ activeDs.format }}</div></div>
+          <div class="kv-item"><div class="kv-label">任务类型</div><div class="kv-value">{{ activeDs.taskTypes.join(', ') }}</div></div>
+          <div class="kv-item"><div class="kv-label">采集环境</div><div class="kv-value">{{ activeDs.environment }}</div></div>
+          <div class="kv-item"><div class="kv-label">许可证</div><div class="kv-value">{{ activeDs.license }}</div></div>
+          <div class="kv-item"><div class="kv-label">来源链接</div><div class="kv-value" style="font-size:11px;word-break:break-all;">{{ activeDs.url || '本地数据集' }}</div></div>
+        </div>
+      </div>
+
+      <!-- Modality -->
+      <div v-if="detailTab==='modality'">
+        <div style="margin-bottom:12px;font-size:12px;color:#64748b;">该数据集包含以下传感器数据模态：</div>
+        <div class="modality-list">
+          <div class="modality-item" v-for="m in activeDs.modalityList" :key="m.name">
+            <div class="modality-icon">{{ m.icon }}</div>
+            <div style="flex:1;">
+              <div class="modality-name">{{ m.name }}</div>
+              <div class="modality-detail">{{ m.detail }}</div>
+            </div>
+            <div class="modality-size">{{ m.size }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Samples -->
+      <div v-if="detailTab==='samples'">
+        <div style="margin-bottom:12px;font-size:12px;color:#64748b;">前 {{ activeDs.sampleList.length }} 条轨迹样本（共 {{ activeDs.episodes }} 条）：</div>
+        <div class="sample-list">
+          <div class="sample-item" v-for="(s,i) in activeDs.sampleList" :key="i">
+            <div class="sample-idx">#{{ String(i+1).padStart(3,'0') }}</div>
+            <div class="sample-info">
+              <div class="sample-name">{{ s.name }}</div>
+              <div class="sample-meta">时长 {{ s.duration }}s · {{ s.steps }} 步 · {{ s.scenario }}</div>
+            </div>
+            <div class="sample-result" :class="s.success ? 'res-pass' : 'res-fail'">{{ s.success ? '✓ 成功' : '✗ 失败' }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Usage -->
+      <div v-if="detailTab==='usage'">
+        <div style="background:rgba(30,41,59,0.5);border:1px solid rgba(99,179,237,0.1);border-radius:10px;padding:16px;margin-bottom:14px;">
+          <div style="font-size:12px;font-weight:700;color:#93c5fd;margin-bottom:10px;">📦 LeRobot 格式加载</div>
+          <div style="background:rgba(0,0,0,0.5);border-radius:8px;padding:12px;font-family:'SF Mono','Fira Code',monospace;font-size:11px;color:#6ee7b7;line-height:1.8;">
+            <div style="color:#475569;"># Python · LeRobot / HuggingFace Dataset</div>
+            <div>from lerobot.common.datasets.lerobot_dataset import LeRobotDataset</div>
+            <div>&nbsp;</div>
+            <div>dataset = LeRobotDataset(</div>
+            <div>&nbsp;&nbsp;repo_id="{{ activeDs.repoId || activeDs.id }}",</div>
+            <div>&nbsp;&nbsp;root="./data/{{ activeDs.id }}"</div>
+            <div>)</div>
+            <div>&nbsp;</div>
+            <div style="color:#475569;"># 遍历轨迹</div>
+            <div>for episode in dataset.episodes:</div>
+            <div>&nbsp;&nbsp;obs = episode["observation.state"]  # 关节状态</div>
+            <div>&nbsp;&nbsp;act = episode["action"]  # 动作序列</div>
+          </div>
+        </div>
+        <div style="background:rgba(30,41,59,0.5);border:1px solid rgba(99,179,237,0.1);border-radius:10px;padding:16px;">
+          <div style="font-size:12px;font-weight:700;color:#93c5fd;margin-bottom:10px;">🔗 与仿真测试联动</div>
+          <div style="font-size:12px;color:#64748b;line-height:1.8;">
+            <div>1. 在测试场景库选择对应场景</div>
+            <div>2. 创建测试任务时选择"数据集驱动"模式</div>
+            <div>3. 绑定此数据集作为动作回放/训练基准</div>
+            <div>4. 测试结果自动扩充至本数据集</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- New Collect Dialog -->
+  <el-dialog :visible.sync="newCollectDialog" width="560px" title="🎬 新建仿真采集任务">
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">任务名称</label>
+        <input class="form-input" v-model="newCollect.name" placeholder="e.g. G1步态数据采集-001" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">目标数据集</label>
+        <select class="form-input" v-model="newCollect.targetDataset">
+          <option value="">新建数据集</option>
+          <option v-for="ds in simDatasets" :key="ds.id" :value="ds.id">{{ ds.name }}</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">机器人型号</label>
+        <select class="form-input" v-model="newCollect.robot">
+          <option value="G1">G1 人形（宇树）</option>
+          <option value="H1">H1 人形（宇树）</option>
+          <option value="Go2">Go2 四足（宇树）</option>
+          <option value="X1">X1 人形（智元）</option>
+          <option value="X2">X2 双臂（智元）</option>
+          <option value="Bipedal-v2">Bipedal-v2（仿真）</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">采集场景</label>
+        <select class="form-input" v-model="newCollect.scene">
+          <option value="步态稳定">步态稳定性测试</option>
+          <option value="楼梯">楼梯上下行</option>
+          <option value="抓取">6DoF机械臂抓取</option>
+          <option value="避障">多障碍物避让</option>
+          <option value="斜坡">斜坡上坡行走</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">采集目标条数</label>
+        <input class="form-input" v-model.number="newCollect.target" type="number" min="10" max="10000" placeholder="500" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">采集频率 (Hz)</label>
+        <select class="form-input" v-model="newCollect.freq">
+          <option value="50">50 Hz</option>
+          <option value="100">100 Hz</option>
+          <option value="200">200 Hz</option>
+          <option value="500">500 Hz</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:14px;">
+      <label class="form-label">采集数据模态</label>
+      <div class="checkbox-group" style="margin-top:6px;">
+        <label class="checkbox-item" v-for="mod in modalityOptions" :key="mod" :class="{selected: newCollect.modalities.includes(mod)}" @click="toggleModality(mod)">
+          <input type="checkbox" /><span>{{ mod }}</span>
+        </label>
+      </div>
+    </div>
+    <span slot="footer">
+      <el-button @click="newCollectDialog=false">取消</el-button>
+      <el-button type="primary" @click="startNewCollect">🚀 开始采集</el-button>
+    </span>
+  </el-dialog>
+
+  <!-- New Dataset Dialog -->
+  <el-dialog :visible.sync="newDatasetDialog" width="520px" title="➕ 新建数据集">
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">数据集名称</label>
+        <input class="form-input" v-model="newDs.name" placeholder="e.g. 步态控制-v1" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">来源类型</label>
+        <select class="form-input" v-model="newDs.source">
+          <option value="sim">仿真生成</option>
+          <option value="custom">自定义导入</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:14px;">
+      <label class="form-label">描述</label>
+      <textarea class="form-input form-textarea" v-model="newDs.desc" placeholder="数据集描述、采集方法、适用场景…"></textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">机器人型号</label>
+        <input class="form-input" v-model="newDs.robot" placeholder="e.g. G1, H1, X1" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">数据格式</label>
+        <select class="form-input" v-model="newDs.format">
+          <option value="LeRobot HDF5">LeRobot HDF5</option>
+          <option value="ROS2 Bag">ROS2 Bag</option>
+          <option value="NumPy NPZ">NumPy NPZ</option>
+          <option value="CSV">CSV</option>
+        </select>
+      </div>
+    </div>
+    <span slot="footer">
+      <el-button @click="newDatasetDialog=false">取消</el-button>
+      <el-button type="primary" @click="createDataset">✅ 创建</el-button>
+    </span>
+  </el-dialog>
+
+  <!-- Sync Dialog -->
+  <el-dialog :visible.sync="syncDialog" width="500px" title="🔄 同步开源数据集">
+    <div style="font-size:13px;color:#64748b;margin-bottom:16px;">从 HuggingFace Hub 同步最新开源机器人数据集：</div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div v-for="src in syncSources" :key="src.id" style="background:rgba(30,41,59,0.5);border:1px solid rgba(99,179,237,0.1);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:12px;">
+        <img v-if="src.logo" :src="src.logo" :alt="src.name" style="width:24px;height:24px;object-fit:contain;" />
+        <div v-else style="font-size:20px;">{{ src.emoji }}</div>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:700;color:#e2e8f0;">{{ src.name }}</div>
+          <div style="font-size:11px;color:#64748b;">{{ src.desc }}</div>
+        </div>
+        <div style="font-size:11px;color:#475569;">{{ src.datasets }}个数据集</div>
+        <el-button size="mini" :type="src.syncing ? 'info' : 'primary'" :disabled="src.syncing" @click="syncSource(src)">
+          {{ src.syncing ? '同步中…' : '同步' }}
+        </el-button>
+      </div>
+    </div>
+    <span slot="footer">
+      <el-button @click="syncDialog=false">关闭</el-button>
+    </span>
+  </el-dialog>
+
+</div>
+</div>
+
+<script>
+const DATASETS = [
+  // ── 智元 AgiBot ──
+  {
+    id: 'agibot-x-embodiment', name: 'AgiBot World - X-Embodiment', source: 'agibot',
+    logo: 'https://agibot-world.cn/logo.png',
+    isNew: true, updatedAt: '2025-03',
+    desc: '智元机器人发布的大规模跨形态具身学习数据集，覆盖100+个不同机器人形态，超过100万条操作轨迹，是目前最大的公开机器人操作数据集之一。',
+    robots: ['AgiBot-X1', 'AgiBot-G1', 'X2-双臂'], taskTypes: ['灵巧操作', '运动+操作'],
+    modalities: ['RGB相机', '深度图', '关节状态', '力矩传感', '末端位姿'],
+    episodes: '1,000,000+', freq: 50, avgLen: 12, successRate: '87%', dof: 29,
+    size: '4.2 TB', sizeRatio: 85,
+    format: 'LeRobot HDF5', environment: '室内操作台', license: 'CC BY 4.0',
+    url: 'huggingface.co/datasets/agibot-world/AgiBot-World-Alpha',
+    repoId: 'agibot-world/AgiBot-World-Alpha',
+    modalityList: [
+      {icon:'📷', name:'RGB 相机', detail:'左/右腕部相机 + 头部广角 3路 640×480 @50Hz', size:'2.8 TB'},
+      {icon:'🔦', name:'深度图', detail:'Intel RealSense D435 双目深度 @30Hz', size:'800 GB'},
+      {icon:'⚙️', name:'关节位置/速度', detail:'29 DoF，精度 0.001 rad', size:'120 GB'},
+      {icon:'💪', name:'关节力矩', detail:'29 DoF，精度 0.01 Nm', size:'120 GB'},
+      {icon:'🖐️', name:'末端执行器位姿', detail:'6D 位姿 @ 50Hz', size:'80 GB'},
+      {icon:'🗣️', name:'语言标注', detail:'任务描述文本，中英双语', size:'2 GB'},
+    ],
+    sampleList: [
+      {name:'pick_place_cup_001', duration:8.4, steps:420, scenario:'杯子抓取放置', success:true},
+      {name:'pick_place_cup_002', duration:9.1, steps:455, scenario:'杯子抓取放置', success:true},
+      {name:'drawer_open_001', duration:6.2, steps:310, scenario:'抽屉开合', success:true},
+      {name:'wipe_table_003', duration:15.8, steps:790, scenario:'桌面擦拭', success:false},
+      {name:'pour_water_001', duration:11.2, steps:560, scenario:'倒水任务', success:true},
+    ]
+  },
+  {
+    id: 'agibot-manipulation-v2', name: 'AgiBot Manipulation Dataset v2', source: 'agibot',
+    logo: 'https://agibot-world.cn/logo.png',
+    isNew: false, updatedAt: '2024-11',
+    desc: 'AgiBot X1 人形机器人双臂协作操作数据集，专注日常家庭操作任务，包含遥操作演示数据与自主采集数据。',
+    robots: ['AgiBot-X1', 'AgiBot-X2'], taskTypes: ['灵巧操作'],
+    modalities: ['RGB相机', '关节状态', '力矩传感'],
+    episodes: '50,000', freq: 50, avgLen: 8, successRate: '92%', dof: 29,
+    size: '380 GB', sizeRatio: 38,
+    format: 'LeRobot HDF5', environment: '室内家庭场景', license: 'CC BY 4.0',
+    url: 'huggingface.co/datasets/agibot-world/manipulation-v2',
+    repoId: 'agibot-world/manipulation-v2',
+    modalityList: [
+      {icon:'📷', name:'RGB 相机', detail:'双腕 + 头部 3路 @50Hz', size:'280 GB'},
+      {icon:'⚙️', name:'关节状态', detail:'29 DoF 位置/速度/力矩', size:'60 GB'},
+      {icon:'🖐️', name:'末端位姿', detail:'6D SE(3) 位姿序列', size:'40 GB'},
+    ],
+    sampleList: [
+      {name:'fold_cloth_001', duration:22.0, steps:1100, scenario:'叠衣服', success:true},
+      {name:'arrange_dishes_001', duration:18.5, steps:925, scenario:'餐具摆放', success:true},
+      {name:'open_fridge_001', duration:5.2, steps:260, scenario:'开冰箱', success:true},
+    ]
+  },
+
+  // ── 宇树 Unitree ──
+  {
+    id: 'unitree-h1-loco', name: 'Unitree H1 Locomotion Dataset', source: 'unitree',
+    logo: 'https://latestlogo.com/wp-content/uploads/2024/09/unitree-logo.png',
+    isNew: true, updatedAt: '2025-01',
+    desc: '宇树 H1 人形机器人运动控制数据集，涵盖平地行走、斜坡、楼梯、跑步等多种地形场景，由强化学习策略采集，配有专家演示数据。',
+    robots: ['H1'], taskTypes: ['运动控制'],
+    modalities: ['关节状态', 'IMU', '足底力传感', '点云'],
+    episodes: '120,000', freq: 200, avgLen: 20, successRate: '95%', dof: 19,
+    size: '620 GB', sizeRatio: 62,
+    format: 'LeRobot HDF5', environment: '室内/室外多地形', license: 'Apache 2.0',
+    url: 'huggingface.co/datasets/unitreerobotics/h1-locomotion',
+    repoId: 'unitreerobotics/h1-locomotion',
+    modalityList: [
+      {icon:'⚙️', name:'关节状态', detail:'19 DoF 位置/速度/力矩 @200Hz', size:'320 GB'},
+      {icon:'🧭', name:'IMU 数据', detail:'9轴IMU，加速度/陀螺仪/磁力计', size:'80 GB'},
+      {icon:'👟', name:'足底力传感', detail:'4路力传感器，每路 3轴', size:'60 GB'},
+      {icon:'☁️', name:'LiDAR 点云', detail:'Velodyne VLP-16 @10Hz', size:'160 GB'},
+    ],
+    sampleList: [
+      {name:'flat_walk_0001', duration:30.0, steps:6000, scenario:'平地行走', success:true},
+      {name:'stair_up_0001', duration:15.2, steps:3040, scenario:'楼梯上行', success:true},
+      {name:'slope_15deg_0001', duration:18.8, steps:3760, scenario:'15°斜坡', success:true},
+      {name:'run_3ms_0001', duration:10.0, steps:2000, scenario:'3m/s跑步', success:true},
+      {name:'bumpy_terrain_001', duration:22.4, steps:4480, scenario:'颠簸路面', success:false},
+    ]
+  },
+  {
+    id: 'unitree-go2-nav', name: 'Unitree Go2 Navigation Dataset', source: 'unitree',
+    logo: 'https://latestlogo.com/wp-content/uploads/2024/09/unitree-logo.png',
+    isNew: false, updatedAt: '2024-10',
+    desc: '宇树 Go2 四足机器人室内外导航数据集，包含自主导航、避障、地图构建等任务，支持 SLAM 训练基准测试。',
+    robots: ['Go2'], taskTypes: ['导航避障', '运动控制'],
+    modalities: ['RGB相机', 'LiDAR', '关节状态', 'IMU', 'GPS'],
+    episodes: '80,000', freq: 100, avgLen: 45, successRate: '91%', dof: 12,
+    size: '890 GB', sizeRatio: 75,
+    format: 'ROS2 Bag', environment: '室内外混合', license: 'MIT',
+    url: 'huggingface.co/datasets/unitreerobotics/go2-navigation',
+    repoId: 'unitreerobotics/go2-navigation',
+    modalityList: [
+      {icon:'📷', name:'RGB 相机', detail:'前置 + 后置 2路 1280×720 @30Hz', size:'600 GB'},
+      {icon:'☁️', name:'LiDAR 点云', detail:'Ouster OS1-16 360° @20Hz', size:'200 GB'},
+      {icon:'⚙️', name:'关节状态', detail:'12 DoF 四足状态 @100Hz', size:'50 GB'},
+      {icon:'📍', name:'GPS/位姿', detail:'RTK GPS + 里程计融合', size:'40 GB'},
+    ],
+    sampleList: [
+      {name:'indoor_nav_0001', duration:120.0, steps:12000, scenario:'室内导航', success:true},
+      {name:'outdoor_park_0001', duration:240.0, steps:24000, scenario:'公园导航', success:true},
+      {name:'narrow_corridor_001', duration:35.0, steps:3500, scenario:'窄道穿越', success:true},
+    ]
+  },
+  {
+    id: 'unitree-g1-loco-manipulation', name: 'Unitree G1 Loco-Manipulation', source: 'unitree',
+    logo: 'https://latestlogo.com/wp-content/uploads/2024/09/unitree-logo.png',
+    isNew: true, updatedAt: '2025-02',
+    desc: '宇树 G1 全身运动操作数据集，结合人形机器人运动与双臂操作，是目前宇树最大规模的全身协调控制数据集。',
+    robots: ['G1'], taskTypes: ['运动+操作', '灵巧操作'],
+    modalities: ['RGB相机', '关节状态', 'IMU', '末端力传感'],
+    episodes: '35,000', freq: 100, avgLen: 15, successRate: '82%', dof: 43,
+    size: '480 GB', sizeRatio: 48,
+    format: 'LeRobot HDF5', environment: '室内结构化环境', license: 'Apache 2.0',
+    url: 'huggingface.co/datasets/unitreerobotics/g1-loco-manipulation',
+    repoId: 'unitreerobotics/g1-loco-manipulation',
+    modalityList: [
+      {icon:'📷', name:'RGB 相机', detail:'头部双目 + 腕部相机 @60Hz', size:'320 GB'},
+      {icon:'⚙️', name:'关节状态', detail:'43 DoF 全身关节 @100Hz', size:'120 GB'},
+      {icon:'💪', name:'末端力传感', detail:'双腕 6D 力/力矩传感器', size:'40 GB'},
+    ],
+    sampleList: [
+      {name:'walk_and_grab_001', duration:12.5, steps:1250, scenario:'边走边抓取', success:true},
+      {name:'open_door_walk_001', duration:8.8, steps:880, scenario:'开门通过', success:true},
+      {name:'carry_box_001', duration:18.0, steps:1800, scenario:'搬运箱子', success:false},
+    ]
+  },
+  {
+    id: 'unitree-dex3-hand', name: 'Unitree Dex3-1 Hand Dataset', source: 'unitree',
+    logo: 'https://latestlogo.com/wp-content/uploads/2024/09/unitree-logo.png',
+    isNew: false, updatedAt: '2024-09',
+    desc: '宇树灵巧手 Dex3-1 精细操作数据集，涵盖 50+ 种物体的抓取、翻转、组装任务，支持灵巧手策略学习。',
+    robots: ['Dex3-1'], taskTypes: ['灵巧操作'],
+    modalities: ['触觉传感', 'RGB相机', '关节状态'],
+    episodes: '25,000', freq: 200, avgLen: 6, successRate: '88%', dof: 12,
+    size: '180 GB', sizeRatio: 18,
+    format: 'LeRobot HDF5', environment: '操作台', license: 'CC BY-NC 4.0',
+    url: 'huggingface.co/datasets/unitreerobotics/dex3-manipulation',
+    repoId: 'unitreerobotics/dex3-manipulation',
+    modalityList: [
+      {icon:'🖐️', name:'触觉传感阵列', detail:'24路触觉传感器 @200Hz', size:'80 GB'},
+      {icon:'📷', name:'RGB 相机', detail:'腕部鱼眼相机 360° @60Hz', size:'70 GB'},
+      {icon:'⚙️', name:'手指关节状态', detail:'12 DoF 位置/速度/力矩', size:'30 GB'},
+    ],
+    sampleList: [
+      {name:'pick_coin_001', duration:3.5, steps:700, scenario:'硬币抓取', success:true},
+      {name:'insert_pin_001', duration:8.2, steps:1640, scenario:'销钉插入', success:false},
+      {name:'rotate_knob_001', duration:4.8, steps:960, scenario:'旋钮操作', success:true},
+    ]
+  },
+
+  // ── 仿真生成 ──
+  {
+    id: 'sim-bipedal-gait-v1', name: '双足步态仿真数据集 v1', source: 'sim', emoji: '⚙️',
+    isNew: false, updatedAt: '2026-04-07',
+    desc: '从 MuJoCo 仿真测试任务 #T-2026-039 采集的双足步态训练数据，覆盖平地、斜坡、楼梯等多种地形，配有 LQR 与 RL 策略对比数据。',
+    robots: ['Bipedal-v2'], taskTypes: ['运动控制'],
+    modalities: ['关节状态', 'IMU', '接触力', '质心轨迹'],
+    episodes: '8,240', freq: 500, avgLen: 12, successRate: '100%', dof: 18,
+    size: '24 GB', sizeRatio: 12,
+    format: 'NumPy NPZ', environment: 'MuJoCo 仿真', license: '内部使用',
+    url: null, repoId: 'sim-bipedal-gait-v1',
+    modalityList: [
+      {icon:'⚙️', name:'关节状态', detail:'18 DoF @ 500Hz 仿真步长 2ms', size:'14 GB'},
+      {icon:'🧭', name:'虚拟IMU', detail:'质心 6D 加速度/角速度', size:'4 GB'},
+      {icon:'👟', name:'接触力', detail:'足底接触力与扭矩', size:'6 GB'},
+    ],
+    sampleList: [
+      {name:'flat_gait_001', duration:20.0, steps:10000, scenario:'平地步态', success:true},
+      {name:'slope_up_001', duration:15.5, steps:7750, scenario:'上坡步态', success:true},
+      {name:'stair_climb_001', duration:18.2, steps:9100, scenario:'楼梯攀爬', success:true},
+    ]
+  },
+  {
+    id: 'sim-arm-grasp-v2', name: '机械臂抓取仿真数据集 v2', source: 'sim', emoji: '🦾',
+    isNew: true, updatedAt: '2026-04-08',
+    desc: '从任务 #T-2026-041 实时采集的 6DoF 机械臂抓取数据，涵盖多种形状物体、动态抓取规划轨迹，已标注成功/失败样本。',
+    robots: ['ARM-6DoF'], taskTypes: ['灵巧操作'],
+    modalities: ['关节状态', '末端位姿', '夹持力', '视觉点云'],
+    episodes: '3,150', freq: 1000, avgLen: 4, successRate: '94%', dof: 6,
+    size: '8.5 GB', sizeRatio: 8,
+    format: 'LeRobot HDF5', environment: 'MuJoCo 仿真', license: '内部使用',
+    url: null, repoId: 'sim-arm-grasp-v2',
+    modalityList: [
+      {icon:'⚙️', name:'关节状态', detail:'6 DoF @ 1kHz 精度 0.0001 rad', size:'4 GB'},
+      {icon:'🖐️', name:'末端位姿 + 夹持力', detail:'SE(3) 位姿 + 夹持状态', size:'2 GB'},
+      {icon:'☁️', name:'目标物体点云', detail:'仿真点云 @ 30Hz', size:'2.5 GB'},
+    ],
+    sampleList: [
+      {name:'grasp_cube_0001', duration:3.8, steps:3800, scenario:'方块抓取', success:true},
+      {name:'grasp_cylinder_001', duration:4.2, steps:4200, scenario:'圆柱抓取', success:true},
+      {name:'dynamic_grasp_001', duration:5.1, steps:5100, scenario:'动态目标抓取', success:false},
+    ]
+  },
+];
+
+const COLLECT_TASKS = [
+  {id:'ct-1', name:'双足步态数据采集', status:'collecting', collected:1240, target:5000, progress:24, robot:'Bipedal-v2', scene:'步态稳定性'},
+  {id:'ct-2', name:'机械臂抓取采集', status:'paused', collected:3150, target:5000, progress:63, robot:'ARM-6DoF', scene:'6DoF机械臂抓取'},
+  {id:'ct-3', name:'H1 斜坡行走', status:'idle', collected:0, target:2000, progress:0, robot:'H1', scene:'斜坡行走'},
+];
+
+new Vue({
+  el: '#app',
+  data() {
+    return {
+      datasets: DATASETS,
+      collectTasks: COLLECT_TASKS,
+      activeTab: 'all',
+      search: '',
+      filterRobot: '',
+      filterTask: '',
+      sortField: 'updatedAt',
+      detailOpen: false,
+      activeDs: null,
+      detailTab: 'overview',
+      // dialogs
+      newCollectDialog: false,
+      newDatasetDialog: false,
+      syncDialog: false,
+      // forms
+      newCollect: { name:'', targetDataset:'', robot:'G1', scene:'步态稳定', target:500, freq:'100', modalities:['关节状态','IMU'] },
+      newDs: { name:'', source:'sim', desc:'', robot:'', format:'LeRobot HDF5' },
+      modalityOptions: ['关节状态', 'IMU', 'RGB相机', '深度图', '点云', '接触力', '末端位姿', '触觉传感', '力矩'],
+      syncSources: [
+        {id:'agibot', logo:'https://agibot-world.cn/logo.png', name:'AgiBot World', desc:'智元机器人 HuggingFace 数据集仓库', datasets:12, syncing:false},
+        {id:'unitree', logo:'https://latestlogo.com/wp-content/uploads/2024/09/unitree-logo.png', name:'Unitree Robotics', desc:'宇树机器人官方数据集', datasets:8, syncing:false},
+        {id:'lerobot', emoji:'🤗', name:'LeRobot Community', desc:'HuggingFace LeRobot 社区数据集', datasets:45, syncing:false},
+      ],
+    };
+  },
+  computed: {
+    totalDatasets() { return this.datasets.length; },
+    agibotCount() { return this.datasets.filter(d=>d.source==='agibot').length; },
+    unitreeCount() { return this.datasets.filter(d=>d.source==='unitree').length; },
+    simCount() { return this.datasets.filter(d=>d.source==='sim').length; },
+    customCount() { return this.datasets.filter(d=>d.source==='custom').length; },
+    totalSamples() {
+      // extract numeric part
+      const sum = this.datasets.reduce((acc,d)=>{
+        const n = parseInt(String(d.episodes).replace(/[^0-9]/g,''));
+        return acc + (isNaN(n)?0:n);
+      },0);
+      return sum >= 1000000 ? (sum/1000000).toFixed(1)+'M' : sum >= 1000 ? Math.round(sum/1000)+'K' : sum;
+    },
+    usedStorage() { return '6.8 TB'; },
+    simDatasets() { return this.datasets.filter(d=>d.source==='sim'||d.source==='custom'); },
+    filteredDatasets() {
+      let list = this.datasets;
+      if (this.activeTab !== 'all') list = list.filter(d=>d.source===this.activeTab);
+      if (this.search) {
+        const q = this.search.toLowerCase();
+        list = list.filter(d=>d.name.toLowerCase().includes(q)||d.desc.toLowerCase().includes(q)||d.taskTypes.join(' ').toLowerCase().includes(q));
+      }
+      if (this.filterRobot) list = list.filter(d=>d.robots.join(' ').includes(this.filterRobot));
+      if (this.filterTask) list = list.filter(d=>d.taskTypes.join(' ').toLowerCase().includes(this.filterTask));
+      return list;
+    },
+  },
+  methods: {
+    sourceLabel(s) { return {agibot:'智元 AgiBot',unitree:'宇树 Unitree',sim:'仿真生成',custom:'自定义'}[s]||s; },
+    sourceBadgeClass(s) { return {agibot:'badge-agibot',unitree:'badge-unitree',sim:'badge-sim',custom:'badge-custom'}[s]||''; },
+    storageColor(s) { return {agibot:'linear-gradient(90deg,#f59e0b,#ef4444)',unitree:'linear-gradient(90deg,#3b82f6,#8b5cf6)',sim:'linear-gradient(90deg,#10b981,#06b6d4)',custom:'linear-gradient(90deg,#8b5cf6,#ec4899)'}[s]||'#3b82f6'; },
+    openDetail(ds) { this.activeDs=ds; this.detailTab='overview'; this.detailOpen=true; },
+    downloadDs(ds) { this.$message({message:'正在准备下载 '+ds.name+' …',type:'success'}); },
+    editDs(ds) { this.$message.info('编辑数据集：'+ds.name); },
+    deleteDs(ds) {
+      this.$confirm('确认删除数据集 "'+ds.name+'" 吗？此操作不可恢复。','确认删除',{type:'warning'})
+        .then(()=>{ this.datasets=this.datasets.filter(d=>d.id!==ds.id); this.$message.success('已删除'); })
+        .catch(()=>{});
+    },
+    toggleModality(mod) {
+      const idx = this.newCollect.modalities.indexOf(mod);
+      if (idx>=0) this.newCollect.modalities.splice(idx,1);
+      else this.newCollect.modalities.push(mod);
+    },
+    startCollect(ct) { ct.status='collecting'; this.$message.success('采集任务已启动：'+ct.name); },
+    stopCollect(ct) { ct.status='paused'; this.$message.info('采集任务已暂停：'+ct.name); },
+    saveCollect(ct) { this.$message.success('数据已归档至数据集，共 '+ct.collected+' 条轨迹'); },
+    startNewCollect() {
+      if (!this.newCollect.name) { this.$message.error('请填写任务名称'); return; }
+      const ct = {
+        id: 'ct-'+Date.now(), name: this.newCollect.name, status:'ready',
+        collected:0, target:this.newCollect.target, progress:0,
+        robot:this.newCollect.robot, scene:this.newCollect.scene
+      };
+      this.collectTasks.push(ct);
+      this.newCollectDialog=false;
+      this.$message.success('采集任务创建成功，可在采集面板启动');
+    },
+    createDataset() {
+      if (!this.newDs.name) { this.$message.error('请填写数据集名称'); return; }
+      this.datasets.push({
+        id: 'custom-'+Date.now(), name:this.newDs.name, source:this.newDs.source, emoji:'📁',
+        isNew:true, updatedAt:new Date().toISOString().slice(0,10),
+        desc:this.newDs.desc||'自定义数据集', robots:[this.newDs.robot||'未指定'],
+        taskTypes:['自定义'], modalities:[], episodes:0, freq:'-', avgLen:'-', successRate:'-', dof:'-',
+        size:'0 B', sizeRatio:0, format:this.newDs.format, environment:'自定义', license:'内部使用',
+        url:null, repoId:this.newDs.name, modalityList:[], sampleList:[]
+      });
+      this.newDatasetDialog=false;
+      this.$message.success('数据集 "'+this.newDs.name+'" 创建成功');
+      this.newDs={name:'',source:'sim',desc:'',robot:'',format:'LeRobot HDF5'};
+    },
+    syncSource(src) {
+      src.syncing=true;
+      setTimeout(()=>{ src.syncing=false; this.$message.success(src.name+' 数据集同步完成'); },3000);
+    },
+  },
+  watch: {
+    activeTab() {},
+  }
+});
+</script>
+
+<script>
+  // Intercept internal navigation links and notify parent
+  if (window !== window.top) {
+    document.addEventListener('click', function(e) {
+      var link = e.target.closest('a[href]');
+      if (!link) return;
+      var href = link.getAttribute('href');
+      if (!href) return;
+      // Only intercept links to local simulation pages
+      var simPages = ['index.html','scene-library.html','task-manager.html','monitor.html','dataset-manager.html'];
+      var page = href.split('/').pop().split('?')[0].split('#')[0];
+      if (simPages.indexOf(page) !== -1) {
+        e.preventDefault();
+        window.parent.postMessage({type: 'sim-navigate', target: page}, '*');
+      }
+    });
+  }
+</script>
+</body>
+</html>

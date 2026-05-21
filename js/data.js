@@ -21,6 +21,8 @@ window.AppData = {
     { id: 'standard', name: '标准认证', icon: 'standard', desc: '权威认证路径' },
     { id: 'mall', name: '供应链商城', icon: 'mall', desc: '优质零部件采购' },
     { id: 'community', name: '众创社区', icon: 'community', desc: '开发者交流平台' },
+    { id: 'paper', name: '论文解读', icon: 'paper', desc: '前沿论文深度解读' },
+    { id: 'testfield', name: '测试场地', icon: 'testfield', desc: '专业场地预约测试' },
   ],
   latestNews: [
     { id:1, date:'2025-05-18', title:'平台数据集突破1200个，涵盖灵巧手、双足等多类本体', excerpt:'本次新增200+机器人操作类数据集，支持云端一键训练，显著提升研发效率。', tag:'平台公告', tagType:'primary' },
@@ -526,6 +528,129 @@ window.AppData = {
     { name:'数据侠', level:6, desc:'机器人数据采集与标注专家' },
   ],
 
+  // ===== PAPER（论文解读）=====
+  papers: [
+    {
+      id: 1,
+      title: 'RT-2: Vision-Language-Action Models Transfer Web Knowledge to Robotic Control',
+      titleCn: 'RT-2：视觉-语言-动作模型将网络知识迁移至机器人控制',
+      authors: 'Michael Ahn et al.',
+      org: 'Google DeepMind',
+      venue: 'CoRL 2024',
+      year: 2024,
+      icon: '🧠',
+      tags: ['VLA', '端到端', '大模型', '迁移学习'],
+      abstract: '本文提出 RT-2（Robotic Transformer 2），将大规模视觉-语言模型（VLM）直接微调为视觉-语言-动作（VLA）模型，使机器人能利用互联网规模的知识进行推理和控制。RT-2 在 PaLI-X 和 PaLM-E 等大模型基础上，将机器人动作离散化为 token，与语言 token 统一训练，实现了从网络知识到机器人操作的零样本迁移。',
+      keyInsights: [
+        '首次证明 VLM 可以直接作为机器人策略网络，无需额外策略头',
+        '模型能理解"把水果放到碗里"等需要常识推理的指令，无需专门训练',
+        '在未见过的物体和场景上，零样本成功率从 RT-1 的 28% 提升至 62%',
+        'Chain-of-Thought 推理可使模型在多步骤任务中规划更合理'
+      ],
+      impact: 'RT-2 开创了 VLA（Vision-Language-Action）研究范式，直接催生了 OpenVLA、Octo 等开源后续工作，是具身智能大模型落地的重要里程碑。',
+      link: 'https://robotics-transformer-x.github.io/'
+    },
+    {
+      id: 2,
+      title: 'Diffusion Policy: Visuomotor Policy Learning via Action Diffusion',
+      titleCn: 'Diffusion Policy：基于动作扩散的视觉运动策略学习',
+      authors: 'Cheng Chi et al.',
+      org: 'Columbia University',
+      venue: 'RSS 2023 (Best Paper Finalist)',
+      year: 2023,
+      icon: '🌊',
+      tags: ['扩散模型', '模仿学习', '多模态动作', '操作'],
+      abstract: '本文提出 Diffusion Policy，将去噪扩散模型用于机器人策略学习。不同于传统回归或高斯混合模型输出单峰动作，Diffusion Policy 通过迭代去噪生成多模态动作分布，天然适配"多种可行轨迹并存"的操作场景。作者在 15 个任务基准上验证了其优势。',
+      keyInsights: [
+        '扩散模型生成多模态动作分布，完美解决"同一目标多种抓法"的歧义问题',
+        '引入动作序列预测（action chunking），避免逐步预测的误差累积',
+        '在 15 个任务上超越传统方法，成功率平均提升 20% 以上',
+        '支持图像观测输入，端到端从像素到动作，无需手工特征工程'
+      ],
+      impact: 'Diffusion Policy 成为模仿学习新范式，后续 DP3（3D 点云版）、Diffusion Policy Policy 等变体层出不穷，已广泛应用于双臂协作、灵巧手操作等前沿课题。',
+      link: 'https://diffusion-policy.cs.columbia.edu/'
+    },
+    {
+      id: 3,
+      title: 'SayCan: Do As I Can, Not As I Say — Grounding Language in Robotic Affordances',
+      titleCn: 'SayCan：基于可行性接地的大语言模型机器人规划',
+      authors: 'Michael Ahn et al.',
+      org: 'Google DeepMind',
+      venue: 'CoRL 2022',
+      year: 2022,
+      icon: '🗣️',
+      tags: ['LLM规划', '技能接地', '分层控制', '语言指令'],
+      abstract: 'SayCan 提出将大语言模型（LLM）的常识规划能力与机器人物理可行性（affordance）结合的框架：LLM 负责高层任务分解与动作选择，底层技能策略提供可行性评分，两者相乘得到"既合理又可执行"的动作序列。解决了"LLM 知道该做什么但不知道能不能做"的问题。',
+      keyInsights: [
+        'LLM 输出概率 × 技能可行性分数 = 接地后的动作选择，简洁优雅',
+        '使机器人能理解"我渴了"等模糊意图，自主分解为可执行步骤',
+        '在厨房场景中，长程任务成功率从纯 LLM 的 14% 提升至 84%',
+        '首次证明 LLM + 机器人技能库可构成实用的分层控制系统'
+      ],
+      impact: 'SayCan 是 LLM 驱动机器人规划的奠基之作，后续 Inner Monologue、Code as Policies、Voyager 等工作均受其启发，开启了"大模型做大脑，机器人做身体"的研究热潮。',
+      link: 'https://say-can.github.io/'
+    }
+  ],
+
+  // ===== TESTFIELD（测试场地预约）=====
+  testFields: [
+    {
+      id: 1,
+      name: '去野测试场',
+      icon: '🏔️',
+      tags: ['基础测试', '楼梯', '台阶', '淋雨'],
+      desc: '综合性基础测试场地，配备标准楼梯与台阶模块，支持机器人越障、爬坡、稳定性等基础运动能力测试。内置淋雨环境模拟区，可验证设备在雨天工况下的防水性能与传感器可靠性。适合四足、人形、轮式机器人基础性能评估。',
+      features: ['标准化楼梯（15°/30°/45°三档可调）', '多级台阶测试区（5cm-30cm可调）', '淋雨模拟系统（IP54-IP67分级测试）', '平整地面基准测试区'],
+      location: '去野机器人测试基地',
+      phone: '400-888-0001',
+      price: '¥800/天起'
+    },
+    {
+      id: 2,
+      name: '去野南测试场',
+      icon: '🌋',
+      tags: ['极限地形', '战壕', '废墟'],
+      desc: '面向极限工况的专业测试场，模拟灾害救援、军事侦察等极端场景。设有战壕穿越区、废墟攀爬区、泥泞沼泽区，可全面测试机器人在非结构化复杂地形中的通过性、稳定性和自主恢复能力。',
+      features: ['战壕穿越区（深0.5-1.5m，宽0.3-0.8m）', '废墟攀爬区（不规则碎石+倒塌建筑模拟）', '泥泞沼泽区（含水位可调）', '极限坡道（最高60°）'],
+      location: '去野南极限测试基地',
+      phone: '400-888-0002',
+      price: '¥1,200/天起'
+    },
+    {
+      id: 3,
+      name: '小木屋测试场',
+      icon: '🏠',
+      tags: ['智能家具', '家居场景'],
+      desc: '1:1 还原真实家居环境，配备全屋智能家居系统，专为家庭服务机器人设计。覆盖客厅、厨房、卧室、卫生间等典型场景，内含智能灯光、窗帘、门锁等IoT设备，支持机器人与智能家居的联动测试。',
+      features: ['全屋智能家居互联（支持Matter/HomeKit/米家）', '厨房操作区（含台面、水龙头、厨具）', '卧室与卫生间场景', '动态障碍物模拟（人体模型+宠物模型）'],
+      location: '小木屋智慧家居测试中心',
+      phone: '400-888-0003',
+      price: '¥600/天起'
+    },
+    {
+      id: 4,
+      name: '九龙潭测试场',
+      icon: '🌊',
+      tags: ['智慧水域', '水下测试'],
+      desc: '面向水域机器人与水下装备的专业测试基地，涵盖静水池、流动水道、浅滩湿地三种水域环境。支持水下机器人导航、管道巡检、水面救援等场景测试，配备水下定位与通信系统。',
+      features: ['静水池（20m×15m，水深1-3m可调）', '流动水道（流速0-2m/s可调）', '浅滩湿地区（芦苇+淤泥仿真）', '水下定位系统（USBL+SBL）'],
+      location: '九龙潭水域测试基地',
+      phone: '400-888-0004',
+      price: '¥1,000/天起'
+    },
+    {
+      id: 5,
+      name: '产业园测试场',
+      icon: '🏭',
+      tags: ['标准测试场', '工业场景'],
+      desc: '标准化工业测试场地，符合 GB/T 12642、ISO 9283 等国际标准要求，可开展机器人性能规范试验。配备产线模拟区、仓储物流区、质检工位区，满足工业机器人、协作机器人、AGV/AMR 的标准认证测试需求。',
+      features: ['符合 GB/T 12642 性能规范测试条件', '产线模拟区（含传送带、工装夹具）', '仓储物流区（含货架、AGV通道）', '电气安全与EMC测试间'],
+      location: '机器人产业园标准测试中心',
+      phone: '400-888-0005',
+      price: '¥500/天起'
+    }
+  ],
+
   // ===== PROFILE =====
   permissions: [
     { module:'数据集中心', permission:'完整读写', permType:'success', expire:'永久', remark:'认证企业用户，不限量访问' },
@@ -559,6 +684,8 @@ window.AppIcons = {
   standard: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>',
   mall: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>',
   community: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>',
+  paper: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>',
+  testfield: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/><path d="M9 9v.01"/><path d="M9 12v.01"/><path d="M9 15v.01"/><path d="M9 18v.01"/></svg>',
   bolt: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
   cloud: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z"/></svg>',
   shield: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>',

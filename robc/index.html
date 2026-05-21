@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基于多智能体协同调度的云控数据管理平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <!-- 引入地图所需的百度地图API（替换为你的AK） -->
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=3.0&ak=你的百度地图AK"></script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .card-shadow {
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            }
+            .bg-tech {
+                background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            }
+            .text-glow {
+                text-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
+            }
+        }
+    </style>
+
+<style id="iframe-override">
+  /* When embedded in iframe, hide header */
+</style>
+<script>
+  if (window !== window.top) {
+    document.documentElement.classList.add("in-iframe");
+    var style = document.getElementById("iframe-override");
+    if (style) {
+      style.textContent = "header{display:none!important}main{height:100vh!important;padding-top:0!important}";
+    }
+  }
+</script>
+</head>
+<body class="bg-gray-900 text-gray-200 min-h-screen">
+    <!-- 顶部导航栏 -->
+    <header class="bg-tech py-3 px-6 border-b border-blue-900/50">
+        <div class="flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <i class="fa fa-robot text-3xl text-sky-400 text-glow"></i>
+                <h1 class="text-2xl font-bold text-white">基于多智能体协同调度的云控数据管理平台</h1>
+                <span class="text-sm text-sky-300 bg-sky-900/30 px-2 py-1 rounded">苏州旺山景区</span>
+            </div>
+            <div class="flex items-center gap-6">
+                <div class="flex items-center gap-2">
+                    <i class="fa fa-clock-o text-sky-400"></i>
+                    <span id="current-time" class="text-sm">2026-03-11 15:30:00</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <img src="https://picsum.photos/32/32" alt="用户头像" class="w-8 h-8 rounded-full border border-sky-500">
+                    <span class="text-sm">管理员</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主体内容 -->
+    <main class="flex p-4 gap-4 h-[calc(100vh-60px)]">
+        <!-- 左侧面板：数据统计 + 机器人清单 -->
+        <div class="w-80 flex flex-col gap-4">
+            <!-- 数据统计卡片 -->
+            <div class="bg-gray-800 rounded-lg p-4 card-shadow">
+                <h2 class="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                    <i class="fa fa-bar-chart text-sky-400"></i>
+                    运行数据统计
+                </h2>
+                <div class="grid grid-cols-2 gap-3 mb-4">
+                    <div class="bg-gray-700/50 rounded p-2 text-center">
+                        <div class="text-2xl font-bold text-sky-400">12</div>
+                        <div class="text-xs text-gray-400">在线机器人</div>
+                    </div>
+                    <div class="bg-gray-700/50 rounded p-2 text-center">
+                        <div class="text-2xl font-bold text-amber-400">3</div>
+                        <div class="text-xs text-gray-400">离线机器人</div>
+                    </div>
+                    <div class="bg-gray-700/50 rounded p-2 text-center">
+                        <div class="text-2xl font-bold text-green-400">85%</div>
+                        <div class="text-xs text-gray-400">整体运行率</div>
+                    </div>
+                    <div class="bg-gray-700/50 rounded p-2 text-center">
+                        <div class="text-2xl font-bold text-red-400">5</div>
+                        <div class="text-xs text-gray-400">待处理事件</div>
+                    </div>
+                </div>
+                <!-- 运行时长趋势图 -->
+                <div class="h-40">
+                    <div id="runtime-chart" class="w-full h-full"></div>
+                </div>
+            </div>
+
+            <!-- 机器人清单卡片 -->
+            <div class="bg-gray-800 rounded-lg p-4 card-shadow flex-1 overflow-auto">
+                <h2 class="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                    <i class="fa fa-list text-sky-400"></i>
+                    机器人清单
+                </h2>
+                <div class="space-y-2">
+                    <!-- 机器人条目 -->
+                    <div class="bg-gray-700/50 rounded p-3 hover:bg-gray-700 transition">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-medium text-white">A公司 - 巡检机器人01</span>
+                            <span class="text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full">在线</span>
+                        </div>
+                        <div class="flex justify-between text-xs text-gray-400">
+                            <span><i class="fa fa-battery-three-quarters text-green-400"></i> 电量：88%</span>
+                            <span><i class="fa fa-map-marker text-sky-400"></i> 旺山广场</span>
+                        </div>
+                    </div>
+                    <div class="bg-gray-700/50 rounded p-3 hover:bg-gray-700 transition">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-medium text-white">A公司 - 安防机器狗02</span>
+                            <span class="text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full">在线</span>
+                        </div>
+                        <div class="flex justify-between text-xs text-gray-400">
+                            <span><i class="fa fa-battery-half text-amber-400"></i> 电量：52%</span>
+                            <span><i class="fa fa-map-marker text-sky-400"></i> 九龙潭景区</span>
+                        </div>
+                    </div>
+                    <div class="bg-gray-700/50 rounded p-3 hover:bg-gray-700 transition">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-medium text-white">B公司 - 清洁机器人03</span>
+                            <span class="text-xs bg-red-500/20 text-red-400 px-2 py-0.5 rounded-full">离线</span>
+                        </div>
+                        <div class="flex justify-between text-xs text-gray-400">
+                            <span><i class="fa fa-battery-empty text-red-400"></i> 电量：10%</span>
+                            <span><i class="fa fa-map-marker text-sky-400"></i> 叆叇岭</span>
+                        </div>
+                    </div>
+                    <div class="bg-gray-700/50 rounded p-3 hover:bg-gray-700 transition">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-medium text-white">B公司 - 巡逻机器狗04</span>
+                            <span class="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded-full">故障</span>
+                        </div>
+                        <div class="flex justify-between text-xs text-gray-400">
+                            <span><i class="fa fa-battery-quarter text-yellow-400"></i> 电量：25%</span>
+                            <span><i class="fa fa-map-marker text-sky-400"></i> 宝华寺</span>
+                        </div>
+                    </div>
+                    <div class="bg-gray-700/50 rounded p-3 hover:bg-gray-700 transition">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-medium text-white">C公司 - 配送机器人05</span>
+                            <span class="text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full">在线</span>
+                        </div>
+                        <div class="flex justify-between text-xs text-gray-400">
+                            <span><i class="fa fa-battery-three-quarters text-green-400"></i> 电量：76%</span>
+                            <span><i class="fa fa-map-marker text-sky-400"></i> 旺山民宿区</span>
+                        </div>
+                    </div>
+                    <div class="bg-gray-700/50 rounded p-3 hover:bg-gray-700 transition">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-medium text-white">X公司 - 智能巡检机器人01</span>
+                            <span class="text-xs bg-red-500/20 text-red-400 px-2 py-0.5 rounded-full">紧急</span>
+                        </div>
+                        <div class="flex justify-between text-xs text-gray-400">
+                            <span><i class="fa fa-battery-three-quarters text-green-400"></i> 电量：65%</span>
+                            <span><i class="fa fa-map-marker text-sky-400"></i> 叆叇岭景区</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 充电基地信息卡片 -->
+            <div class="bg-gray-800 rounded-lg p-4 card-shadow">
+                <h2 class="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                    <i class="fa fa-bolt text-yellow-400"></i>
+                    充电基地信息
+                </h2>
+                <div class="bg-gray-700/50 rounded p-3">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-medium text-white">旺山主充电基地</span>
+                        <span class="text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full">正常运行</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="bg-gray-600/50 rounded p-2 text-center">
+                            <div class="text-2xl font-bold text-yellow-400">8/10</div>
+                            <div class="text-xs text-gray-400">可用充电枪</div>
+                        </div>
+                        <div class="bg-gray-600/50 rounded p-2 text-center">
+                            <div class="text-2xl font-bold text-green-400">2</div>
+                            <div class="text-xs text-gray-400">正在充电</div>
+                        </div>
+                    </div>
+                    <div class="mt-2 text-xs text-gray-400">
+                        <i class="fa fa-map-marker text-sky-400"></i> 位置：旺山游客中心旁
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 中间面板：旺山景区地图 -->
+        <div class="flex-1 bg-gray-800 rounded-lg p-2 card-shadow overflow-hidden">
+            <h2 class="text-lg font-semibold text-white mb-2 px-2 flex items-center gap-2">
+                <i class="fa fa-map text-sky-400"></i>
+                苏州旺山景区机器人分布
+            </h2>
+            <!-- 地图容器（替换为百度地图/高德地图，这里先用模拟图+标注） -->
+            <div class="w-full h-[calc(100%-40px)] relative rounded bg-gray-900">
+                <!-- 旺山景区背景图 -->
+                <img src="map.png" alt="苏州旺山景区地图" class="w-full h-full object-cover opacity-70">
+                
+                <!-- 机器人标注点（绝对定位模拟，可拖拽） -->
+                <!-- 标注1：旺山广场 - A公司巡检机器人01 -->
+                <div class="absolute top-[30%] left-[45%] cursor-move group" draggable="true">
+                    <div class="w-6 h-6 bg-green-500 rounded-full border-2 border-white flex items-center justify-center animate-pulse">
+                        <i class="fa fa-robot text-white text-xs"></i>
+                    </div>
+                    <div class="opacity-1 absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-gray-800 text-xs p-2 rounded shadow-lg w-48">
+                        <div class="font-medium text-white">A公司 - 巡检机器人01</div>
+                        <div class="text-gray-400">位置：旺山广场 | 电量：88% | 状态：正常</div>
+                    </div>
+                </div>
+                
+                <!-- 标注2：九龙潭景区 - A公司安防机器狗02 -->
+                <div class="absolute top-[45%] left-[60%] cursor-move group" draggable="true">
+                    <div class="w-6 h-6 bg-green-500 rounded-full border-2 border-white flex items-center justify-center animate-pulse">
+                        <i class="fa fa-paw text-white text-xs"></i>
+                    </div>
+                    <div class="opacity-1 absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-gray-800 text-xs p-2 rounded shadow-lg w-48">
+                        <div class="font-medium text-white">A公司 - 安防机器狗02</div>
+                        <div class="text-gray-400">位置：九龙潭景区 | 电量：52% | 状态：正常</div>
+                    </div>
+                </div>
+                
+                <!-- 标注3：叆叇岭 - B公司清洁机器人03（低电量） -->
+                <div class="absolute top-[60%] left-[30%] cursor-move group" draggable="true">
+                    <div class="w-6 h-6 bg-red-500 rounded-full border-2 border-white flex items-center justify-center animate-pulse">
+                        <i class="fa fa-trash text-white text-xs"></i>
+                    </div>
+                    <div class="opacity-1 absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-gray-800 text-xs p-2 rounded shadow-lg w-48">
+                        <div class="font-medium text-white">B公司 - 清洁机器人03</div>
+                        <div class="text-gray-400">位置：叆叇岭 | 电量：10% | 状态：离线（低电量）</div>
+                    </div>
+                </div>
+                
+                <!-- 标注4：宝华寺 - B公司巡逻机器狗04（故障） -->
+                <div class="absolute top-[25%] left-[70%] cursor-move group" draggable="true">
+                    <div class="w-6 h-6 bg-yellow-500 rounded-full border-2 border-white flex items-center justify-center animate-pulse">
+                        <i class="fa fa-paw text-white text-xs"></i>
+                    </div>
+                    <div class="opacity-1 absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-gray-800 text-xs p-2 rounded shadow-lg w-48">
+                        <div class="font-medium text-white">B公司 - 巡逻机器狗04</div>
+                        <div class="text-gray-400">位置：宝华寺 | 电量：25% | 状态：故障（传感器异常）</div>
+                    </div>
+                </div>
+                
+                <!-- 标注5：旺山民宿区 - C公司配送机器人05 -->
+                <div class="absolute top-[70%] left-[55%] cursor-move group" draggable="true">
+                    <div class="w-6 h-6 bg-green-500 rounded-full border-2 border-white flex items-center justify-center animate-pulse">
+                        <i class="fa fa-truck text-white text-xs"></i>
+                    </div>
+                    <div class="opacity-1 absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-gray-800 text-xs p-2 rounded shadow-lg w-48">
+                        <div class="font-medium text-white">C公司 - 配送机器人05</div>
+                        <div class="text-gray-400">位置：旺山民宿区 | 电量：76% | 状态：正常</div>
+                    </div>
+                </div>
+                
+                <!-- 标注6：无人机检测到火情 -->
+                <div class="absolute top-[40%] left-[35%] cursor-move group" draggable="true">
+                    <div class="w-6 h-6 bg-red-500 rounded-full border-2 border-white flex items-center justify-center animate-pulse">
+                        <i class="fa fa-fire text-white text-xs"></i>
+                    </div>
+                    <div class="opacity-1 absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-gray-800 text-xs p-2 rounded shadow-lg w-80">
+                        <div class="font-medium text-white">X公司 - 智能巡检机器人01</div>
+                        <div class="text-red-400">位置：叆叇岭 | 状态：检测到火情，紧急</div>
+                        <div class="mt-2 flex justify-center">
+                            <img src="fire.png" alt="火灾预警" class="w-72 h-54 object-cover rounded">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧面板：事件上报 -->
+        <div class="w-80 flex flex-col gap-4">
+            <!-- 事件上报卡片 -->
+            <div class="bg-gray-800 rounded-lg p-4 card-shadow flex-1 overflow-auto">
+                <h2 class="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                    <i class="fa fa-bell text-sky-400"></i>
+                    事件上报 <span class="text-xs bg-red-500 text-white px-1.5 py-0.5 rounded-full">6</span>
+                </h2>
+                <div class="space-y-3">
+                    <!-- 事件1：火灾检测告警 -->
+                    <div class="bg-red-900/30 border-l-4 border-red-500 rounded-r p-3 hover:bg-red-900/40 transition shadow-lg">
+                        <div class="flex justify-between items-start mb-1">
+                            <span class="font-medium text-white">火灾检测告警</span>
+                            <span class="text-xs bg-red-500 text-white px-1.5 py-0.5 rounded-full">紧急</span>
+                        </div>
+                        <p class="text-sm text-red-300">X公司智能巡检机器人01（叆叇岭景区）检测到火情，需立即处理</p>
+                        <div class="mt-2 flex justify-end gap-2">
+                            <button class="text-xs bg-gray-700 px-2 py-1 rounded hover:bg-gray-600 transition">忽略</button>
+                            <button class="text-xs bg-sky-600 px-2 py-1 rounded hover:bg-sky-500 transition">处理</button>
+                        </div>
+                    </div>
+                    
+                    <!-- 事件2：低电量告警 -->
+                    <div class="bg-red-900/20 border-l-4 border-red-500 rounded-r p-3 hover:bg-red-900/30 transition">
+                        <div class="flex justify-between items-start mb-1">
+                            <span class="font-medium text-white">低电量告警</span>
+                            <span class="text-xs text-gray-400">10分钟前</span>
+                        </div>
+                        <p class="text-sm text-gray-300">B公司清洁机器人03（叆叇岭）电量仅剩10%，请及时充电</p>
+                        <div class="mt-2 flex justify-end gap-2">
+                            <button class="text-xs bg-gray-700 px-2 py-1 rounded hover:bg-gray-600 transition">忽略</button>
+                            <button class="text-xs bg-sky-600 px-2 py-1 rounded hover:bg-sky-500 transition">处理</button>
+                        </div>
+                    </div>
+                    
+                    <!-- 事件3：故障告警 -->
+                    <div class="bg-yellow-900/20 border-l-4 border-yellow-500 rounded-r p-3 hover:bg-yellow-900/30 transition">
+                        <div class="flex justify-between items-start mb-1">
+                            <span class="font-medium text-white">设备故障告警</span>
+                            <span class="text-xs text-gray-400">25分钟前</span>
+                        </div>
+                        <p class="text-sm text-gray-300">B公司巡逻机器狗04（宝华寺）传感器异常，无法正常巡检</p>
+                        <div class="mt-2 flex justify-end gap-2">
+                            <button class="text-xs bg-gray-700 px-2 py-1 rounded hover:bg-gray-600 transition">忽略</button>
+                            <button class="text-xs bg-sky-600 px-2 py-1 rounded hover:bg-sky-500 transition">处理</button>
+                        </div>
+                    </div>
+                    
+                    <!-- 事件4：离线告警 -->
+                    <div class="bg-red-900/20 border-l-4 border-red-500 rounded-r p-3 hover:bg-red-900/30 transition">
+                        <div class="flex justify-between items-start mb-1">
+                            <span class="font-medium text-white">设备离线告警</span>
+                            <span class="text-xs text-gray-400">1小时前</span>
+                        </div>
+                        <p class="text-sm text-gray-300">C公司配送机器人06（竹海）网络断开，离线超过30分钟</p>
+                        <div class="mt-2 flex justify-end gap-2">
+                            <button class="text-xs bg-gray-700 px-2 py-1 rounded hover:bg-gray-600 transition">忽略</button>
+                            <button class="text-xs bg-sky-600 px-2 py-1 rounded hover:bg-sky-500 transition">处理</button>
+                        </div>
+                    </div>
+                    
+                    <!-- 事件5：越界告警 -->
+                    <div class="bg-yellow-900/20 border-l-4 border-yellow-500 rounded-r p-3 hover:bg-yellow-900/30 transition">
+                        <div class="flex justify-between items-start mb-1">
+                            <span class="font-medium text-white">区域越界告警</span>
+                            <span class="text-xs text-gray-400">2小时前</span>
+                        </div>
+                        <p class="text-sm text-gray-300">A公司安防机器狗02（九龙潭）超出预设巡逻范围</p>
+                        <div class="mt-2 flex justify-end gap-2">
+                            <button class="text-xs bg-gray-700 px-2 py-1 rounded hover:bg-gray-600 transition">忽略</button>
+                            <button class="text-xs bg-sky-600 px-2 py-1 rounded hover:bg-sky-500 transition">处理</button>
+                        </div>
+                    </div>
+                    
+                    <!-- 事件6：任务完成提醒 -->
+                    <div class="bg-green-900/20 border-l-4 border-green-500 rounded-r p-3 hover:bg-green-900/30 transition">
+                        <div class="flex justify-between items-start mb-1">
+                            <span class="font-medium text-white">任务完成提醒</span>
+                            <span class="text-xs text-gray-400">3小时前</span>
+                        </div>
+                        <p class="text-sm text-gray-300">A公司巡检机器人01（旺山广场）完成今日第3次巡检任务</p>
+                        <div class="mt-2 flex justify-end gap-2">
+                            <button class="text-xs bg-gray-700 px-2 py-1 rounded hover:bg-gray-600 transition">已读</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 快捷操作卡片 -->
+            <div class="bg-gray-800 rounded-lg p-4 card-shadow">
+                <h2 class="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                    <i class="fa fa-cogs text-sky-400"></i>
+                    快捷操作
+                </h2>
+                <div class="grid grid-cols-2 gap-2">
+                    <button class="bg-sky-600 hover:bg-sky-500 rounded p-2 text-sm flex items-center justify-center gap-2 transition">
+                        <i class="fa fa-refresh"></i>
+                        <span>刷新数据</span>
+                    </button>
+                    <button class="bg-gray-700 hover:bg-gray-600 rounded p-2 text-sm flex items-center justify-center gap-2 transition">
+                        <i class="fa fa-download"></i>
+                        <span>导出报表</span>
+                    </button>
+                    <button class="bg-red-600 hover:bg-red-500 rounded p-2 text-sm flex items-center justify-center gap-2 transition">
+                        <i class="fa fa-video-camera"></i>
+                        <span>实时视频监控</span>
+                    </button>
+                    <button class="bg-red-600 hover:bg-red-500 rounded p-2 text-sm flex items-center justify-center gap-2 transition">
+                        <i class="fa fa-bell"></i>
+                        <span>一键报警</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // 1. 实时更新时间
+        function updateTime() {
+            const now = new Date();
+            const formattedTime = now.toLocaleString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            }).replace(/\//g, '-');
+            document.getElementById('current-time').textContent = formattedTime;
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+
+        // 2. 初始化运行时长趋势图
+        const runtimeChart = echarts.init(document.getElementById('runtime-chart'));
+        const option = {
+            grid: { top: 5, right: 5, bottom: 20, left: 25 },
+            xAxis: {
+                type: 'category',
+                data: ['08:00', '10:00', '12:00', '14:00', '16:00'],
+                axisLabel: { color: '#9ca3af', fontSize: 10 },
+                axisLine: { lineStyle: { color: '#4b5563' } }
+            },
+            yAxis: {
+                type: 'value',
+                name: '运行时长(h)',
+                nameTextStyle: { color: '#9ca3af', fontSize: 10 },
+                axisLabel: { color: '#9ca3af', fontSize: 10 },
+                axisLine: { lineStyle: { color: '#4b5563' } },
+                splitLine: { lineStyle: { color: '#374151' } }
+            },
+            series: [{
+                data: [2.5, 3.2, 2.8, 3.5, 3.0],
+                type: 'line',
+                smooth: true,
+                itemStyle: { color: '#38bdf8' },
+                areaStyle: { 
+                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                        { offset: 0, color: 'rgba(56, 189, 248, 0.4)' },
+                        { offset: 1, color: 'rgba(56, 189, 248, 0.05)' }
+                    ])
+                },
+                lineStyle: { width: 2 },
+                symbol: 'circle',
+                symbolSize: 4
+            }],
+            tooltip: {
+                trigger: 'axis',
+                textStyle: { fontSize: 10 },
+                backgroundColor: 'rgba(17, 24, 39, 0.8)'
+            }
+        };
+        runtimeChart.setOption(option);
+
+        // 3. 适配窗口大小变化
+        window.addEventListener('resize', () => {
+            runtimeChart.resize();
+        });
+
+        // 4. 实现机器人标注点的拖拽功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const draggableMarkers = document.querySelectorAll('[draggable="true"]');
+            let draggedElement = null;
+            let offsetX, offsetY;
+
+            draggableMarkers.forEach(marker => {
+                // 鼠标按下事件 - 开始拖拽
+                marker.addEventListener('mousedown', function(e) {
+                    draggedElement = this;
+                    const rect = this.getBoundingClientRect();
+                    const mapRect = this.parentElement.getBoundingClientRect();
+                    offsetX = e.clientX - rect.left;
+                    offsetY = e.clientY - rect.top;
+                    this.style.zIndex = '1000'; // 拖拽时置于顶层
+                });
+
+                // 触摸开始事件 - 支持触摸设备
+                marker.addEventListener('touchstart', function(e) {
+                    draggedElement = this;
+                    const rect = this.getBoundingClientRect();
+                    const touch = e.touches[0];
+                    offsetX = touch.clientX - rect.left;
+                    offsetY = touch.clientY - rect.top;
+                    this.style.zIndex = '1000';
+                });
+            });
+
+            // 鼠标移动事件 - 拖动元素
+            document.addEventListener('mousemove', function(e) {
+                if (draggedElement) {
+                    const mapRect = draggedElement.parentElement.getBoundingClientRect();
+                    let newLeft = e.clientX - mapRect.left - offsetX;
+                    let newTop = e.clientY - mapRect.top - offsetY;
+
+                    // 限制在地图范围内
+                    newLeft = Math.max(0, Math.min(newLeft, mapRect.width - 24)); // 24是标注点宽度
+                    newTop = Math.max(0, Math.min(newTop, mapRect.height - 24));
+
+                    // 转换为百分比
+                    const leftPercent = (newLeft / mapRect.width) * 100;
+                    const topPercent = (newTop / mapRect.height) * 100;
+
+                    draggedElement.style.left = leftPercent + '%';
+                    draggedElement.style.top = topPercent + '%';
+
+                    e.preventDefault();
+                }
+            });
+
+            // 触摸移动事件 - 支持触摸设备
+            document.addEventListener('touchmove', function(e) {
+                if (draggedElement) {
+                    const mapRect = draggedElement.parentElement.getBoundingClientRect();
+                    const touch = e.touches[0];
+                    let newLeft = touch.clientX - mapRect.left - offsetX;
+                    let newTop = touch.clientY - mapRect.top - offsetY;
+
+                    // 限制在地图范围内
+                    newLeft = Math.max(0, Math.min(newLeft, mapRect.width - 24));
+                    newTop = Math.max(0, Math.min(newTop, mapRect.height - 24));
+
+                    // 转换为百分比
+                    const leftPercent = (newLeft / mapRect.width) * 100;
+                    const topPercent = (newTop / mapRect.height) * 100;
+
+                    draggedElement.style.left = leftPercent + '%';
+                    draggedElement.style.top = topPercent + '%';
+
+                    e.preventDefault();
+                }
+            });
+
+            // 鼠标释放事件 - 结束拖拽
+            document.addEventListener('mouseup', function() {
+                if (draggedElement) {
+                    draggedElement.style.zIndex = '10'; // 恢复默认层级
+                    draggedElement = null;
+                }
+            });
+
+            // 触摸结束事件 - 支持触摸设备
+            document.addEventListener('touchend', function() {
+                if (draggedElement) {
+                    draggedElement.style.zIndex = '10';
+                    draggedElement = null;
+                }
+            });
+        });
+
+        // 注：若要替换为真实的百度地图，需替换以下代码（需申请百度地图AK）
+        // function initMap() {
+        //     const map = new BMapGL.Map("map-container");
+        //     const point = new BMapGL.Point(120.58, 31.28); // 苏州旺山景区经纬度
+        //     map.centerAndZoom(point, 15);
+        //     map.enableScrollWheelZoom(true);
+        //     // 添加标注点...
+        // }
+        // window.onload = initMap;
+    </script>
+</body>
+</html>

@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>机器人仿真测试平台</title>
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #0a0e1a; color: #e2e8f0; min-height: 100vh; }
+
+    /* ── Layout ── */
+    .app-layout { display: flex; min-height: 100vh; }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: 240px; min-height: 100vh; flex-shrink: 0;
+      background: linear-gradient(180deg, #0d1224 0%, #111827 100%);
+      border-right: 1px solid rgba(99,179,237,0.12);
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; height: 100vh; z-index: 100;
+    }
+    .sidebar-logo {
+      padding: 24px 20px 20px;
+      border-bottom: 1px solid rgba(99,179,237,0.1);
+    }
+    .sidebar-logo .logo-icon {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      border-radius: 10px; display: flex; align-items: center; justify-content: center;
+      font-size: 20px; margin-bottom: 10px;
+      box-shadow: 0 4px 15px rgba(59,130,246,0.4);
+    }
+    .sidebar-logo h1 { font-size: 14px; font-weight: 700; color: #e2e8f0; line-height: 1.4; }
+    .sidebar-logo p { font-size: 11px; color: #64748b; margin-top: 2px; }
+
+    .sidebar-nav { flex: 1; padding: 16px 12px; overflow-y: auto; }
+    .nav-section-title {
+      font-size: 10px; font-weight: 600; color: #475569;
+      text-transform: uppercase; letter-spacing: 1px;
+      padding: 8px 8px 6px; margin-top: 8px;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: 8px;
+      cursor: pointer; margin-bottom: 2px;
+      text-decoration: none; color: #94a3b8;
+      font-size: 13px; font-weight: 500;
+      transition: all 0.2s;
+    }
+    .nav-item:hover { background: rgba(59,130,246,0.12); color: #93c5fd; }
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(59,130,246,0.2), rgba(139,92,246,0.15));
+      color: #60a5fa; border: 1px solid rgba(59,130,246,0.25);
+    }
+    .nav-item .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+    .nav-badge {
+      margin-left: auto; background: #ef4444; color: #fff;
+      font-size: 10px; padding: 1px 6px; border-radius: 10px; font-weight: 600;
+    }
+    .nav-badge.green { background: #10b981; }
+    .nav-badge.yellow { background: #f59e0b; }
+
+    .sidebar-footer {
+      padding: 16px; border-top: 1px solid rgba(99,179,237,0.08);
+    }
+    .system-status {
+      background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2);
+      border-radius: 8px; padding: 10px 12px; font-size: 12px;
+    }
+    .status-dot {
+      display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+      background: #10b981; margin-right: 6px;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity: 1; box-shadow: 0 0 0 0 rgba(16,185,129,0.4); }
+      50% { opacity: .8; box-shadow: 0 0 0 4px rgba(16,185,129,0); }
+    }
+    .status-text { color: #6ee7b7; font-weight: 600; }
+
+    /* ── Main ── */
+    .main-content { margin-left: 240px; flex: 1; min-height: 100vh; }
+
+    /* ── Top Bar ── */
+    .topbar {
+      height: 60px; background: rgba(13,18,36,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(99,179,237,0.1);
+      display: flex; align-items: center; padding: 0 28px;
+      gap: 16px; position: sticky; top: 0; z-index: 90;
+    }
+    .topbar-title { font-size: 16px; font-weight: 700; color: #e2e8f0; }
+    .topbar-subtitle { font-size: 12px; color: #64748b; }
+    .topbar-spacer { flex: 1; }
+    .topbar-actions { display: flex; align-items: center; gap: 12px; }
+    .topbar-btn {
+      padding: 7px 16px; border-radius: 8px; font-size: 12px; font-weight: 600;
+      border: none; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px;
+    }
+    .topbar-btn.primary {
+      background: linear-gradient(135deg, #3b82f6, #6366f1);
+      color: #fff; box-shadow: 0 4px 12px rgba(59,130,246,0.35);
+    }
+    .topbar-btn.primary:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(59,130,246,0.45); }
+    .topbar-btn.ghost {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1); color: #94a3b8;
+    }
+    .topbar-btn.ghost:hover { background: rgba(255,255,255,0.08); color: #e2e8f0; }
+    .avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 700; color: #fff; cursor: pointer;
+    }
+
+    /* ── Page Content ── */
+    .page-body { padding: 28px; }
+
+    /* ── Hero Section ── */
+    .hero-section {
+      background: linear-gradient(135deg, rgba(30,41,59,0.9), rgba(15,23,42,0.95));
+      border: 1px solid rgba(99,179,237,0.15);
+      border-radius: 20px;
+      padding: 32px 36px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-section::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(59,130,246,0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-greeting {
+      font-size: 12px; color: #64748b; margin-bottom: 6px;
+    }
+    .hero-title {
+      font-size: 24px; font-weight: 700; color: #e2e8f0; margin-bottom: 8px;
+    }
+    .hero-subtitle {
+      font-size: 14px; color: #94a3b8; margin-bottom: 24px; max-width: 600px;
+    }
+    .hero-stats {
+      display: flex; gap: 32px; flex-wrap: wrap;
+    }
+    .hero-stat {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .hero-stat-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+    }
+    .hero-stat-icon.blue { background: rgba(59,130,246,0.2); }
+    .hero-stat-icon.green { background: rgba(16,185,129,0.2); }
+    .hero-stat-icon.purple { background: rgba(139,92,246,0.2); }
+    .hero-stat-icon.orange { background: rgba(245,158,11,0.2); }
+    .hero-stat-info {}
+    .hero-stat-value { font-size: 22px; font-weight: 800; color: #e2e8f0; }
+    .hero-stat-label { font-size: 12px; color: #64748b; }
+
+    /* ── Live Simulation Bar ── */
+    .live-bar {
+      background: linear-gradient(90deg, rgba(16,185,129,0.1), rgba(16,185,129,0.05));
+      border: 1px solid rgba(16,185,129,0.2);
+      border-radius: 12px;
+      padding: 16px 24px;
+      display: flex; align-items: center; gap: 24px;
+      margin-bottom: 24px;
+    }
+    .live-indicator {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .live-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: #10b981;
+      animation: livePulse 1.5s infinite;
+    }
+    @keyframes livePulse {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+    .live-label {
+      font-size: 13px; font-weight: 600; color: #10b981;
+    }
+    .live-robot {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: #94a3b8;
+    }
+    .live-robot-icon {
+      width: 28px; height: 28px; border-radius: 6px;
+      background: rgba(59,130,246,0.2);
+      display: flex; align-items: center; justify-content: center; font-size: 14px;
+    }
+    .live-progress {
+      flex: 1; display: flex; align-items: center; gap: 12px;
+    }
+    .progress-bar {
+      flex: 1; height: 6px; background: rgba(255,255,255,0.1);
+      border-radius: 3px; overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%; background: linear-gradient(90deg, #10b981, #34d399);
+      border-radius: 3px; transition: width 0.3s;
+    }
+    .progress-text { font-size: 12px; color: #6ee7b7; font-weight: 600; min-width: 50px; }
+    .live-metrics {
+      display: flex; gap: 20px;
+    }
+    .live-metric {
+      text-align: center;
+    }
+    .live-metric-value {
+      font-size: 14px; font-weight: 700; color: #e2e8f0;
+    }
+    .live-metric-label {
+      font-size: 10px; color: #64748b;
+    }
+
+    /* ── Stats Grid ── */
+    .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+    .stat-card {
+      background: linear-gradient(135deg, rgba(30,41,59,0.8), rgba(15,23,42,0.9));
+      border: 1px solid rgba(99,179,237,0.1); border-radius: 14px;
+      padding: 20px; position: relative; overflow: hidden;
+      transition: all 0.3s;
+    }
+    .stat-card:hover { border-color: rgba(99,179,237,0.25); transform: translateY(-2px); }
+    .stat-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    }
+    .stat-card.blue::before { background: linear-gradient(90deg, #3b82f6, #6366f1); }
+    .stat-card.green::before { background: linear-gradient(90deg, #10b981, #34d399); }
+    .stat-card.yellow::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+    .stat-card.red::before { background: linear-gradient(90deg, #ef4444, #f87171); }
+    .stat-card.purple::before { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+    .stat-label { font-size: 12px; color: #64748b; font-weight: 500; margin-bottom: 8px; }
+    .stat-value { font-size: 28px; font-weight: 800; color: #e2e8f0; }
+    .stat-change { 
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 11px; font-weight: 600; margin-left: 8px;
+    }
+    .stat-change.up { color: #10b981; }
+    .stat-change.down { color: #ef4444; }
+    .stat-sub { font-size: 11px; color: #475569; margin-top: 4px; }
+    .stat-icon {
+      position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
+      font-size: 36px; opacity: 0.15;
+    }
+
+    /* ── Content Grid ── */
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    /* ── Panel ── */
+    .panel {
+      background: linear-gradient(135deg, rgba(30,41,59,0.7), rgba(15,23,42,0.85));
+      border: 1px solid rgba(99,179,237,0.1);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .panel-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid rgba(99,179,237,0.08);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .panel-title {
+      font-size: 14px; font-weight: 700; color: #e2e8f0; display: flex; align-items: center; gap: 8px;
+    }
+    .panel-title::before {
+      content: ''; display: block; width: 4px; height: 16px;
+      background: linear-gradient(180deg, #3b82f6, #8b5cf6); border-radius: 2px;
+    }
+    .panel-body { padding: 20px 24px; }
+
+    /* ── Quick Actions ── */
+    .quick-actions {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
+    }
+    .quick-action {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 16px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(99,179,237,0.1);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none; color: inherit;
+    }
+    .quick-action:hover {
+      background: rgba(59,130,246,0.1);
+      border-color: rgba(59,130,246,0.3);
+      transform: translateY(-1px);
+    }
+    .quick-action-icon {
+      width: 36px; height: 36px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+    .qa-blue { background: rgba(59,130,246,0.2); }
+    .qa-green { background: rgba(16,185,129,0.2); }
+    .qa-purple { background: rgba(139,92,246,0.2); }
+    .qa-orange { background: rgba(245,158,11,0.2); }
+    .quick-action-text {}
+    .quick-action-title { font-size: 13px; font-weight: 600; color: #e2e8f0; }
+    .quick-action-desc { font-size: 11px; color: #64748b; margin-top: 2px; }
+
+    /* ── Chart Container ── */
+    .chart-container {
+      height: 220px;
+      position: relative;
+    }
+    .chart-canvas {
+      width: 100%; height: 100%;
+    }
+
+    /* ── Robot Distribution ── */
+    .robot-dist {
+      margin-bottom: 20px;
+    }
+    .dist-item {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 14px;
+    }
+    .dist-item:last-child { margin-bottom: 0; }
+    .dist-icon {
+      width: 32px; height: 32px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+    }
+    .dist-info { flex: 1; }
+    .dist-name { font-size: 13px; font-weight: 600; color: #e2e8f0; }
+    .dist-meta { font-size: 11px; color: #64748b; margin-top: 2px; }
+    .dist-bar-wrap {
+      width: 80px; height: 6px; background: rgba(255,255,255,0.1);
+      border-radius: 3px; overflow: hidden;
+    }
+    .dist-bar {
+      height: 100%; border-radius: 3px;
+    }
+    .dist-value { font-size: 12px; font-weight: 700; color: #e2e8f0; min-width: 36px; text-align: right; }
+
+    /* ── Recent Tasks Table ── */
+    .task-table { width: 100%; border-collapse: collapse; }
+    .task-table th {
+      text-align: left; font-size: 11px; font-weight: 600; color: #64748b;
+      padding: 0 12px 12px 0; border-bottom: 1px solid rgba(99,179,237,0.08);
+    }
+    .task-table td {
+      padding: 14px 12px 14px 0; font-size: 13px; color: #94a3b8;
+      border-bottom: 1px solid rgba(99,179,237,0.05);
+    }
+    .task-name { font-weight: 600; color: #e2e8f0 !important; }
+    .task-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;
+    }
+    .task-badge.running { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+    .task-badge.completed { background: rgba(59,130,246,0.15); color: #93c5fd; }
+    .task-badge.failed { background: rgba(239,68,68,0.15); color: #fca5a5; }
+    .task-badge.pending { background: rgba(245,158,11,0.15); color: #fcd34d; }
+
+    /* ── Activity Timeline ── */
+    .timeline { position: relative; }
+    .timeline::before {
+      content: ''; position: absolute; left: 11px; top: 0; bottom: 0;
+      width: 1px; background: rgba(99,179,237,0.1);
+    }
+    .timeline-item {
+      display: flex; gap: 16px; margin-bottom: 16px;
+      position: relative;
+    }
+    .timeline-item:last-child { margin-bottom: 0; }
+    .timeline-dot {
+      width: 24px; height: 24px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; flex-shrink: 0;
+      z-index: 1;
+    }
+    .timeline-dot.success { background: rgba(16,185,129,0.2); color: #10b981; }
+    .timeline-dot.warning { background: rgba(245,158,11,0.2); color: #f59e0b; }
+    .timeline-dot.info { background: rgba(59,130,246,0.2); color: #3b82f6; }
+    .timeline-dot.error { background: rgba(239,68,68,0.2); color: #ef4444; }
+    .timeline-content { flex: 1; padding-top: 2px; }
+    .timeline-title { font-size: 13px; color: #e2e8f0; font-weight: 500; }
+    .timeline-desc { font-size: 11px; color: #64748b; margin-top: 2px; }
+    .timeline-time { font-size: 10px; color: #475569; margin-top: 4px; }
+
+    /* ── Section Header ── */
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .section-title { font-size: 15px; font-weight: 700; color: #e2e8f0; display: flex; align-items: center; gap: 8px; }
+    .section-title::before {
+      content: ''; display: block; width: 4px; height: 18px;
+      background: linear-gradient(180deg, #3b82f6, #8b5cf6); border-radius: 2px;
+    }
+    .view-all {
+      font-size: 12px; color: #3b82f6; cursor: pointer; font-weight: 500;
+    }
+    .view-all:hover { color: #60a5fa; }
+
+    /* ── Dataset Stats ── */
+    .dataset-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+    .dataset-card {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(99,179,237,0.08);
+      border-radius: 12px; padding: 18px;
+      display: flex; align-items: center; gap: 14px;
+      transition: all 0.2s;
+    }
+    .dataset-card:hover { border-color: rgba(99,179,237,0.2); }
+    .dataset-logo {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: rgba(255,255,255,0.05);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .dataset-logo img { width: 28px; height: 28px; object-fit: contain; }
+    .dataset-info {}
+    .dataset-name { font-size: 13px; font-weight: 600; color: #e2e8f0; }
+    .dataset-meta { font-size: 11px; color: #64748b; margin-top: 2px; }
+
+    /* ── Quick Entry ── */
+    .demo-nav { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 24px; }
+    .demo-card {
+      background: linear-gradient(135deg, rgba(30,41,59,0.8), rgba(15,23,42,0.9));
+      border: 1px solid rgba(99,179,237,0.1); border-radius: 16px;
+      padding: 28px 24px; cursor: pointer; text-decoration: none; color: inherit;
+      transition: all 0.3s; display: block;
+    }
+    .demo-card:hover {
+      border-color: rgba(59,130,246,0.4); transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+    }
+    .demo-card-icon {
+      font-size: 40px; margin-bottom: 16px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .demo-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; color: #e2e8f0; }
+    .demo-card p { font-size: 13px; color: #64748b; line-height: 1.6; }
+    .demo-card .demo-tag {
+      display: inline-block; margin-top: 14px;
+      padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600;
+    }
+    .demo-tag.blue { background: rgba(59,130,246,0.15); color: #93c5fd; }
+    .demo-tag.green { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+    .demo-tag.purple { background: rgba(139,92,246,0.15); color: #c4b5fd; }
+  </style>
+<style id="iframe-override">
+  /* When embedded in iframe, hide sidebar and adjust layout */
+</style>
+<script>
+  // Detect iframe embedding and adjust layout
+  if (window !== window.top) {
+    document.documentElement.classList.add("in-iframe");
+    var style = document.getElementById("iframe-override");
+    if (style) {
+      style.textContent = ".sidebar{display:none!important}.main-content{margin-left:0!important}";
+    }
+  }
+</script>
+</head>
+<body>
+<div class="app-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">🤖</div>
+      <h1>机器人仿真<br>测试平台</h1>
+      <p>RoboSim v2.0</p>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">概览</div>
+      <a href="index.html" class="nav-item active">
+        <span class="nav-icon">🏠</span> 控制台总览
+      </a>
+
+      <div class="nav-section-title">测试管理</div>
+      <a href="scene-library.html" class="nav-item">
+        <span class="nav-icon">🗂️</span> 测试场景库
+        <span class="nav-badge green">48</span>
+      </a>
+      <a href="task-manager.html" class="nav-item">
+        <span class="nav-icon">📋</span> 测试任务管理
+        <span class="nav-badge yellow">3</span>
+      </a>
+      <a href="monitor.html" class="nav-item">
+        <span class="nav-icon">📡</span> 实时监控
+        <span class="nav-badge">运行中</span>
+      </a>
+
+      <div class="nav-section-title">数据与报告</div>
+      <a href="dataset-manager.html" class="nav-item">
+        <span class="nav-icon">🗃️</span> 数据集管理 <span class="nav-badge" style="background:#8b5cf6;margin-left:auto;">New</span>
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">📊</span> 测试报告
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">🗄️</span> 历史数据
+      </a>
+
+      <div class="nav-section-title">系统</div>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">⚙️</span> 系统配置
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">🔧</span> MuJoCo 配置
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="system-status">
+        <span class="status-dot"></span>
+        <span class="status-text">MuJoCo 引擎在线</span><br>
+        <span style="font-size:11px;color:#475569;margin-top:4px;display:block">v3.1.6 · GPU加速已启用</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main-content">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title">控制台总览</div>
+        <div class="topbar-subtitle">机器人仿真测试平台 · Dashboard</div>
+      </div>
+      <div class="topbar-spacer"></div>
+      <div class="topbar-actions">
+        <button class="topbar-btn ghost">📥 导入场景</button>
+        <button class="topbar-btn primary">▶ 快速测试</button>
+        <div class="avatar">管</div>
+      </div>
+    </div>
+
+    <div class="page-body">
+      <!-- Hero Section -->
+      <div class="hero-section">
+        <div class="hero-greeting">下午好，当前时间 14:47</div>
+        <div class="hero-title">欢迎使用机器人仿真测试平台</div>
+        <div class="hero-subtitle">平台运行稳定，所有系统组件正常。今日已完成 12 项仿真测试，综合通过率 83.3%。</div>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <div class="hero-stat-icon blue">📊</div>
+            <div class="hero-stat-info">
+              <div class="hero-stat-value">1,284</div>
+              <div class="hero-stat-label">总测试次数</div>
+            </div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-icon green">✅</div>
+            <div class="hero-stat-info">
+              <div class="hero-stat-value">1,070</div>
+              <div class="hero-stat-label">成功测试</div>
+            </div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-icon purple">🤖</div>
+            <div class="hero-stat-info">
+              <div class="hero-stat-value">12</div>
+              <div class="hero-stat-label">支持的机器人</div>
+            </div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-icon orange">⏱️</div>
+            <div class="hero-stat-info">
+              <div class="hero-stat-value">98.2%</div>
+              <div class="hero-stat-label">平均运行时长</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Simulation Bar -->
+      <div class="live-bar">
+        <div class="live-indicator">
+          <div class="live-dot"></div>
+          <span class="live-label">仿真进行中</span>
+        </div>
+        <div class="live-robot">
+          <div class="live-robot-icon">🦾</div>
+          <span>宇树 H1 · 双足行走测试</span>
+        </div>
+        <div class="live-progress">
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 68%;"></div>
+          </div>
+          <span class="progress-text">68%</span>
+        </div>
+        <div class="live-metrics">
+          <div class="live-metric">
+            <div class="live-metric-value">1.2m/s</div>
+            <div class="live-metric-label">步速</div>
+          </div>
+          <div class="live-metric">
+            <div class="live-metric-value">23.5°</div>
+            <div class="live-metric-label">关节角度</div>
+          </div>
+          <div class="live-metric">
+            <div class="live-metric-value">45N</div>
+            <div class="live-metric-label">足底力</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="stat-grid">
+        <div class="stat-card blue">
+          <div class="stat-label">测试场景总数</div>
+          <div class="stat-value">48<span class="stat-change up">+6</span></div>
+          <div class="stat-sub">较上周新增 6 个场景</div>
+          <div class="stat-icon">🗂️</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-label">今日完成测试</div>
+          <div class="stat-value">12<span class="stat-change up">+3</span></div>
+          <div class="stat-sub">通过率 83.3%</div>
+          <div class="stat-icon">✅</div>
+        </div>
+        <div class="stat-card yellow">
+          <div class="stat-label">运行中任务</div>
+          <div class="stat-value">3</div>
+          <div class="stat-sub">预计 18 分钟完成</div>
+          <div class="stat-icon">⚡</div>
+        </div>
+        <div class="stat-card red">
+          <div class="stat-label">待处理异常</div>
+          <div class="stat-value">2<span class="stat-change down">-1</span></div>
+          <div class="stat-sub">需要人工确认</div>
+          <div class="stat-icon">⚠️</div>
+        </div>
+      </div>
+
+      <!-- Content Grid: Charts + Activity -->
+      <div class="content-grid">
+        <!-- Left: Chart Panel -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">测试趋势</div>
+            <span style="font-size:12px;color:#64748b;">近 7 天</span>
+          </div>
+          <div class="panel-body">
+            <div class="chart-container">
+              <canvas id="trendChart" class="chart-canvas"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Activity Timeline -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">近期动态</div>
+            <span class="view-all">查看全部</span>
+          </div>
+          <div class="panel-body">
+            <div class="timeline">
+              <div class="timeline-item">
+                <div class="timeline-dot success">✓</div>
+                <div class="timeline-content">
+                  <div class="timeline-title">宇树 H1 双足行走测试完成</div>
+                  <div class="timeline-desc">步速 1.2m/s，关节角度正常</div>
+                  <div class="timeline-time">10 分钟前</div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot info">▶</div>
+                <div class="timeline-content">
+                  <div class="timeline-title">智元 G1 物体抓取测试开始</div>
+                  <div class="timeline-desc">目标物体：圆柱体 #03</div>
+                  <div class="timeline-time">25 分钟前</div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot warning">!</div>
+                <div class="timeline-content">
+                  <div class="timeline-title">宇树 Go2 导航测试发现异常</div>
+                  <div class="timeline-desc">路径规划偏差 0.3m，需人工确认</div>
+                  <div class="timeline-time">1 小时前</div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot success">✓</div>
+                <div class="timeline-content">
+                  <div class="timeline-title">数据集 AgiBot World 同步完成</div>
+                  <div class="timeline-desc">新增 1,250 条训练样本</div>
+                  <div class="timeline-time">2 小时前</div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot error">✕</div>
+                <div class="timeline-content">
+                  <div class="timeline-title">宇树 H1 平衡测试失败</div>
+                  <div class="timeline-desc">关节力矩超限，已自动暂停</div>
+                  <div class="timeline-time">3 小时前</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="section-header">
+        <div class="section-title">快捷操作</div>
+      </div>
+      <div class="quick-actions">
+        <a href="scene-library.html" class="quick-action">
+          <div class="quick-action-icon qa-blue">🗂️</div>
+          <div class="quick-action-text">
+            <div class="quick-action-title">浏览场景库</div>
+            <div class="quick-action-desc">选择仿真场景</div>
+          </div>
+        </a>
+        <a href="task-manager.html" class="quick-action">
+          <div class="quick-action-icon qa-green">📋</div>
+          <div class="quick-action-text">
+            <div class="quick-action-title">创建测试任务</div>
+            <div class="quick-action-desc">配置参数并启动</div>
+          </div>
+        </a>
+        <a href="dataset-manager.html" class="quick-action">
+          <div class="quick-action-icon qa-purple">🗃️</div>
+          <div class="quick-action-text">
+            <div class="quick-action-title">管理数据集</div>
+            <div class="quick-action-desc">查看开源数据集</div>
+          </div>
+        </a>
+        <a href="monitor.html" class="quick-action">
+          <div class="quick-action-icon qa-orange">📡</div>
+          <div class="quick-action-text">
+            <div class="quick-action-title">实时监控</div>
+            <div class="quick-action-desc">查看仿真数据</div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Dataset Stats -->
+      <div class="section-header" style="margin-top: 24px;">
+        <div class="section-title">数据集概览</div>
+        <a href="dataset-manager.html" class="view-all">进入数据集管理 →</a>
+      </div>
+      <div class="dataset-grid">
+        <div class="dataset-card">
+          <div class="dataset-logo">
+            <img src="https://agibot-world.cn/logo.png" alt="AgiBot" onerror="this.parentElement.style.background='rgba(59,130,246,0.2)';this.parentElement.innerHTML='🦾'">
+          </div>
+          <div class="dataset-info">
+            <div class="dataset-name">AgiBot World</div>
+            <div class="dataset-meta">100万+ 条样本 · X-Embodiment</div>
+          </div>
+        </div>
+        <div class="dataset-card">
+          <div class="dataset-logo">
+            <img src="https://latestlogo.com/wp-content/uploads/2024/09/unitree-logo.png" alt="Unitree" onerror="this.parentElement.style.background='rgba(16,185,129,0.2)';this.parentElement.innerHTML='🐕'">
+          </div>
+          <div class="dataset-info">
+            <div class="dataset-name">Unitree Robotics</div>
+            <div class="dataset-meta">4个数据集 · H1/Go2/G1/Dex3-1</div>
+          </div>
+        </div>
+        <div class="dataset-card">
+          <div class="dataset-logo" style="background: rgba(139,92,246,0.2);">🤗</div>
+          <div class="dataset-info">
+            <div class="dataset-name">LeRobot Community</div>
+            <div class="dataset-meta">开源社区 · 持续更新</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Tasks -->
+      <div class="section-header" style="margin-top: 24px;">
+        <div class="section-title">最近任务</div>
+        <a href="task-manager.html" class="view-all">查看全部 →</a>
+      </div>
+      <div class="panel">
+        <div class="panel-body" style="padding: 16px 24px;">
+          <table class="task-table">
+            <thead>
+              <tr>
+                <th>任务名称</th>
+                <th>机器人</th>
+                <th>场景</th>
+                <th>状态</th>
+                <th>进度</th>
+                <th>运行时长</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="task-name">H1 双足行走测试</td>
+                <td>宇树 H1</td>
+                <td>平地行走</td>
+                <td><span class="task-badge running">● 运行中</span></td>
+                <td>68%</td>
+                <td>12:34</td>
+              </tr>
+              <tr>
+                <td class="task-name">G1 物体抓取测试</td>
+                <td>智元 G1</td>
+                <td>桌面操作</td>
+                <td><span class="task-badge pending">● 等待中</span></td>
+                <td>0%</td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <td class="task-name">Go2 导航避障测试</td>
+                <td>宇树 Go2</td>
+                <td>室内导航</td>
+                <td><span class="task-badge running">● 运行中</td>
+                <td>42%</td>
+                <td>08:21</td>
+              </tr>
+              <tr>
+                <td class="task-name">H1 平衡控制测试</td>
+                <td>宇树 H1</td>
+                <td>斜坡行走</td>
+                <td><span class="task-badge failed">● 失败</span></td>
+                <td>23%</td>
+                <td>04:12</td>
+              </tr>
+              <tr>
+                <td class="task-name">Dex3-1 手部精细操作</td>
+                <td>宇树 Dex3-1</td>
+                <td>物体装配</td>
+                <td><span class="task-badge completed">● 完成</span></td>
+                <td>100%</td>
+                <td>15:47</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Robot Distribution -->
+      <div class="section-header" style="margin-top: 24px;">
+        <div class="section-title">机器人类型分布</div>
+      </div>
+      <div class="content-grid">
+        <div class="panel">
+          <div class="panel-body">
+            <div class="robot-dist">
+              <div class="dist-item">
+                <div class="dist-icon" style="background:rgba(59,130,246,0.2);">🦾</div>
+                <div class="dist-info">
+                  <div class="dist-name">宇树 H1</div>
+                  <div class="dist-meta">双足人形机器人 · 运动控制测试</div>
+                </div>
+                <div class="dist-bar-wrap">
+                  <div class="dist-bar" style="width:85%;background:linear-gradient(90deg,#3b82f6,#6366f1);"></div>
+                </div>
+                <div class="dist-value">85%</div>
+              </div>
+              <div class="dist-item">
+                <div class="dist-icon" style="background:rgba(16,185,129,0.2);">🐕</div>
+                <div class="dist-info">
+                  <div class="dist-name">宇树 Go2</div>
+                  <div class="dist-meta">四足机器人 · 导航避障测试</div>
+                </div>
+                <div class="dist-bar-wrap">
+                  <div class="dist-bar" style="width:62%;background:linear-gradient(90deg,#10b981,#34d399);"></div>
+                </div>
+                <div class="dist-value">62%</div>
+              </div>
+              <div class="dist-item">
+                <div class="dist-icon" style="background:rgba(139,92,246,0.2);">🤖</div>
+                <div class="dist-info">
+                  <div class="dist-name">智元 G1</div>
+                  <div class="dist-meta">人形机器人 · 具身操作测试</div>
+                </div>
+                <div class="dist-bar-wrap">
+                  <div class="dist-bar" style="width:48%;background:linear-gradient(90deg,#8b5cf6,#a78bfa);"></div>
+                </div>
+                <div class="dist-value">48%</div>
+              </div>
+              <div class="dist-item">
+                <div class="dist-icon" style="background:rgba(245,158,11,0.2);">🦾</div>
+                <div class="dist-info">
+                  <div class="dist-name">宇树 Dex3-1</div>
+                  <div class="dist-meta">灵巧手 · 精细操作测试</div>
+                </div>
+                <div class="dist-bar-wrap">
+                  <div class="dist-bar" style="width:35%;background:linear-gradient(90deg,#f59e0b,#fbbf24);"></div>
+                </div>
+                <div class="dist-value">35%</div>
+              </div>
+              <div class="dist-item">
+                <div class="dist-icon" style="background:rgba(239,68,68,0.2);">🦾</div>
+                <div class="dist-info">
+                  <div class="dist-name">智元 X1</div>
+                  <div class="dist-meta">复合机器人 · 多任务测试</div>
+                </div>
+                <div class="dist-bar-wrap">
+                  <div class="dist-bar" style="width:22%;background:linear-gradient(90deg,#ef4444,#f87171);"></div>
+                </div>
+                <div class="dist-value">22%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">测试成功率</div>
+          </div>
+          <div class="panel-body">
+            <div style="text-align:center;padding:20px 0;">
+              <div style="font-size:56px;font-weight:800;background:linear-gradient(135deg,#10b981,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">83.3%</div>
+              <div style="font-size:14px;color:#64748b;margin-top:8px;">综合通过率</div>
+              <div style="display:flex;justify-content:center;gap:32px;margin-top:24px;">
+                <div style="text-align:center;">
+                  <div style="font-size:20px;font-weight:700;color:#10b981;">1,070</div>
+                  <div style="font-size:11px;color:#64748b;">成功</div>
+                </div>
+                <div style="text-align:center;">
+                  <div style="font-size:20px;font-weight:700;color:#ef4444;">214</div>
+                  <div style="font-size:11px;color:#64748b;">失败</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Entry -->
+      <div class="section-header" style="margin-top: 24px;">
+        <div class="section-title">功能入口</div>
+      </div>
+      <div class="demo-nav">
+        <a href="scene-library.html" class="demo-card">
+          <div class="demo-card-icon">🗂️</div>
+          <h3>测试场景库管理</h3>
+          <p>浏览、筛选和管理所有仿真测试场景，选择场景后一键配置参数并启动 MuJoCo 仿真测试。</p>
+          <span class="demo-tag blue">48 个场景可用</span>
+        </a>
+        <a href="task-manager.html" class="demo-card">
+          <div class="demo-card-icon">📋</div>
+          <h3>测试任务管理</h3>
+          <p>查看所有测试任务的执行状态、进度、日志，支持任务排队、暂停、重试等操作。</p>
+          <span class="demo-tag green">3 个任务运行中</span>
+        </a>
+        <a href="monitor.html" class="demo-card">
+          <div class="demo-card-icon">📡</div>
+          <h3>实时监控 & 报告</h3>
+          <p>实时查看仿真测试的关节状态、力矩、轨迹曲线，测试完成后自动生成 PDF 报告。</p>
+          <span class="demo-tag purple">实时数据推送</span>
+        </a>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+  // Trend Chart
+  const ctx = document.getElementById('trendChart').getContext('2d');
+  const gradient = ctx.createLinearGradient(0, 0, 0, 200);
+  gradient.addColorStop(0, 'rgba(59, 130, 246, 0.3)');
+  gradient.addColorStop(1, 'rgba(59, 130, 246, 0)');
+
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+      datasets: [{
+        label: '通过率',
+        data: [78, 82, 75, 88, 85, 92, 83],
+        borderColor: '#3b82f6',
+        backgroundColor: gradient,
+        borderWidth: 2,
+        fill: true,
+        tension: 0.4,
+        pointBackgroundColor: '#3b82f6',
+        pointBorderColor: '#0a0e1a',
+        pointBorderWidth: 2,
+        pointRadius: 4,
+        pointHoverRadius: 6
+      }, {
+        label: '任务数',
+        data: [8, 12, 10, 15, 14, 6, 12],
+        borderColor: '#10b981',
+        backgroundColor: 'transparent',
+        borderWidth: 2,
+        fill: false,
+        tension: 0.4,
+        pointBackgroundColor: '#10b981',
+        pointBorderColor: '#0a0e1a',
+        pointBorderWidth: 2,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+        yAxisID: 'y1'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: {
+        intersect: false,
+        mode: 'index'
+      },
+      plugins: {
+        legend: {
+          display: true,
+          position: 'top',
+          align: 'end',
+          labels: {
+            color: '#64748b',
+            font: { size: 11 },
+            boxWidth: 12,
+            padding: 16
+          }
+        },
+        tooltip: {
+          backgroundColor: 'rgba(15, 23, 42, 0.9)',
+          titleColor: '#e2e8f0',
+          bodyColor: '#94a3b8',
+          borderColor: 'rgba(99,179,237,0.2)',
+          borderWidth: 1,
+          padding: 12,
+          cornerRadius: 8
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: 'rgba(99,179,237,0.05)', drawBorder: false },
+          ticks: { color: '#64748b', font: { size: 11 } }
+        },
+        y: {
+          grid: { color: 'rgba(99,179,237,0.05)', drawBorder: false },
+          ticks: { 
+            color: '#64748b', font: { size: 11 },
+            callback: value => value + '%'
+          },
+          min: 0,
+          max: 100
+        },
+        y1: {
+          position: 'right',
+          grid: { display: false },
+          ticks: { 
+            color: '#64748b', font: { size: 11 }
+          },
+          min: 0,
+          max: 20
+        }
+      }
+    }
+  });
+</script>
+
+<script>
+  // Intercept internal navigation links and notify parent
+  if (window !== window.top) {
+    document.addEventListener('click', function(e) {
+      var link = e.target.closest('a[href]');
+      if (!link) return;
+      var href = link.getAttribute('href');
+      if (!href) return;
+      // Only intercept links to local simulation pages
+      var simPages = ['index.html','scene-library.html','task-manager.html','monitor.html','dataset-manager.html'];
+      var page = href.split('/').pop().split('?')[0].split('#')[0];
+      if (simPages.indexOf(page) !== -1) {
+        e.preventDefault();
+        window.parent.postMessage({type: 'sim-navigate', target: page}, '*');
+      }
+    });
+  }
+</script>
+</body>
+</html>

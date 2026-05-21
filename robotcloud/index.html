@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RoboCloud · 机器人全域测试管控中枢</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+
+<style id="iframe-override">
+  /* When embedded in iframe, hide topbar and sidebar */
+</style>
+<script>
+  if (window !== window.top) {
+    document.documentElement.classList.add("in-iframe");
+    var style = document.getElementById("iframe-override");
+    if (style) {
+      style.textContent = ".topbar{display:none!important}.sidebar{display:none!important}.app-layout{margin-top:0!important;height:100vh!important}";
+    }
+  }
+</script>
+</head>
+<body>
+  <!-- 顶部导航栏 -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="logo">
+        <span class="logo-icon">⬡</span>
+        <span class="logo-text">RoboCloud</span>
+        <span class="logo-sub">全域测试管控中枢</span>
+      </div>
+    </div>
+    <div class="topbar-center">
+      <div class="system-status">
+        <span class="status-dot online"></span>
+        <span>系统运行正常</span>
+        <span class="divider">|</span>
+        <span id="topbar-time">--:--:--</span>
+        <span class="divider">|</span>
+        <span class="env-tag">生产环境 v2.4.1</span>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button class="topbar-btn" onclick="showNotifications()">
+        <span class="icon">🔔</span>
+        <span class="badge">3</span>
+      </button>
+      <button class="topbar-btn" onclick="showSettings()">
+        <span class="icon">⚙️</span>
+      </button>
+      <div class="user-info">
+        <div class="user-avatar">ZT</div>
+        <div class="user-detail">
+          <span class="user-name">张天</span>
+          <span class="user-role">系统管理员</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-layout">
+    <!-- 侧边栏 -->
+    <aside class="sidebar" id="sidebar">
+      <nav class="nav-menu">
+        <div class="nav-section-title">核心功能</div>
+        <div class="nav-item active" data-page="dashboard" onclick="switchPage('dashboard', this)">
+          <span class="nav-icon">📊</span>
+          <span class="nav-label">总览大屏</span>
+        </div>
+        <div class="nav-item" data-page="monitor" onclick="switchPage('monitor', this)">
+          <span class="nav-icon">📡</span>
+          <span class="nav-label">实时监控</span>
+          <span class="nav-badge online-count">12</span>
+        </div>
+        <div class="nav-item" data-page="tasks" onclick="switchPage('tasks', this)">
+          <span class="nav-icon">🗂</span>
+          <span class="nav-label">场景任务编排</span>
+        </div>
+        <div class="nav-item" data-page="testing" onclick="switchPage('testing', this)">
+          <span class="nav-icon">🧪</span>
+          <span class="nav-label">自动化测试</span>
+          <span class="nav-badge running">2</span>
+        </div>
+
+        <div class="nav-section-title">设备管理</div>
+        <div class="nav-item" data-page="robots" onclick="switchPage('robots', this)">
+          <span class="nav-icon">🤖</span>
+          <span class="nav-label">机器人管理</span>
+        </div>
+        <div class="nav-item" data-page="dispatch" onclick="switchPage('dispatch', this)">
+          <span class="nav-icon">🗺</span>
+          <span class="nav-label">多机协同调度</span>
+        </div>
+
+        <div class="nav-section-title">数据与分析</div>
+        <div class="nav-item" data-page="analytics" onclick="switchPage('analytics', this)">
+          <span class="nav-icon">📈</span>
+          <span class="nav-label">数据采集分析</span>
+        </div>
+        <div class="nav-item" data-page="reports" onclick="switchPage('reports', this)">
+          <span class="nav-icon">📋</span>
+          <span class="nav-label">测试报告</span>
+        </div>
+
+        <div class="nav-section-title">高级功能</div>
+        <div class="nav-item" data-page="simulation" onclick="switchPage('simulation', this)">
+          <span class="nav-icon">🌐</span>
+          <span class="nav-label">仿真虚实联动</span>
+        </div>
+        <div class="nav-item" data-page="simtest" onclick="switchPage('simtest', this)">
+          <span class="nav-icon">🧬</span>
+          <span class="nav-label">仿真测试管理</span>
+          <span class="nav-badge running">1</span>
+        </div>
+        <div class="nav-item" data-page="safety" onclick="switchPage('safety', this)">
+          <span class="nav-icon">🛡</span>
+          <span class="nav-label">安全合规校验</span>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="resource-bar">
+          <div class="resource-item">
+            <span>CPU</span>
+            <div class="mini-bar"><div class="mini-fill" style="width:62%"></div></div>
+            <span>62%</span>
+          </div>
+          <div class="resource-item">
+            <span>MEM</span>
+            <div class="mini-bar"><div class="mini-fill" style="width:45%"></div></div>
+            <span>45%</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 主内容区 -->
+    <main class="main-content" id="main-content">
+      <!-- 各页面由JS动态渲染 -->
+    </main>
+  </div>
+
+  <!-- 通知面板 -->
+  <div class="notification-panel" id="notification-panel">
+    <div class="panel-header">
+      <span>消息通知</span>
+      <button onclick="closePanel('notification-panel')">✕</button>
+    </div>
+    <div class="notification-list">
+      <div class="notification-item warning">
+        <span class="notif-icon">⚠️</span>
+        <div>
+          <div class="notif-title">巡检机器人 RB-03 电量不足</div>
+          <div class="notif-time">2分钟前</div>
+        </div>
+      </div>
+      <div class="notification-item info">
+        <span class="notif-icon">ℹ️</span>
+        <div>
+          <div class="notif-title">测试任务 T-2024-089 已完成</div>
+          <div class="notif-time">15分钟前</div>
+        </div>
+      </div>
+      <div class="notification-item error">
+        <span class="notif-icon">🚨</span>
+        <div>
+          <div class="notif-title">仓储机器人 WH-07 通信异常</div>
+          <div class="notif-time">1小时前</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="overlay" id="overlay" onclick="closeAllPanels()"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

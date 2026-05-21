@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>测试场景库 · 机器人仿真测试平台</title>
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+  <script src="https://unpkg.com/vue@2/dist/vue.js"></script>
+  <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+  <style>
+    /* ══ Reset & Base ══ */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #0a0e1a; color: #e2e8f0; min-height: 100vh; }
+
+    /* ══ Layout ══ */
+    .app-layout { display: flex; min-height: 100vh; }
+
+    /* ══ Sidebar ══ */
+    .sidebar {
+      width: 240px; min-height: 100vh; flex-shrink: 0;
+      background: linear-gradient(180deg, #0d1224 0%, #111827 100%);
+      border-right: 1px solid rgba(99,179,237,0.12);
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; height: 100vh; z-index: 100;
+    }
+    .sidebar-logo { padding: 24px 20px 20px; border-bottom: 1px solid rgba(99,179,237,0.1); }
+    .sidebar-logo .logo-icon {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      border-radius: 10px; display: flex; align-items: center; justify-content: center;
+      font-size: 20px; margin-bottom: 10px; box-shadow: 0 4px 15px rgba(59,130,246,0.4);
+    }
+    .sidebar-logo h1 { font-size: 14px; font-weight: 700; color: #e2e8f0; line-height: 1.4; }
+    .sidebar-logo p { font-size: 11px; color: #64748b; margin-top: 2px; }
+    .sidebar-nav { flex: 1; padding: 16px 12px; overflow-y: auto; }
+    .nav-section-title {
+      font-size: 10px; font-weight: 600; color: #475569;
+      text-transform: uppercase; letter-spacing: 1px; padding: 8px 8px 6px; margin-top: 8px;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: 8px; cursor: pointer;
+      margin-bottom: 2px; text-decoration: none; color: #94a3b8;
+      font-size: 13px; font-weight: 500; transition: all 0.2s;
+    }
+    .nav-item:hover { background: rgba(59,130,246,0.12); color: #93c5fd; }
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(59,130,246,0.2), rgba(139,92,246,0.15));
+      color: #60a5fa; border: 1px solid rgba(59,130,246,0.25);
+    }
+    .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+    .nav-badge {
+      margin-left: auto; background: #ef4444; color: #fff;
+      font-size: 10px; padding: 1px 6px; border-radius: 10px; font-weight: 600;
+    }
+    .nav-badge.green { background: #10b981; }
+    .nav-badge.yellow { background: #f59e0b; }
+    .sidebar-footer { padding: 16px; border-top: 1px solid rgba(99,179,237,0.08); }
+    .system-status {
+      background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2);
+      border-radius: 8px; padding: 10px 12px; font-size: 12px;
+    }
+    .status-dot {
+      display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+      background: #10b981; margin-right: 6px; animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity:1; box-shadow: 0 0 0 0 rgba(16,185,129,0.4); }
+      50% { box-shadow: 0 0 0 4px rgba(16,185,129,0); }
+    }
+    .status-text { color: #6ee7b7; font-weight: 600; }
+
+    /* ══ Main Content ══ */
+    .main-content { margin-left: 240px; flex: 1; min-height: 100vh; }
+
+    /* ══ Topbar ══ */
+    .topbar {
+      height: 60px; background: rgba(13,18,36,0.95); backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(99,179,237,0.1);
+      display: flex; align-items: center; padding: 0 28px; gap: 16px;
+      position: sticky; top: 0; z-index: 90;
+    }
+    .topbar-title { font-size: 16px; font-weight: 700; color: #e2e8f0; }
+    .topbar-sub { font-size: 12px; color: #64748b; }
+    .topbar-spacer { flex: 1; }
+    .topbar-btn {
+      padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: 600;
+      border: none; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #3b82f6, #6366f1);
+      color: #fff; box-shadow: 0 4px 12px rgba(59,130,246,0.35);
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(59,130,246,0.45); }
+    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+    .btn-ghost {
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #94a3b8;
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,0.08); color: #e2e8f0; }
+    .avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg,#3b82f6,#8b5cf6); display: flex; align-items: center; justify-content: center; font-size:14px; font-weight:700; color:#fff; cursor:pointer; }
+
+    /* ══ Page Body ══ */
+    .page-body { padding: 24px 28px; }
+
+    /* ══ Filter Bar ══ */
+    .filter-bar {
+      background: rgba(15,23,42,0.8); border: 1px solid rgba(99,179,237,0.1);
+      border-radius: 14px; padding: 18px 20px; margin-bottom: 20px;
+      display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    }
+    .filter-bar .search-box {
+      flex: 1; min-width: 220px; position: relative;
+    }
+    .filter-bar .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #475569; font-size: 14px; }
+    .filter-bar input {
+      width: 100%; background: rgba(30,41,59,0.8); border: 1px solid rgba(99,179,237,0.15);
+      border-radius: 8px; padding: 9px 12px 9px 36px; color: #e2e8f0; font-size: 13px; outline: none;
+      transition: border-color 0.2s;
+    }
+    .filter-bar input:focus { border-color: rgba(59,130,246,0.5); }
+    .filter-bar input::placeholder { color: #475569; }
+
+    .filter-select {
+      background: rgba(30,41,59,0.8); border: 1px solid rgba(99,179,237,0.15);
+      border-radius: 8px; padding: 9px 14px; color: #94a3b8; font-size: 13px;
+      outline: none; cursor: pointer; min-width: 130px;
+    }
+    .filter-select option { background: #1e293b; }
+
+    .filter-tag {
+      padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
+      cursor: pointer; border: 1px solid transparent; transition: all 0.2s;
+    }
+    .filter-tag.all { background: rgba(59,130,246,0.2); color: #93c5fd; border-color: rgba(59,130,246,0.4); }
+    .filter-tag:not(.all) { background: rgba(30,41,59,0.5); color: #64748b; border-color: rgba(255,255,255,0.06); }
+    .filter-tag:hover { color: #e2e8f0; border-color: rgba(99,179,237,0.3); }
+
+    .result-count { font-size: 12px; color: #64748b; margin-left: auto; white-space: nowrap; }
+
+    /* ══ Scene Grid ══ */
+    .scene-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
+
+    .scene-card {
+      background: linear-gradient(135deg, rgba(30,41,59,0.85), rgba(15,23,42,0.95));
+      border: 1px solid rgba(99,179,237,0.1); border-radius: 16px; overflow: hidden;
+      cursor: pointer; transition: all 0.3s; position: relative;
+    }
+    .scene-card:hover {
+      border-color: rgba(59,130,246,0.35); transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    }
+    .scene-card.selected {
+      border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.3), 0 12px 40px rgba(59,130,246,0.2);
+    }
+    .scene-card.selected::after {
+      content: '✓'; position: absolute; top: 12px; right: 12px;
+      width: 24px; height: 24px; border-radius: 50%;
+      background: #3b82f6; color: #fff; font-size: 13px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .scene-thumb {
+      height: 150px; position: relative; overflow: hidden;
+      background: linear-gradient(135deg, #0d1224, #1e293b);
+    }
+    .scene-thumb-canvas {
+      width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+    }
+    .scene-preview-icon { font-size: 56px; opacity: 0.6; }
+    .scene-type-badge {
+      position: absolute; top: 10px; left: 10px;
+      padding: 3px 10px; border-radius: 12px; font-size: 10px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .badge-locomotion { background: rgba(59,130,246,0.25); color: #93c5fd; border: 1px solid rgba(59,130,246,0.3); }
+    .badge-manipulation { background: rgba(139,92,246,0.25); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.3); }
+    .badge-navigation { background: rgba(16,185,129,0.25); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); }
+    .badge-balance { background: rgba(245,158,11,0.25); color: #fcd34d; border: 1px solid rgba(245,158,11,0.3); }
+    .badge-collision { background: rgba(239,68,68,0.25); color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); }
+
+    .difficulty-bar {
+      position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+      background: rgba(255,255,255,0.1);
+    }
+    .difficulty-fill { height: 100%; border-radius: 0 2px 2px 0; }
+    .diff-easy .difficulty-fill { background: #10b981; width: 30%; }
+    .diff-medium .difficulty-fill { background: #f59e0b; width: 60%; }
+    .diff-hard .difficulty-fill { background: #ef4444; width: 90%; }
+
+    .scene-body { padding: 14px 16px; }
+    .scene-title { font-size: 14px; font-weight: 700; color: #e2e8f0; margin-bottom: 5px; line-height: 1.4; }
+    .scene-desc { font-size: 12px; color: #64748b; line-height: 1.6; margin-bottom: 12px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+    .scene-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+    .meta-item { display: flex; align-items: center; gap: 4px; font-size: 11px; color: #475569; }
+    .meta-item span { color: #64748b; }
+
+    .scene-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+    .tag {
+      padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600;
+      background: rgba(30,41,59,0.8); color: #64748b; border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .scene-footer { display: flex; gap: 8px; }
+    .card-btn {
+      flex: 1; padding: 8px; border-radius: 8px; font-size: 12px; font-weight: 600;
+      border: none; cursor: pointer; transition: all 0.2s; text-align: center;
+    }
+    .card-btn.detail { background: rgba(255,255,255,0.05); color: #94a3b8; border: 1px solid rgba(255,255,255,0.08); }
+    .card-btn.detail:hover { background: rgba(255,255,255,0.08); color: #e2e8f0; }
+    .card-btn.select {
+      background: linear-gradient(135deg, rgba(59,130,246,0.2), rgba(99,102,241,0.2));
+      color: #93c5fd; border: 1px solid rgba(59,130,246,0.3);
+    }
+    .card-btn.select:hover { background: linear-gradient(135deg, rgba(59,130,246,0.3), rgba(99,102,241,0.3)); color: #e2e8f0; }
+    .card-btn.selected-btn {
+      background: linear-gradient(135deg, #3b82f6, #6366f1);
+      color: #fff; border: none;
+    }
+
+    /* ══ Bottom Action Bar ══ */
+    .action-bar {
+      position: fixed; bottom: 0; left: 240px; right: 0;
+      background: rgba(13,18,36,0.97); backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(59,130,246,0.2);
+      padding: 14px 28px; display: flex; align-items: center; gap: 16px;
+      transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+    }
+    .action-bar.visible { transform: translateY(0); }
+    .action-info { font-size: 13px; color: #e2e8f0; }
+    .action-info strong { color: #60a5fa; }
+    .action-spacer { flex: 1; }
+    .action-btn {
+      padding: 10px 24px; border-radius: 10px; font-size: 13px; font-weight: 700;
+      border: none; cursor: pointer; transition: all 0.2s;
+    }
+    .action-btn.clear { background: rgba(255,255,255,0.06); color: #94a3b8; border: 1px solid rgba(255,255,255,0.08); }
+    .action-btn.clear:hover { background: rgba(255,255,255,0.1); color: #e2e8f0; }
+    .action-btn.start {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff; box-shadow: 0 4px 15px rgba(16,185,129,0.4);
+    }
+    .action-btn.start:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(16,185,129,0.5); }
+
+    /* ══ Config Drawer / Dialog ══ */
+    .overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px); z-index: 200;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    }
+    .overlay.show { opacity: 1; pointer-events: all; }
+
+    .config-panel {
+      position: fixed; right: 0; top: 0; bottom: 0; width: 520px;
+      background: linear-gradient(180deg, #0d1224 0%, #111827 100%);
+      border-left: 1px solid rgba(99,179,237,0.15);
+      z-index: 201; transform: translateX(100%);
+      transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    .config-panel.open { transform: translateX(0); }
+
+    .panel-header {
+      padding: 24px 24px 20px; border-bottom: 1px solid rgba(99,179,237,0.1);
+      display: flex; align-items: flex-start; gap: 14px;
+    }
+    .panel-icon {
+      width: 48px; height: 48px; border-radius: 12px; flex-shrink: 0;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      display: flex; align-items: center; justify-content: center; font-size: 24px;
+    }
+    .panel-title { font-size: 17px; font-weight: 800; color: #e2e8f0; margin-bottom: 4px; }
+    .panel-sub { font-size: 12px; color: #64748b; }
+    .panel-close {
+      margin-left: auto; width: 32px; height: 32px; border-radius: 8px;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: #64748b; font-size: 16px; transition: all 0.2s; flex-shrink: 0;
+    }
+    .panel-close:hover { background: rgba(239,68,68,0.15); color: #f87171; border-color: rgba(239,68,68,0.3); }
+
+    .panel-body { flex: 1; overflow-y: auto; padding: 20px 24px; }
+    .panel-body::-webkit-scrollbar { width: 4px; }
+    .panel-body::-webkit-scrollbar-track { background: transparent; }
+    .panel-body::-webkit-scrollbar-thumb { background: rgba(99,179,237,0.2); border-radius: 2px; }
+
+    .cfg-section { margin-bottom: 24px; }
+    .cfg-section-title {
+      font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase;
+      letter-spacing: 1px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
+    }
+    .cfg-section-title::after { content: ''; flex: 1; height: 1px; background: rgba(99,179,237,0.08); }
+
+    .cfg-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+    .cfg-row.single { grid-template-columns: 1fr; }
+    .cfg-field label {
+      display: block; font-size: 11px; font-weight: 600; color: #64748b;
+      margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .cfg-field input, .cfg-field select, .cfg-field textarea {
+      width: 100%; background: rgba(30,41,59,0.8); border: 1px solid rgba(99,179,237,0.15);
+      border-radius: 8px; padding: 9px 12px; color: #e2e8f0; font-size: 13px; outline: none;
+      transition: border-color 0.2s; font-family: inherit;
+    }
+    .cfg-field input:focus, .cfg-field select:focus, .cfg-field textarea:focus {
+      border-color: rgba(59,130,246,0.5); box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+    }
+    .cfg-field select option { background: #1e293b; }
+    .cfg-field textarea { resize: vertical; min-height: 80px; }
+    .cfg-hint { font-size: 10px; color: #475569; margin-top: 4px; }
+
+    .slider-row { margin-bottom: 14px; }
+    .slider-label { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 11px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .slider-val { color: #93c5fd; font-weight: 700; }
+    input[type=range] {
+      width: 100%; -webkit-appearance: none; height: 4px; border-radius: 2px;
+      background: rgba(99,179,237,0.15); outline: none; cursor: pointer;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%;
+      background: linear-gradient(135deg, #3b82f6, #6366f1);
+      box-shadow: 0 2px 8px rgba(59,130,246,0.5); cursor: pointer;
+    }
+
+    .toggle-group { display: flex; gap: 8px; flex-wrap: wrap; }
+    .toggle-item {
+      padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
+      border: 1px solid rgba(255,255,255,0.08); cursor: pointer;
+      background: rgba(30,41,59,0.5); color: #64748b; transition: all 0.2s;
+    }
+    .toggle-item.active { background: rgba(59,130,246,0.2); color: #93c5fd; border-color: rgba(59,130,246,0.4); }
+    .toggle-item:hover { color: #e2e8f0; }
+
+    .scene-quick-info {
+      background: rgba(59,130,246,0.07); border: 1px solid rgba(59,130,246,0.15);
+      border-radius: 10px; padding: 12px 16px; margin-bottom: 20px;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+    }
+    .quick-info-item { text-align: center; }
+    .quick-info-val { font-size: 18px; font-weight: 800; color: #60a5fa; }
+    .quick-info-key { font-size: 10px; color: #64748b; margin-top: 2px; }
+
+    .panel-footer {
+      padding: 16px 24px; border-top: 1px solid rgba(99,179,237,0.1);
+      display: flex; gap: 12px;
+    }
+    .panel-btn {
+      flex: 1; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 700;
+      border: none; cursor: pointer; transition: all 0.2s; text-align: center;
+    }
+    .panel-btn.secondary { background: rgba(255,255,255,0.05); color: #94a3b8; border: 1px solid rgba(255,255,255,0.08); }
+    .panel-btn.secondary:hover { background: rgba(255,255,255,0.08); color: #e2e8f0; }
+    .panel-btn.run {
+      flex: 2; background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff; box-shadow: 0 4px 15px rgba(16,185,129,0.4);
+    }
+    .panel-btn.run:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(16,185,129,0.5); }
+
+    /* ══ Progress Launch ══ */
+    .launch-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+      z-index: 300; display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    }
+    .launch-overlay.show { opacity: 1; pointer-events: all; }
+    .launch-box {
+      background: linear-gradient(135deg, #0d1224, #111827);
+      border: 1px solid rgba(99,179,237,0.2); border-radius: 20px;
+      padding: 40px; width: 440px; text-align: center;
+    }
+    .launch-icon { font-size: 60px; margin-bottom: 16px; }
+    .launch-title { font-size: 20px; font-weight: 800; color: #e2e8f0; margin-bottom: 8px; }
+    .launch-sub { font-size: 13px; color: #64748b; margin-bottom: 28px; }
+    .launch-progress-wrap { background: rgba(255,255,255,0.06); border-radius: 8px; height: 8px; overflow: hidden; margin-bottom: 12px; }
+    .launch-progress-bar {
+      height: 100%; border-radius: 8px;
+      background: linear-gradient(90deg, #3b82f6, #8b5cf6, #10b981);
+      background-size: 200% 100%;
+      animation: gradientMove 1.5s linear infinite;
+      transition: width 0.3s ease;
+    }
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
+    }
+    .launch-step { font-size: 12px; color: #64748b; margin-bottom: 24px; }
+    .launch-cancel { padding: 8px 24px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); color: #94a3b8; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s; }
+    .launch-cancel:hover { background: rgba(239,68,68,0.1); color: #f87171; }
+
+    /* ══ Section Header ══ */
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+    .section-title { font-size: 16px; font-weight: 700; color: #e2e8f0; display: flex; align-items: center; gap: 8px; }
+    .section-title::before { content: ''; display: block; width: 4px; height: 18px; background: linear-gradient(180deg, #3b82f6, #8b5cf6); border-radius: 2px; }
+
+    /* ══ View Toggle ══ */
+    .view-toggle { display: flex; background: rgba(30,41,59,0.6); border-radius: 8px; padding: 3px; gap: 2px; }
+    .view-btn { padding: 5px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; color: #64748b; border: none; background: none; transition: all 0.2s; }
+    .view-btn.active { background: rgba(59,130,246,0.2); color: #93c5fd; }
+
+    /* ══ Pagination ══ */
+    .pagination { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 28px; padding-bottom: 80px; }
+    .page-btn {
+      width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      background: rgba(30,41,59,0.6); border: 1px solid rgba(99,179,237,0.1);
+      color: #64748b; transition: all 0.2s;
+    }
+    .page-btn:hover { background: rgba(59,130,246,0.15); color: #93c5fd; border-color: rgba(59,130,246,0.3); }
+    .page-btn.active { background: linear-gradient(135deg, #3b82f6, #6366f1); color: #fff; border: none; box-shadow: 0 3px 10px rgba(59,130,246,0.4); }
+    .page-btn.arrow { font-size: 16px; }
+
+    /* ══ Scrollbar ══ */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(99,179,237,0.15); border-radius: 3px; }
+
+    /* ══ Scene List View ══ */
+    .scene-list { border: 1px solid rgba(99,179,237,0.1); border-radius: 14px; overflow: hidden; }
+    .list-header {
+      display: grid;
+      grid-template-columns: 40px 44px 1fr 100px 70px 110px 70px 80px 110px 130px;
+      align-items: center;
+      padding: 10px 16px;
+      background: rgba(30,41,59,0.6);
+      border-bottom: 1px solid rgba(99,179,237,0.08);
+      font-size: 10px; font-weight: 700; color: #475569;
+      text-transform: uppercase; letter-spacing: 0.7px;
+      gap: 8px;
+    }
+    .list-row {
+      display: grid;
+      grid-template-columns: 40px 44px 1fr 100px 70px 110px 70px 80px 110px 130px;
+      align-items: center;
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(99,179,237,0.05);
+      cursor: pointer;
+      transition: all 0.2s;
+      gap: 8px;
+      background: rgba(15,23,42,0.6);
+    }
+    .list-row:last-child { border-bottom: none; }
+    .list-row:hover { background: rgba(30,41,59,0.7); }
+    .list-row.selected { background: rgba(59,130,246,0.07); border-color: rgba(59,130,246,0.12); }
+
+    .list-checkbox {
+      width: 18px; height: 18px; border-radius: 5px;
+      border: 1.5px solid rgba(99,179,237,0.25);
+      background: rgba(30,41,59,0.5);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; color: #fff; font-weight: 700;
+      transition: all 0.2s; flex-shrink: 0;
+    }
+    .list-checkbox.checked { background: #3b82f6; border-color: #3b82f6; box-shadow: 0 0 8px rgba(59,130,246,0.4); }
+
+    .list-scene-name { font-size: 13px; font-weight: 700; color: #e2e8f0; margin-bottom: 3px; }
+    .list-scene-desc { font-size: 11px; color: #475569; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 320px; }
+
+    .diff-tag { padding: 3px 9px; border-radius: 10px; font-size: 10px; font-weight: 700; }
+    .diff-tag-easy   { background: rgba(16,185,129,0.15); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.25); }
+    .diff-tag-medium { background: rgba(245,158,11,0.15); color: #fcd34d; border: 1px solid rgba(245,158,11,0.25); }
+    .diff-tag-hard   { background: rgba(239,68,68,0.15);  color: #fca5a5; border: 1px solid rgba(239,68,68,0.25); }
+
+    .rate-bar { width: 50px; height: 4px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
+    .rate-bar-fill { height: 100%; border-radius: 2px; transition: width 0.4s; }
+
+    .list-btn {
+      padding: 5px 11px; border-radius: 6px; font-size: 11px; font-weight: 600;
+      border: none; cursor: pointer; transition: all 0.2s; margin-left: 4px;
+    }
+    .detail-btn { background: rgba(255,255,255,0.05); color: #94a3b8; border: 1px solid rgba(255,255,255,0.08); }
+    .detail-btn:hover { background: rgba(255,255,255,0.09); color: #e2e8f0; }
+    .sel-btn { background: rgba(59,130,246,0.12); color: #93c5fd; border: 1px solid rgba(59,130,246,0.25); }
+    .sel-btn:hover { background: rgba(59,130,246,0.22); }
+    .sel-active { background: linear-gradient(135deg,#3b82f6,#6366f1); color: #fff; box-shadow: 0 2px 8px rgba(59,130,246,0.35); }
+
+    /* ══ Element UI override ══ */
+    .el-dialog { background: #0f172a !important; border: 1px solid rgba(99,179,237,0.15) !important; border-radius: 16px !important; }
+    .el-dialog__header { border-bottom: 1px solid rgba(99,179,237,0.1); padding: 18px 24px !important; }
+    .el-dialog__title { color: #e2e8f0 !important; font-weight: 700 !important; }
+    .el-dialog__body { padding: 20px 24px !important; color: #94a3b8 !important; }
+    .el-tag { font-weight: 600 !important; }
+  </style>
+<style id="iframe-override">
+  /* When embedded in iframe, hide sidebar and adjust layout */
+</style>
+<script>
+  // Detect iframe embedding and adjust layout
+  if (window !== window.top) {
+    document.documentElement.classList.add("in-iframe");
+    var style = document.getElementById("iframe-override");
+    if (style) {
+      style.textContent = ".sidebar{display:none!important}.main-content{margin-left:0!important}";
+    }
+  }
+</script>
+</head>
+<body>
+<div id="app">
+<div class="app-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">🤖</div>
+      <h1>机器人仿真<br>测试平台</h1>
+      <p>RoboSim v2.0</p>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">概览</div>
+      <a href="index.html" class="nav-item"><span class="nav-icon">🏠</span> 控制台总览</a>
+      <div class="nav-section-title">测试管理</div>
+      <a href="scene-library.html" class="nav-item active"><span class="nav-icon">🗂️</span> 测试场景库 <span class="nav-badge green">48</span></a>
+      <a href="task-manager.html" class="nav-item"><span class="nav-icon">📋</span> 测试任务管理 <span class="nav-badge yellow">3</span></a>
+      <a href="monitor.html" class="nav-item"><span class="nav-icon">📡</span> 实时监控 <span class="nav-badge">运行中</span></a>
+      <div class="nav-section-title">数据与报告</div>
+      <a href="dataset-manager.html" class="nav-item"><span class="nav-icon">🗃️</span> 数据集管理 <span class="nav-badge" style="background:#8b5cf6;">New</span></a>
+      <a href="#" class="nav-item"><span class="nav-icon">📊</span> 测试报告</a>
+      <a href="#" class="nav-item"><span class="nav-icon">🗄️</span> 历史数据</a>
+      <div class="nav-section-title">系统</div>
+      <a href="#" class="nav-item"><span class="nav-icon">⚙️</span> 系统配置</a>
+      <a href="#" class="nav-item"><span class="nav-icon">🔧</span> MuJoCo 配置</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="system-status">
+        <span class="status-dot"></span>
+        <span class="status-text">MuJoCo 引擎在线</span><br>
+        <span style="font-size:11px;color:#475569;margin-top:4px;display:block">v3.1.6 · GPU加速已启用</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main-content">
+    <!-- Topbar -->
+    <div class="topbar">
+      <div>
+        <div class="topbar-title">测试场景库</div>
+        <div class="topbar-sub">共 {{ filteredScenes.length }} 个场景 · 已选 {{ selectedIds.length }} 个</div>
+      </div>
+      <div class="topbar-spacer"></div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <button class="topbar-btn btn-ghost" @click="importDialog=true">📥 导入场景</button>
+        <button class="topbar-btn btn-ghost">⬆️ 上传 XML</button>
+        <button class="topbar-btn btn-primary" :disabled="selectedIds.length===0" @click="openConfig">
+          ⚙️ 开始配置 <span v-if="selectedIds.length>0" style="background:rgba(255,255,255,0.2);border-radius:10px;padding:1px 7px;font-size:11px;">{{ selectedIds.length }}</span>
+        </button>
+        <div class="avatar">管</div>
+      </div>
+    </div>
+
+    <!-- Page Body -->
+    <div class="page-body">
+      <!-- Filter Bar -->
+      <div class="filter-bar">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input v-model="search" placeholder="搜索场景名称、描述、标签…" @input="onSearch" />
+        </div>
+        <select class="filter-select" v-model="filterType">
+          <option value="">全部类型</option>
+          <option value="locomotion">运动控制</option>
+          <option value="manipulation">操作抓取</option>
+          <option value="navigation">导航避障</option>
+          <option value="balance">平衡稳定</option>
+          <option value="collision">碰撞测试</option>
+        </select>
+        <select class="filter-select" v-model="filterDiff">
+          <option value="">全部难度</option>
+          <option value="easy">简单</option>
+          <option value="medium">中等</option>
+          <option value="hard">困难</option>
+        </select>
+        <select class="filter-select" v-model="sortBy">
+          <option value="name">按名称</option>
+          <option value="date">按时间</option>
+          <option value="runs">按使用次数</option>
+        </select>
+
+        <span style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+          <span class="filter-tag" :class="{all: filterType===''}" @click="filterType=''">全部</span>
+          <span class="filter-tag" :class="{all: filterType==='locomotion'}" @click="filterType='locomotion'">🦿 运动</span>
+          <span class="filter-tag" :class="{all: filterType==='manipulation'}" @click="filterType='manipulation'">🦾 操作</span>
+          <span class="filter-tag" :class="{all: filterType==='navigation'}" @click="filterType='navigation'">🧭 导航</span>
+        </span>
+        <span class="result-count">{{ filteredScenes.length }} / {{ scenes.length }} 个场景</span>
+      </div>
+
+      <!-- Section Header -->
+      <div class="section-header">
+        <div class="section-title">场景列表</div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span v-if="selectedIds.length>0" style="font-size:12px;color:#60a5fa;font-weight:600;">
+            已选 {{ selectedIds.length }} 个场景
+            <span style="cursor:pointer;margin-left:8px;color:#64748b;" @click="clearSelected">清除</span>
+          </span>
+          <div class="view-toggle">
+            <button class="view-btn" :class="{active: viewMode==='card'}" @click="viewMode='card'">⊞ 卡片</button>
+            <button class="view-btn" :class="{active: viewMode==='list'}" @click="viewMode='list'">≡ 列表</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scene Card Grid -->
+      <div class="scene-grid" v-if="viewMode==='card'">
+        <div
+          v-for="scene in pagedScenes"
+          :key="scene.id"
+          class="scene-card"
+          :class="{selected: selectedIds.includes(scene.id)}"
+          @click="toggleSelect(scene.id)"
+        >
+          <!-- Thumb -->
+          <div class="scene-thumb" :class="'diff-'+scene.difficulty">
+            <div class="scene-thumb-canvas">
+              <span class="scene-preview-icon">{{ scene.icon }}</span>
+            </div>
+            <span class="scene-type-badge" :class="'badge-'+scene.type">{{ scene.typeLabel }}</span>
+            <div class="difficulty-bar"><div class="difficulty-fill"></div></div>
+          </div>
+          <!-- Body -->
+          <div class="scene-body">
+            <div class="scene-title">{{ scene.name }}</div>
+            <div class="scene-desc">{{ scene.desc }}</div>
+            <div class="scene-meta">
+              <span class="meta-item">⏱️ <span>~{{ scene.duration }}s</span></span>
+              <span class="meta-item">🔁 <span>{{ scene.runs }}次</span></span>
+              <span class="meta-item">🤖 <span>{{ scene.robot }}</span></span>
+              <span class="meta-item" :style="{color: scene.difficulty==='easy'?'#10b981':scene.difficulty==='medium'?'#f59e0b':'#ef4444'}">
+                ● <span>{{ scene.difficulty==='easy'?'简单':scene.difficulty==='medium'?'中等':'困难' }}</span>
+              </span>
+            </div>
+            <div class="scene-tags">
+              <span class="tag" v-for="t in scene.tags" :key="t">{{ t }}</span>
+            </div>
+            <div class="scene-footer" @click.stop>
+              <button class="card-btn detail" @click="openDetail(scene)">📋 详情</button>
+              <button class="card-btn" :class="selectedIds.includes(scene.id)?'selected-btn':'select'" @click="toggleSelect(scene.id)">
+                {{ selectedIds.includes(scene.id) ? '✓ 已选中' : '+ 选择' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scene List View -->
+      <div class="scene-list" v-if="viewMode==='list'">
+        <div class="list-header">
+          <div class="lh-check"></div>
+          <div class="lh-icon"></div>
+          <div class="lh-name">场景名称</div>
+          <div class="lh-type">类型</div>
+          <div class="lh-diff">难度</div>
+          <div class="lh-robot">机器人</div>
+          <div class="lh-duration">时长</div>
+          <div class="lh-runs">运行次数</div>
+          <div class="lh-rate">成功率</div>
+          <div class="lh-action">操作</div>
+        </div>
+        <div
+          v-for="scene in pagedScenes"
+          :key="scene.id"
+          class="list-row"
+          :class="{selected: selectedIds.includes(scene.id)}"
+          @click="toggleSelect(scene.id)"
+        >
+          <div class="lh-check">
+            <div class="list-checkbox" :class="{checked: selectedIds.includes(scene.id)}">
+              <span v-if="selectedIds.includes(scene.id)">✓</span>
+            </div>
+          </div>
+          <div class="lh-icon">
+            <span style="font-size:24px;">{{ scene.icon }}</span>
+          </div>
+          <div class="lh-name">
+            <div class="list-scene-name">{{ scene.name }}</div>
+            <div class="list-scene-desc">{{ scene.desc }}</div>
+          </div>
+          <div class="lh-type">
+            <span class="scene-type-badge" :class="'badge-'+scene.type" style="position:relative;top:auto;left:auto;">{{ scene.typeLabel }}</span>
+          </div>
+          <div class="lh-diff">
+            <span class="diff-tag" :class="'diff-tag-'+scene.difficulty">
+              {{ scene.difficulty==='easy'?'简单':scene.difficulty==='medium'?'中等':'困难' }}
+            </span>
+          </div>
+          <div class="lh-robot" style="font-size:12px;color:#94a3b8;">{{ scene.robot }}</div>
+          <div class="lh-duration" style="font-size:12px;color:#64748b;">~{{ scene.duration }}s</div>
+          <div class="lh-runs" style="font-size:12px;color:#64748b;">{{ scene.runs }} 次</div>
+          <div class="lh-rate">
+            <div style="display:flex;align-items:center;gap:6px;">
+              <div class="rate-bar">
+                <div class="rate-bar-fill" :style="{width:scene.successRate+'%', background: scene.successRate>=85?'#10b981':scene.successRate>=60?'#f59e0b':'#ef4444'}"></div>
+              </div>
+              <span style="font-size:11px;font-weight:700;" :style="{color: scene.successRate>=85?'#6ee7b7':scene.successRate>=60?'#fcd34d':'#fca5a5'}">{{ scene.successRate }}%</span>
+            </div>
+          </div>
+          <div class="lh-action" @click.stop>
+            <button class="list-btn detail-btn" @click="openDetail(scene)">详情</button>
+            <button class="list-btn" :class="selectedIds.includes(scene.id)?'sel-active':'sel-btn'" @click="toggleSelect(scene.id)">
+              {{ selectedIds.includes(scene.id) ? '✓ 已选' : '选择' }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination">
+        <div class="page-btn arrow" @click="prevPage">‹</div>
+        <div class="page-btn" v-for="p in totalPages" :key="p" :class="{active:p===currentPage}" @click="currentPage=p">{{ p }}</div>
+        <div class="page-btn arrow" @click="nextPage">›</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Action Bar -->
+  <div class="action-bar" :class="{visible: selectedIds.length>0}">
+    <div class="action-info">已选择 <strong>{{ selectedIds.length }}</strong> 个测试场景，将按序执行</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;max-width:400px;">
+      <span v-for="id in selectedIds.slice(0,5)" :key="id" style="background:rgba(59,130,246,0.15);color:#93c5fd;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;">
+        {{ getSceneName(id) }}
+      </span>
+      <span v-if="selectedIds.length>5" style="background:rgba(99,102,241,0.15);color:#a5b4fc;padding:4px 10px;border-radius:6px;font-size:11px;">+{{ selectedIds.length-5 }} 个</span>
+    </div>
+    <div class="action-spacer"></div>
+    <button class="action-btn clear" @click="clearSelected">清除选择</button>
+    <button class="action-btn start" @click="openConfig">⚙️ 开始配置测试参数</button>
+  </div>
+
+  <!-- Overlay -->
+  <div class="overlay" :class="{show: configOpen}" @click="closeConfig"></div>
+
+  <!-- Config Panel -->
+  <div class="config-panel" :class="{open: configOpen}">
+    <div class="panel-header">
+      <div class="panel-icon">⚙️</div>
+      <div>
+        <div class="panel-title">测试参数配置</div>
+        <div class="panel-sub">{{ selectedIds.length }} 个场景 · 按序执行</div>
+      </div>
+      <div class="panel-close" @click="closeConfig">✕</div>
+    </div>
+
+    <div class="panel-body">
+      <!-- Quick Info -->
+      <div class="scene-quick-info">
+        <div class="quick-info-item"><div class="quick-info-val">{{ selectedIds.length }}</div><div class="quick-info-key">测试场景</div></div>
+        <div class="quick-info-item"><div class="quick-info-val">~{{ estimatedTime }}</div><div class="quick-info-key">预计时长(s)</div></div>
+        <div class="quick-info-item"><div class="quick-info-val">{{ config.simStep }}</div><div class="quick-info-key">仿真步长(ms)</div></div>
+      </div>
+
+      <!-- 任务基本信息 -->
+      <div class="cfg-section">
+        <div class="cfg-section-title">任务基本信息</div>
+        <div class="cfg-row single">
+          <div class="cfg-field">
+            <label>任务名称</label>
+            <input v-model="config.taskName" placeholder="如：双足机器人步态测试-2026-04-08" />
+          </div>
+        </div>
+        <div class="cfg-row">
+          <div class="cfg-field">
+            <label>任务优先级</label>
+            <select v-model="config.priority">
+              <option value="high">🔴 高优先级</option>
+              <option value="normal">🟡 普通</option>
+              <option value="low">🟢 低优先级</option>
+            </select>
+          </div>
+          <div class="cfg-field">
+            <label>执行模式</label>
+            <select v-model="config.execMode">
+              <option value="sequential">顺序执行</option>
+              <option value="parallel">并行执行</option>
+            </select>
+          </div>
+        </div>
+        <div class="cfg-row single">
+          <div class="cfg-field">
+            <label>备注说明</label>
+            <textarea v-model="config.note" placeholder="可选：记录本次测试的目的、背景…"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- MuJoCo 仿真参数 -->
+      <div class="cfg-section">
+        <div class="cfg-section-title">MuJoCo 仿真参数</div>
+        <div class="cfg-row">
+          <div class="cfg-field">
+            <label>仿真步长 (ms)</label>
+            <input v-model="config.simStep" type="number" step="0.1" min="0.1" max="10" />
+            <div class="cfg-hint">推荐 1-2ms，值越小精度越高</div>
+          </div>
+          <div class="cfg-field">
+            <label>最大仿真时长 (s)</label>
+            <input v-model="config.maxTime" type="number" min="1" max="3600" />
+          </div>
+        </div>
+        <div class="cfg-row">
+          <div class="cfg-field">
+            <label>积分器</label>
+            <select v-model="config.integrator">
+              <option value="Euler">Euler</option>
+              <option value="RK4">RK4</option>
+              <option value="implicit">Implicit</option>
+            </select>
+          </div>
+          <div class="cfg-field">
+            <label>求解器</label>
+            <select v-model="config.solver">
+              <option value="Newton">Newton</option>
+              <option value="CG">CG</option>
+              <option value="PGS">PGS</option>
+            </select>
+          </div>
+        </div>
+        <div class="slider-row">
+          <div class="slider-label">
+            <span>重力系数</span>
+            <span class="slider-val">{{ config.gravity }} m/s²</span>
+          </div>
+          <input type="range" v-model.number="config.gravity" min="-20" max="0" step="0.1" />
+        </div>
+        <div class="slider-row">
+          <div class="slider-label">
+            <span>渲染倍速</span>
+            <span class="slider-val">{{ config.renderSpeed }}x</span>
+          </div>
+          <input type="range" v-model.number="config.renderSpeed" min="0.1" max="10" step="0.1" />
+        </div>
+      </div>
+
+      <!-- 机器人配置 -->
+      <div class="cfg-section">
+        <div class="cfg-section-title">机器人配置</div>
+        <div class="cfg-row">
+          <div class="cfg-field">
+            <label>机器人模型</label>
+            <select v-model="config.robotModel">
+              <option value="bipedal_v2">双足机器人 v2</option>
+              <option value="manipulator_6dof">6DoF 机械臂</option>
+              <option value="quadruped_a1">四足 A1</option>
+              <option value="humanoid_h1">人形 H1</option>
+            </select>
+          </div>
+          <div class="cfg-field">
+            <label>控制器</label>
+            <select v-model="config.controller">
+              <option value="pid">PID 控制器</option>
+              <option value="lqr">LQR 控制器</option>
+              <option value="rl_policy">RL Policy</option>
+              <option value="mpc">MPC</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- 数据采集 -->
+      <div class="cfg-section">
+        <div class="cfg-section-title">数据采集与监控</div>
+        <div class="toggle-group" style="margin-bottom:14px;">
+          <span
+            v-for="item in dataItems"
+            :key="item.key"
+            class="toggle-item"
+            :class="{active: config.dataCollect.includes(item.key)}"
+            @click="toggleData(item.key)"
+          >{{ item.label }}</span>
+        </div>
+        <div class="cfg-row">
+          <div class="cfg-field">
+            <label>采样频率 (Hz)</label>
+            <input v-model="config.sampleRate" type="number" min="10" max="1000" />
+          </div>
+          <div class="cfg-field">
+            <label>数据存储格式</label>
+            <select v-model="config.dataFormat">
+              <option value="csv">CSV</option>
+              <option value="json">JSON</option>
+              <option value="hdf5">HDF5</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- 成功判定 -->
+      <div class="cfg-section">
+        <div class="cfg-section-title">测试成功判定条件</div>
+        <div class="cfg-row">
+          <div class="cfg-field">
+            <label>最大角度偏差 (°)</label>
+            <input v-model="config.maxAngleDev" type="number" step="0.1" />
+          </div>
+          <div class="cfg-field">
+            <label>最大力矩超限 (Nm)</label>
+            <input v-model="config.maxTorque" type="number" />
+          </div>
+        </div>
+        <div class="cfg-row">
+          <div class="cfg-field">
+            <label>倒地判定阈值 (m)</label>
+            <input v-model="config.fallThreshold" type="number" step="0.01" />
+          </div>
+          <div class="cfg-field">
+            <label>最低成功率 (%)</label>
+            <input v-model="config.minSuccessRate" type="number" min="0" max="100" />
+          </div>
+        </div>
+      </div>
+
+      <!-- 报告 -->
+      <div class="cfg-section">
+        <div class="cfg-section-title">报告设置</div>
+        <div class="toggle-group">
+          <span class="toggle-item" :class="{active:config.autoReport}" @click="config.autoReport=!config.autoReport">📄 自动生成报告</span>
+          <span class="toggle-item" :class="{active:config.sendEmail}" @click="config.sendEmail=!config.sendEmail">📧 邮件通知</span>
+          <span class="toggle-item" :class="{active:config.saveVideo}" @click="config.saveVideo=!config.saveVideo">🎥 录制视频</span>
+          <span class="toggle-item" :class="{active:config.renderGL}" @click="config.renderGL=!config.renderGL">🖥️ OpenGL渲染</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-footer">
+      <button class="panel-btn secondary" @click="saveDraft">💾 存草稿</button>
+      <button class="panel-btn run" @click="startTest">▶ 开始测试</button>
+    </div>
+  </div>
+
+  <!-- Launch Progress Overlay -->
+  <div class="launch-overlay" :class="{show: launching}">
+    <div class="launch-box">
+      <div class="launch-icon">🚀</div>
+      <div class="launch-title">正在启动 MuJoCo 仿真</div>
+      <div class="launch-sub">{{ launchSteps[launchStepIdx] }}</div>
+      <div class="launch-progress-wrap">
+        <div class="launch-progress-bar" :style="{width: launchProgress+'%'}"></div>
+      </div>
+      <div class="launch-step">{{ launchProgress }}% · {{ launchSteps[launchStepIdx] }}</div>
+      <button class="launch-cancel" @click="cancelLaunch">取消</button>
+    </div>
+  </div>
+
+  <!-- Detail Dialog (el-dialog) -->
+  <el-dialog
+    :visible.sync="detailVisible"
+    width="600px"
+    :title="detailScene ? detailScene.name : ''"
+    custom-class="scene-detail-dialog"
+  >
+    <div v-if="detailScene" style="color:#94a3b8;">
+      <div style="display:flex;gap:16px;margin-bottom:20px;align-items:center;">
+        <div style="font-size:56px;background:rgba(30,41,59,0.8);width:80px;height:80px;border-radius:14px;display:flex;align-items:center;justify-content:center;">{{ detailScene.icon }}</div>
+        <div>
+          <div style="font-size:16px;font-weight:700;color:#e2e8f0;margin-bottom:6px;">{{ detailScene.name }}</div>
+          <div style="font-size:13px;color:#64748b;line-height:1.6;">{{ detailScene.desc }}</div>
+          <div style="display:flex;gap:8px;margin-top:10px;">
+            <span class="scene-type-badge" :class="'badge-'+detailScene.type" style="position:relative;top:0;left:0;">{{ detailScene.typeLabel }}</span>
+          </div>
+        </div>
+      </div>
+      <el-divider></el-divider>
+      <el-descriptions :column="2" border>
+        <el-descriptions-item label="机器人类型">{{ detailScene.robot }}</el-descriptions-item>
+        <el-descriptions-item label="仿真时长">~{{ detailScene.duration }}s</el-descriptions-item>
+        <el-descriptions-item label="难度等级">{{ detailScene.difficulty==='easy'?'简单':detailScene.difficulty==='medium'?'中等':'困难' }}</el-descriptions-item>
+        <el-descriptions-item label="历史运行次数">{{ detailScene.runs }} 次</el-descriptions-item>
+        <el-descriptions-item label="历史成功率">{{ detailScene.successRate }}%</el-descriptions-item>
+        <el-descriptions-item label="最后更新">{{ detailScene.updatedAt }}</el-descriptions-item>
+      </el-descriptions>
+      <div style="margin-top:18px;">
+        <div style="font-size:12px;color:#475569;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">关联标签</div>
+        <el-tag v-for="t in detailScene.tags" :key="t" style="margin-right:8px;margin-bottom:8px;">{{ t }}</el-tag>
+      </div>
+    </div>
+    <span slot="footer">
+      <el-button @click="detailVisible=false">关闭</el-button>
+      <el-button type="primary" @click="selectFromDetail(detailScene)">{{ detailScene && selectedIds.includes(detailScene.id) ? '取消选择' : '+ 选择该场景' }}</el-button>
+    </span>
+  </el-dialog>
+
+  <!-- Import Dialog -->
+  <el-dialog :visible.sync="importDialog" title="导入测试场景" width="480px">
+    <div style="color:#94a3b8;text-align:center;padding:20px 0;">
+      <div style="font-size:48px;margin-bottom:16px;">📥</div>
+      <div style="font-size:14px;color:#e2e8f0;font-weight:600;margin-bottom:8px;">拖拽文件或点击上传</div>
+      <div style="font-size:12px;color:#64748b;margin-bottom:20px;">支持 .xml (MuJoCo)、.mjcf、.zip 格式</div>
+      <el-upload drag action="#" :auto-upload="false" style="--el-upload-dragger-background: rgba(30,41,59,0.5);">
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+      </el-upload>
+    </div>
+    <span slot="footer">
+      <el-button @click="importDialog=false">取消</el-button>
+      <el-button type="primary">确认导入</el-button>
+    </span>
+  </el-dialog>
+
+</div>
+</div>
+
+<script>
+const SCENES = [
+  { id:1, name:'双足步态稳定性测试', type:'locomotion', typeLabel:'运动控制', icon:'🦿', difficulty:'medium', desc:'测试双足机器人在平坦地面行走时的步态稳定性，包含步速0.5-2.0m/s范围的渐变测试。', robot:'Bipedal-v2', duration:30, runs:142, successRate:87, tags:['步态','稳定性','PD控制'], updatedAt:'2026-04-06' },
+  { id:2, name:'斜坡上坡行走', type:'locomotion', typeLabel:'运动控制', icon:'⛰️', difficulty:'hard', desc:'测试机器人在15°/30°斜坡上的爬坡能力，评估关节力矩和重心调整策略。', robot:'Quadruped-A1', duration:45, runs:89, successRate:72, tags:['斜坡','四足','力矩'], updatedAt:'2026-04-05' },
+  { id:3, name:'6DoF机械臂抓取', type:'manipulation', typeLabel:'操作抓取', icon:'🦾', difficulty:'medium', desc:'测试6自由度机械臂对不同形状物体的精准抓取，评估末端执行器的定位精度。', robot:'ARM-6DoF', duration:20, runs:231, successRate:94, tags:['抓取','6DoF','精度'], updatedAt:'2026-04-07' },
+  { id:4, name:'窄道穿越导航', type:'navigation', typeLabel:'导航避障', icon:'🧭', difficulty:'hard', desc:'机器人在宽度仅为自身1.2倍的走廊中完成穿越，同时避开动态障碍物。', robot:'Humanoid-H1', duration:60, runs:55, successRate:65, tags:['导航','避障','动态'], updatedAt:'2026-04-04' },
+  { id:5, name:'单腿平衡站立', type:'balance', typeLabel:'平衡稳定', icon:'🎯', difficulty:'hard', desc:'测试机器人单腿站立时抵抗外部推力干扰的能力，评估平衡恢复时间与最大抗扰力。', robot:'Bipedal-v2', duration:15, runs:78, successRate:68, tags:['平衡','单腿','干扰'], updatedAt:'2026-04-03' },
+  { id:6, name:'正面碰撞安全测试', type:'collision', typeLabel:'碰撞测试', icon:'💥', difficulty:'easy', desc:'模拟机器人正面以0.5m/s速度与固定墙面碰撞，记录各关节受力和结构形变。', robot:'Humanoid-H1', duration:5, runs:320, successRate:100, tags:['碰撞','安全','结构'], updatedAt:'2026-04-07' },
+  { id:7, name:'跑步步态测试', type:'locomotion', typeLabel:'运动控制', icon:'🏃', difficulty:'medium', desc:'测试机器人以3-5m/s速度奔跑时的步态协调性和能耗效率。', robot:'Bipedal-v2', duration:30, runs:67, successRate:81, tags:['跑步','能效','步态'], updatedAt:'2026-04-02' },
+  { id:8, name:'多目标抓取排序', type:'manipulation', typeLabel:'操作抓取', icon:'📦', difficulty:'medium', desc:'机械臂需要识别并按颜色对5个物体进行分类抓取和摆放，测试规划能力。', robot:'ARM-6DoF', duration:90, runs:43, successRate:88, tags:['规划','多目标','视觉'], updatedAt:'2026-04-01' },
+  { id:9, name:'楼梯上下行测试', type:'locomotion', typeLabel:'运动控制', icon:'🪜', difficulty:'hard', desc:'测试四足机器人在标准楼梯（阶高20cm）的上下行能力，重点评估落脚点选择算法。', robot:'Quadruped-A1', duration:60, runs:34, successRate:59, tags:['楼梯','四足','规划'], updatedAt:'2026-03-30' },
+  { id:10, name:'颠簸路面行走', type:'locomotion', typeLabel:'运动控制', icon:'🌊', difficulty:'medium', desc:'在高度随机变化（±5cm）的不平整地面上行走，测试机器人适应性和稳定性。', robot:'Quadruped-A1', duration:45, runs:88, successRate:83, tags:['不平整','适应性','传感器'], updatedAt:'2026-03-28' },
+  { id:11, name:'协作双臂装配测试', type:'manipulation', typeLabel:'操作抓取', icon:'🔧', difficulty:'hard', desc:'双机械臂协同完成零件装配任务，测试双臂协调控制和力传感反馈。', robot:'Dual-ARM', duration:120, runs:21, successRate:76, tags:['协作','双臂','装配'], updatedAt:'2026-03-27' },
+  { id:12, name:'静态平衡恢复', type:'balance', typeLabel:'平衡稳定', icon:'⚖️', difficulty:'easy', desc:'双足机器人受到随机方向冲击力后的平衡恢复能力测试，记录恢复时间和步数。', robot:'Bipedal-v2', duration:20, runs:156, successRate:92, tags:['恢复','冲击','控制'], updatedAt:'2026-04-07' },
+];
+
+new Vue({
+  el: '#app',
+  data() {
+    return {
+      scenes: SCENES,
+      viewMode: 'card',
+      search: '',
+      filterType: '',
+      filterDiff: '',
+      sortBy: 'name',
+      selectedIds: [],
+      currentPage: 1,
+      pageSize: 9,
+      configOpen: false,
+      detailVisible: false,
+      detailScene: null,
+      importDialog: false,
+      launching: false,
+      launchProgress: 0,
+      launchStepIdx: 0,
+      launchTimer: null,
+      launchSteps: [
+        '初始化 MuJoCo 仿真环境…',
+        '加载机器人 MJCF 模型…',
+        '配置物理参数与约束…',
+        '预热渲染管线…',
+        '启动数据采集服务…',
+        '仿真已就绪，开始运行！',
+      ],
+      config: {
+        taskName: '',
+        priority: 'normal',
+        execMode: 'sequential',
+        note: '',
+        simStep: 2,
+        maxTime: 300,
+        integrator: 'RK4',
+        solver: 'Newton',
+        gravity: -9.81,
+        renderSpeed: 1.0,
+        robotModel: 'bipedal_v2',
+        controller: 'rl_policy',
+        dataCollect: ['joint_angle','torque','velocity','contact_force'],
+        sampleRate: 100,
+        dataFormat: 'csv',
+        maxAngleDev: 5.0,
+        maxTorque: 200,
+        fallThreshold: 0.3,
+        minSuccessRate: 80,
+        autoReport: true,
+        sendEmail: false,
+        saveVideo: true,
+        renderGL: true,
+      },
+      dataItems: [
+        { key:'joint_angle', label:'关节角度' },
+        { key:'torque', label:'关节力矩' },
+        { key:'velocity', label:'关节速度' },
+        { key:'contact_force', label:'接触力' },
+        { key:'com_pos', label:'质心位置' },
+        { key:'energy', label:'能耗' },
+        { key:'imu', label:'IMU数据' },
+        { key:'render', label:'渲染帧' },
+      ],
+    };
+  },
+  computed: {
+    filteredScenes() {
+      let list = this.scenes;
+      if (this.search) {
+        const q = this.search.toLowerCase();
+        list = list.filter(s => s.name.toLowerCase().includes(q) || s.desc.toLowerCase().includes(q) || s.tags.some(t => t.toLowerCase().includes(q)));
+      }
+      if (this.filterType) list = list.filter(s => s.type === this.filterType);
+      if (this.filterDiff) list = list.filter(s => s.difficulty === this.filterDiff);
+      if (this.sortBy === 'name') list = [...list].sort((a,b) => a.name.localeCompare(b.name));
+      if (this.sortBy === 'runs') list = [...list].sort((a,b) => b.runs - a.runs);
+      return list;
+    },
+    totalPages() {
+      return Math.ceil(this.filteredScenes.length / this.pageSize);
+    },
+    pagedScenes() {
+      const start = (this.currentPage - 1) * this.pageSize;
+      return this.filteredScenes.slice(start, start + this.pageSize);
+    },
+    estimatedTime() {
+      return this.selectedIds.reduce((sum, id) => {
+        const s = this.scenes.find(x => x.id === id);
+        return sum + (s ? s.duration : 0);
+      }, 0);
+    },
+  },
+  methods: {
+    toggleSelect(id) {
+      const idx = this.selectedIds.indexOf(id);
+      if (idx === -1) this.selectedIds.push(id);
+      else this.selectedIds.splice(idx, 1);
+    },
+    clearSelected() { this.selectedIds = []; },
+    getSceneName(id) {
+      const s = this.scenes.find(x => x.id === id);
+      return s ? s.name.slice(0, 6) + (s.name.length > 6 ? '…' : '') : '';
+    },
+    openConfig() {
+      if (this.selectedIds.length === 0) { this.$message.warning('请先选择至少一个测试场景'); return; }
+      this.config.taskName = `场景测试-${new Date().toLocaleDateString('zh-CN').replace(/\//g,'-')}`;
+      this.configOpen = true;
+    },
+    closeConfig() { this.configOpen = false; },
+    openDetail(scene) { this.detailScene = scene; this.detailVisible = true; },
+    selectFromDetail(scene) {
+      if (!scene) return;
+      this.toggleSelect(scene.id);
+      this.detailVisible = false;
+    },
+    toggleData(key) {
+      const idx = this.config.dataCollect.indexOf(key);
+      if (idx === -1) this.config.dataCollect.push(key);
+      else this.config.dataCollect.splice(idx, 1);
+    },
+    saveDraft() { this.$message.success('草稿已保存'); },
+    startTest() {
+      this.configOpen = false;
+      this.launching = true;
+      this.launchProgress = 0;
+      this.launchStepIdx = 0;
+      this.launchTimer = setInterval(() => {
+        this.launchProgress += 4;
+        this.launchStepIdx = Math.min(Math.floor(this.launchProgress / 20), this.launchSteps.length - 1);
+        if (this.launchProgress >= 100) {
+          clearInterval(this.launchTimer);
+          this.launchProgress = 100;
+          this.launchStepIdx = this.launchSteps.length - 1;
+          setTimeout(() => {
+            this.launching = false;
+            this.$message({ type: 'success', message: '🚀 仿真任务已提交！正在跳转至监控页面…', duration: 2000 });
+            setTimeout(() => { window.location.href = 'monitor.html'; }, 1800);
+          }, 600);
+        }
+      }, 120);
+    },
+    cancelLaunch() {
+      clearInterval(this.launchTimer);
+      this.launching = false;
+      this.$message.info('已取消启动');
+    },
+    prevPage() { if (this.currentPage > 1) this.currentPage--; },
+    nextPage() { if (this.currentPage < this.totalPages) this.currentPage++; },
+    onSearch() { this.currentPage = 1; },
+  },
+});
+</script>
+
+<script>
+  // Intercept internal navigation links and notify parent
+  if (window !== window.top) {
+    document.addEventListener('click', function(e) {
+      var link = e.target.closest('a[href]');
+      if (!link) return;
+      var href = link.getAttribute('href');
+      if (!href) return;
+      // Only intercept links to local simulation pages
+      var simPages = ['index.html','scene-library.html','task-manager.html','monitor.html','dataset-manager.html'];
+      var page = href.split('/').pop().split('?')[0].split('#')[0];
+      if (simPages.indexOf(page) !== -1) {
+        e.preventDefault();
+        window.parent.postMessage({type: 'sim-navigate', target: page}, '*');
+      }
+    });
+  }
+</script>
+</body>
+</html>

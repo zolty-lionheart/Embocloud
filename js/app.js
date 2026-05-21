@@ -41,6 +41,8 @@
     { index: 'standard', label: '标准认证' },
     { index: 'mall', label: '供应链商城' },
     { index: 'community', label: '众创社区' },
+    { index: 'paper', label: '论文解读' },
+    { index: 'testfield', label: '测试场地' },
   ];
 
   // 菜单图标颜色映射
@@ -56,6 +58,8 @@
     standard: 'linear-gradient(135deg,#BF360C,#FF7043)',
     mall: 'linear-gradient(135deg,#0277BD,#29B6F6)',
     community: 'linear-gradient(135deg,#4527A0,#7E57C2)',
+    paper: 'linear-gradient(135deg,#880E4F,#E91E63)',
+    testfield: 'linear-gradient(135deg,#33691E,#8BC34A)',
   };
 
   // 创建应用
@@ -176,7 +180,8 @@
                   <li><a href="#">平台简介</a></li>\
                   <li><a href="#" @click.prevent="navigate(\'page-standard\')">标准认证</a></li>\
                   <li><a href="#" @click.prevent="navigate(\'page-community\')">众创社区</a></li>\
-                  <li><a href="#">联系我们</a></li>\
+                  <li><a href="#" @click.prevent="navigate(\'page-paper\')">论文解读</a></li>\
+                  <li><a href="#" @click.prevent="navigate(\'page-testfield\')">测试场地预约</a></li>\
                 </ul>\
               </div>\
             </div>\
