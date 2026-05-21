@@ -1042,9 +1042,9 @@ function renderAnalytics(el) {
   <div class="metric-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:16px">
     ${[
       ['blue','总采集数据量','2.4 GB','↑ 实时写入'],
-      ['green','传感器节点','${ROBOTS.length * 6}','↑ 全部在线'],
+      ['green','传感器节点',ROBOTS.length * 6,'↑ 全部在线'],
       ['yellow','数据帧率','1,248 fps','↑ 实时流式'],
-      ['cyan','分析报告','${REPORTS.length} 份','↑ 本月生成'],
+      ['cyan','分析报告', REPORTS.length + ' 份','↑ 本月生成'],
     ].map(([c,l,v,ch]) => `
     <div class="metric-card ${c}">
       <div class="metric-label">${l}</div>
