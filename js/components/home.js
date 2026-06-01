@@ -7,6 +7,15 @@
         <div>
           <!-- ===== Hero ===== -->
           <div class="hero-section">
+            <!-- Logo 固定在容器左上角 -->
+    <img src="../images/logo2.png" alt="Logo" style="
+        position: absolute;
+        top: 40px;
+        left: 40px;
+        height: 70px;
+        object-fit: contain;
+    ">
+
             <div class="hero-grid-bg"></div>
             <div class="hero-particles">
               <span v-for="n in 20" :key="n" class="hero-dot" :style="{left: Math.random()*100+'%', top: Math.random()*100+'%', animationDelay: (Math.random()*6)+'s', animationDuration: (4+Math.random()*4)+'s', width: (2+Math.random()*4)+'px', height: (2+Math.random()*4)+'px'}"></span>
@@ -15,6 +24,7 @@
             <div class="hero-float hero-float-2"></div>
             <div class="hero-float hero-float-3"></div>
             <div style="position:relative;z-index:2;max-width:780px;text-align:center;">
+
               <div class="hero-badge">国内领先的具身智能研发平台</div>
               <h1 class="hero-title">具身智能，赋能<span>未来</span>机器人研发</h1>
               <p class="hero-subtitle">提供完整的具身智能研发生态链 — 数据集、模型库、云仿真、供应链一站式解决方案</p>
