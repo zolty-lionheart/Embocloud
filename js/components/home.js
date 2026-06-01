@@ -8,7 +8,7 @@
           <!-- ===== Hero ===== -->
           <div class="hero-section">
             <!-- Logo 固定在容器左上角 -->
-    <img src="../images/logo2.png" alt="Logo" style="
+    <img src="images/logo2.png" alt="Logo" style="
         position: absolute;
         top: 40px;
         left: 40px;
