@@ -120,36 +120,48 @@ window.AppData = {
 
   // ===== MODEL =====
   modelTree: [
-    { id:'1', label:'四足机器人', children:[{id:'1-1',label:'宇树 Go系列'},{id:'1-2',label:'宇树 Aliengo/B系列'},{id:'1-3',label:'ANYmal 系列'}] },
-    { id:'2', label:'人形机器人', children:[{id:'2-1',label:'宇树 H/G系列'},{id:'2-2',label:'Agility Digit'},{id:'2-3',label:'其他通用人形'}] },
+    { id:'1', label:'四足机器人', children:[{id:'1-1',label:'宇树 Go系列'},{id:'1-2',label:'宇树 Aliengo/B系列'},{id:'1-3',label:'ANYmal 系列'},{id:'1-4',label:'Boston Dynamics'}] },
+    { id:'2', label:'人形机器人', children:[{id:'2-1',label:'宇树 H/G系列'},{id:'2-2',label:'Agility Digit'},{id:'2-3',label:'智元/傅利叶'},{id:'2-4',label:'Figure AI'}] },
     { id:'3', label:'工业/协作机械臂', children:[{id:'3-1',label:'Franka Panda'},{id:'3-2',label:'Universal Robots'},{id:'3-3',label:'FANUC'}] },
     { id:'4', label:'灵巧手/末端执行器', children:[{id:'4-1',label:'Dexterous Hand'},{id:'4-2',label:'Robotiq 夹爪'}] },
     { id:'5', label:'移动操作机器人', children:[{id:'5-1',label:'Hello Robot Stretch'},{id:'5-2',label:'TIAGo'}] },
-    { id:'6', label:'教育/开源', children:[{id:'6-1',label:'Poppy 系列'},{id:'6-2',label:'其他教具'}] },
+    { id:'6', label:'教育/开源', children:[{id:'6-1',label:'Poppy 系列'},{id:'6-2',label:'SO-ARM 系列'},{id:'6-3',label:'其他教具'}] },
   ],
   urdfModels: [
     // 四足机器人
-    { id:1,  name:'Unitree Go1',      category:'四足机器人',     format:'URDF',     icon:'🐕', desc:'Unitree Go1 四足机器人，12自由度，适合科研与教育。',                                      version:'1.0',   downloads:'3,200',  size:'32 KB',  file:'models/urdf/quadruped/unitree_go1.urdf' },
-    { id:2,  name:'Unitree Go2',      category:'四足机器人',     format:'URDF',     icon:'🐕', desc:'Unitree Go2 四足机器人，标配4D LiDAR，高性能运动控制。',                                version:'1.0',   downloads:'5,100',  size:'27 KB',  file:'models/urdf/quadruped/unitree_go2.urdf' },
-    { id:3,  name:'Unitree A1',       category:'四足机器人',     format:'URDF',     icon:'🐕', desc:'Unitree A1 高速四足机器人，极大加速度，适合强化学习研究。',                      version:'1.0',   downloads:'2,800',  size:'23 KB',  file:'models/urdf/quadruped/unitree_a1.urdf' },
-    { id:4,  name:'Unitree AlienGo',  category:'四足机器人',     format:'URDF',     icon:'🐕', desc:'Unitree AlienGo 工业级四足机器人，IP65防护，支持室外作业。',                  version:'1.0',   downloads:'1,900',  size:'22 KB',  file:'models/urdf/quadruped/unitree_aliengo.urdf' },
-    { id:5,  name:'Unitree Laikago',  category:'四足机器人',     format:'URDF',     icon:'🐕', desc:'Unitree Laikago 经典四足平台，开源社区支持广泛。',                              version:'1.0',   downloads:'4,500',  size:'16 KB',  file:'models/urdf/quadruped/unitree_laikago.urdf' },
-    { id:6,  name:'Unitree B1',       category:'四足机器人',     format:'URDF',     icon:'🐕', desc:'Unitree B1 工业防水四足机器人，适用于复杂地形巡检。',                        version:'1.0',   downloads:'1,200',  size:'41 KB',  file:'models/urdf/quadruped/unitree_b1.urdf' },
-    { id:7,  name:'Unitree B2',       category:'四足机器人',     format:'URDF',     icon:'🐕', desc:'Unitree B2 最新工业四足机器人，续航与承载力全面升级。',                          version:'1.0',   downloads:'980',    size:'26 KB',  file:'models/urdf/quadruped/unitree_b2.urdf' },
+    { id:1,  name:'Unitree Go1',      category:'四足机器人',     format:'URDF',     icon:'🐕', desc:'Unitree Go1 四足机器人，12自由度，适合科研与教育。',                                      version:'1.0',   downloads:'3,200',  size:'32 KB',  file:'models/urdf/quadruped/unitree_go1.urdf',     image:'models/images/quadruped/unitree_go1.png' },
+    { id:2,  name:'Unitree Go2',      category:'四足机器人',     format:'URDF',     icon:'🐕', desc:'Unitree Go2 四足机器人，标配4D LiDAR，高性能运动控制。',                                version:'1.0',   downloads:'5,100',  size:'27 KB',  file:'models/urdf/quadruped/unitree_go2.urdf',     image:'models/images/quadruped/unitree_go2.png' },
+    { id:3,  name:'Unitree A1',       category:'四足机器人',     format:'URDF',     icon:'🐕', desc:'Unitree A1 高速四足机器人，极大加速度，适合强化学习研究。',                      version:'1.0',   downloads:'2,800',  size:'23 KB',  file:'models/urdf/quadruped/unitree_a1.urdf',      image:'models/images/quadruped/unitree_a1.png' },
+    { id:4,  name:'Unitree AlienGo',  category:'四足机器人',     format:'URDF',     icon:'🐕', desc:'Unitree AlienGo 工业级四足机器人，IP65防护，支持室外作业。',                  version:'1.0',   downloads:'1,900',  size:'22 KB',  file:'models/urdf/quadruped/unitree_aliengo.urdf', image:'models/images/quadruped/unitree_aliengo.png' },
+    { id:5,  name:'Unitree Laikago',  category:'四足机器人',     format:'URDF',     icon:'🐕', desc:'Unitree Laikago 经典四足平台，开源社区支持广泛。',                              version:'1.0',   downloads:'4,500',  size:'16 KB',  file:'models/urdf/quadruped/unitree_laikago.urdf', image:'models/images/quadruped/unitree_laikago.png' },
+    { id:6,  name:'Unitree B1',       category:'四足机器人',     format:'URDF',     icon:'🐕', desc:'Unitree B1 工业防水四足机器人，适用于复杂地形巡检。',                        version:'1.0',   downloads:'1,200',  size:'41 KB',  file:'models/urdf/quadruped/unitree_b1.urdf',      image:'models/images/quadruped/unitree_b1.png' },
+    { id:7,  name:'Unitree B2',       category:'四足机器人',     format:'URDF',     icon:'🐕', desc:'Unitree B2 最新工业四足机器人，续航与承载力全面升级。',                          version:'1.0',   downloads:'980',    size:'26 KB',  file:'models/urdf/quadruped/unitree_b2.urdf',      image:'models/images/quadruped/unitree_b2.png' },
     // 人形机器人
-    { id:8,  name:'Unitree H1',       category:'人形机器人',     format:'URDF',     icon:'🤖', desc:'Unitree H1 通用人形机器人，19自由度，全身运动控制。',                              version:'1.0',   downloads:'2,100',  size:'23 KB',  file:'models/urdf/humanoid/unitree_h1.urdf' },
-    { id:9,  name:'Unitree H1-2',     category:'人形机器人',     format:'URDF',     icon:'🤖', desc:'Unitree H1-2 升级版，支持灵巧手，全身29自由度。',                              version:'1.0',   downloads:'1,500',  size:'52 KB',  file:'models/urdf/humanoid/unitree_h1_2.urdf' },
-    { id:10, name:'Unitree G1 (29DoF)',category:'人形机器人',     format:'URDF',     icon:'🤖', desc:'Unitree G1 轻量人形机器人，29自由度含灵巧手，适合具身智能研究。',        version:'1.0',   downloads:'3,800',  size:'33 KB',  file:'models/urdf/humanoid/unitree_g1_29dof.urdf' },
-    { id:11, name:'Unitree H2',       category:'人形机器人',     format:'URDF',     icon:'🤖', desc:'Unitree H2 全尺寸通用人形机器人，大负载高精度。',                                version:'1.0',   downloads:'860',    size:'30 KB',  file:'models/urdf/humanoid/unitree_h2.urdf' },
-    { id:12, name:'Agility Digit',     category:'人形机器人',     format:'URDF',     icon:'🤖', desc:'Agility Robotics Digit 双足机器人，稼动式腿部，适合物流场景。',                  version:'1.0',   downloads:'1,100',  size:'24 KB',  file:'models/urdf/humanoid/digit.urdf' },
+    { id:8,  name:'Unitree H1',       category:'人形机器人',     format:'URDF',     icon:'🤖', desc:'Unitree H1 通用人形机器人，19自由度，全身运动控制。',                              version:'1.0',   downloads:'2,100',  size:'23 KB',  file:'models/urdf/humanoid/unitree_h1.urdf',       image:'models/images/humanoid/unitree_h1.png' },
+    { id:9,  name:'Unitree H1-2',     category:'人形机器人',     format:'URDF',     icon:'🤖', desc:'Unitree H1-2 升级版，支持灵巧手，全身29自由度。',                              version:'1.0',   downloads:'1,500',  size:'52 KB',  file:'models/urdf/humanoid/unitree_h1_2.urdf',     image:'models/images/humanoid/unitree_h1_2.png' },
+    { id:10, name:'Unitree G1 (29DoF)',category:'人形机器人',    format:'URDF',     icon:'🤖', desc:'Unitree G1 轻量人形机器人，29自由度含灵巧手，适合具身智能研究。',        version:'1.0',   downloads:'3,800',  size:'33 KB',  file:'models/urdf/humanoid/unitree_g1_29dof.urdf', image:'models/images/humanoid/unitree_g1_29dof.png' },
+    { id:11, name:'Unitree H2',       category:'人形机器人',     format:'URDF',     icon:'🤖', desc:'Unitree H2 全尺寸通用人形机器人，大负载高精度。',                                version:'1.0',   downloads:'860',    size:'30 KB',  file:'models/urdf/humanoid/unitree_h2.urdf',       image:'models/images/humanoid/unitree_h2.png' },
+    { id:12, name:'Agility Digit',     category:'人形机器人',    format:'URDF',     icon:'🤖', desc:'Agility Robotics Digit 双足机器人，稼动式腿部，适合物流场景。',                  version:'1.0',   downloads:'1,100',  size:'24 KB',  file:'models/urdf/humanoid/digit.urdf',            image:'models/images/humanoid/agility_digit.png' },
     // 机械臂
-    { id:13, name:'Franka Panda',     category:'工业/协作机械臂', format:'URDF',     icon:'🦾', desc:'Franka Emika Panda 7自由度协作机械臂，关节力矩传感，适合人机协作。',      version:'1.0',   downloads:'8,900',  size:'7 KB',   file:'models/urdf/arm/franka_panda.urdf' },
-    { id:14, name:'FANUC M-710iC',  category:'工业/协作机械臂', format:'URDF',     icon:'🦾', desc:'FANUC M-710iC 工业机械臂，大负载焊接/搬运场景。',                          version:'1.0',   downloads:'1,200',  size:'5 KB',   file:'models/urdf/arm/fanuc_m10ia.urdf' },
-    { id:15, name:'Unitree Z1',       category:'工业/协作机械臂', format:'URDF',     icon:'🦾', desc:'Unitree Z1 6自由度机械臂，轻量化设计，可搭载于四足机器人。',                  version:'1.0',   downloads:'2,100',  size:'8 KB',   file:'models/urdf/arm/unitree_z1.urdf' },
+    { id:13, name:'Franka Panda',     category:'工业/协作机械臂', format:'URDF',    icon:'🦾', desc:'Franka Emika Panda 7自由度协作机械臂，关节力矩传感，适合人机协作。',      version:'1.0',   downloads:'8,900',  size:'7 KB',   file:'models/urdf/arm/franka_panda.urdf',          image:'models/images/arm/franka_panda.png' },
+    { id:14, name:'FANUC M-710iC',    category:'工业/协作机械臂', format:'URDF',    icon:'🦾', desc:'FANUC M-710iC 工业机械臂，大负载焊接/搬运场景。',                          version:'1.0',   downloads:'1,200',  size:'5 KB',   file:'models/urdf/arm/fanuc_m10ia.urdf',           image:'models/images/arm/fanuc_m710ic.png' },
+    { id:15, name:'Unitree Z1',       category:'工业/协作机械臂', format:'URDF',    icon:'🦾', desc:'Unitree Z1 6自由度机械臂，轻量化设计，可搭载于四足机器人。',                  version:'1.0',   downloads:'2,100',  size:'8 KB',   file:'models/urdf/arm/unitree_z1.urdf',            image:'models/images/arm/unitree_z1.png' },
     // 灵巧手
-    { id:16, name:'Dexterous Hand v1',category:'灵巧手/末端执行器',format:'URDF',   icon:'✋', desc:'Unitree Dexterous Hand v1 16自由度灵巧手，适配G1/H1-2。',                     version:'1.0',   downloads:'780',    size:'6 KB',   file:'models/urdf/hand/unitree_dex1_1.urdf' },
+    { id:16, name:'Dexterous Hand v1',category:'灵巧手/末端执行器',format:'URDF',  icon:'✋', desc:'Unitree Dexterous Hand v1 16自由度灵巧手，适配G1/H1-2。',                     version:'1.0',   downloads:'780',    size:'6 KB',   file:'models/urdf/hand/unitree_dex1_1.urdf',       image:'models/images/hand/unitree_dex1.png' },
     // 教育
-    { id:17, name:'Poppy Ergo Jr',    category:'教育/开源',       format:'URDF',     icon:'🤖', desc:'Poppy Ergo Jr 开源教育机械臂，3D打印低成本，适合教学演示。',                  version:'1.0',   downloads:'3,400',  size:'8 KB',   file:'models/urdf/education/poppy_ergo_jr.urdf' },
+    { id:17, name:'Poppy Ergo Jr',    category:'教育/开源',       format:'URDF',    icon:'🤖', desc:'Poppy Ergo Jr 开源教育机械臂，3D打印低成本，适合教学演示。',                  version:'1.0',   downloads:'3,400',  size:'8 KB',   file:'models/urdf/education/poppy_ergo_jr.urdf',   image:'models/images/education/poppy_ergo_jr.png' },
+    // ===== 新增热门机器人 =====
+    // 人形机器人（新增）
+    { id:18, name:'智元 X2',           category:'人形机器人',     format:'URDF',     icon:'🤖', desc:'智元X2通用人形机器人，49自由度，搭载插臂式灵巧手，面向具身智能研究与商业落地。',     version:'1.0',   downloads:'1,650',  size:'48 KB',  file:'models/urdf/humanoid/agibot_x2.urdf',        image:'models/images/humanoid/agibot_x2.png' },
+    { id:19, name:'SO-ARM101',        category:'教育/开源',       format:'URDF',     icon:'🤖', desc:'SO-ARM101 开源6自由度机械臂，3D打印低成本，支持视觉伺服，适合教育与具身智能入门。',   version:'1.0',   downloads:'2,200',  size:'12 KB',  file:'models/urdf/education/so_arm101.urdf',       image:'models/images/education/so_arm101.png' },
+    { id:20, name:'傅利叶 GR-1',       category:'人形机器人',     format:'URDF',     icon:'🤖', desc:'傅利叶GR-1通用人形机器人，54自由度，支持全身运动控制与交互，面向科研与商业化。',     version:'1.0',   downloads:'1,320',  size:'45 KB',  file:'models/urdf/humanoid/fourier_gr1.urdf',      image:'models/images/humanoid/fourier_gr1.png' },
+    // 四足机器人（新增）
+    { id:21, name:'Boston Dynamics Spot',category:'四足机器人',  format:'URDF',     icon:'🐕', desc:'Boston Dynamics Spot 工业级四足机器人，自主导航与巡检作业平台，支持机械臂扩展。',   version:'1.0',   downloads:'4,800',  size:'55 KB',  file:'models/urdf/quadruped/boston_spot.urdf',     image:'models/images/quadruped/boston_spot.png' },
+    { id:22, name:'ANYmal C',          category:'四足机器人',     format:'URDF',     icon:'🐕', desc:'ANYmal C 工业级四足机器人，ETH Zürich研发，IP67防护，适合恶劣环境自主作业。',      version:'1.0',   downloads:'1,750',  size:'38 KB',  file:'models/urdf/quadruped/anymal_c.urdf',        image:'models/images/quadruped/anymal_c.png' },
+    // 机械臂（新增）
+    { id:23, name:'UR5e',              category:'工业/协作机械臂', format:'URDF',    icon:'🦾', desc:'Universal Robots UR5e 协作机械臂，6自由度，负载5kg，工作半径850mm，±0.1mm精度。',  version:'1.0',   downloads:'6,700',  size:'9 KB',   file:'models/urdf/arm/ur5e.urdf',                  image:'models/images/arm/ur5e.png' },
+    // 人形机器人（新增）
+    { id:24, name:'Figure 02',         category:'人形机器人',     format:'URDF',     icon:'🤖', desc:'Figure 02 通用人形机器人，搭载多模态AI大模型，面向工业装配与家庭服务场景。',       version:'1.0',   downloads:'2,900',  size:'42 KB',  file:'models/urdf/humanoid/figure_02.urdf',        image:'models/images/humanoid/figure_02.png' },
   ],
   aiModels: [
     { id:101, name:'RT-2 机器人变换器', category:'端到端控制', framework:'JAX', icon:'🧠', desc:'Google DeepMind RT-2，视觉-语言-动作联合模型', accuracy:'89.4%', params:'55B', version:'1.0.0', downloads:'3,210' },

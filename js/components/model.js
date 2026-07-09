@@ -69,7 +69,10 @@
                 </div>\
                 <div class="model-grid model-grid--4">\
                   <div v-for="m in filteredModels" :key="m.id" class="model-card">\
-                    <div class="model-card-img" style="font-size:36px;">{{ m.icon }}</div>\
+                    <div class="model-card-img">\
+                      <img v-if="m.image" :src="m.image" :alt="m.name" class="model-card-photo" />\
+                      <span v-else style="font-size:36px;">{{ m.icon }}</span>\
+                    </div>\
                     <div class="model-card-body">\
                       <div class="model-card-name">{{ m.name }}</div>\
                       <div style="margin:4px 0 6px;display:flex;gap:4px;flex-wrap:wrap;">\
@@ -159,7 +162,10 @@
             <!-- 模型详情弹窗 -->\
             <el-dialog v-model="detailVisible" :title="detailModel.name||\'模型详情\'" width="600px">\
               <div v-if="detailModel.id" style="display:flex;gap:20px;">\
-                <div style="width:100px;height:100px;background:linear-gradient(135deg,#E3F2FD,#BBDEFB);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:48px;flex-shrink:0;">{{ detailModel.icon }}</div>\
+                <div style="width:140px;height:140px;background:linear-gradient(135deg,#E3F2FD,#BBDEFB);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:48px;flex-shrink:0;overflow:hidden;">\
+                  <img v-if="detailModel.image" :src="detailModel.image" :alt="detailModel.name" style="width:100%;height:100%;object-fit:contain;" />\
+                  <span v-else>{{ detailModel.icon }}</span>\
+                </div>\
                 <div style="flex:1;">\
                   <p style="color:var(--medium-gray);font-size:13px;margin-bottom:10px;">{{ detailModel.desc }}</p>\
                   <el-descriptions :column="2" border size="small">\

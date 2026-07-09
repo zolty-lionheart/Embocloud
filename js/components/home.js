@@ -7,12 +7,12 @@
         <div>
           <!-- ===== Hero ===== -->
           <div class="hero-section">
-            <!-- Logo 固定在容器左上角 -->
-    <img src="images/logo2.png" alt="Logo" style="
+            <!-- Logo 固定在容器左上角 SMVIC 70-->
+    <img src="images/logo3.png" alt="Logo" style="
         position: absolute;
         top: 40px;
         left: 40px;
-        height: 70px;
+        height: 200px; 
         object-fit: contain;
     ">
 
@@ -27,7 +27,7 @@
 
               <div class="hero-badge">国内领先的具身智能研发平台</div>
               <h1 class="hero-title">具身智能，赋能<span>未来</span>机器人研发</h1>
-              <p class="hero-subtitle">提供完整的具身智能研发生态链 — 数据集、模型库、云仿真、供应链一站式解决方案</p>
+              <p class="hero-subtitle">提供完整的具身智能研发生态链 — 数据集、模型库、仿真、供应链一站式解决方案</p>
               <div class="hero-buttons">
                 <el-button type="primary" size="large" @click="navigate('page-dataset')" class="hero-btn-primary">立即开始</el-button>
                 <el-button size="large" @click="navigate('page-course')" class="hero-btn-ghost">了解更多</el-button>
