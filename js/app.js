@@ -1,5 +1,5 @@
 /**
- * 具身智能众创云空间 — 应用入口
+ * 具身智能元宇宙 — 应用入口
  * 创建 Vue 应用，注册所有组件，挂载到 DOM
  */
 (function() {
@@ -73,7 +73,7 @@
           </button>\
           <div class="navbar-logo" @click="navigate(\'page-home\')">\
             <div class="logo-icon" v-html="logoSvg"></div>\
-            <span class="logo-text">具身智能<span class="logo-accent">众创云空间</span></span>\
+            <span class="logo-text">具身智能<span class="logo-accent">元宇宙</span></span>\
           </div>\
           <el-menu\
             class="navbar-menu"\
@@ -108,7 +108,7 @@
         <div class="mobile-nav-drawer" :class="{open: appState.mobileMenuOpen}">\
           <div class="mobile-nav-logo">\
             <div class="logo-icon" v-html="logoSvg"></div>\
-            <span class="logo-text">具身智能众创云空间</span>\
+            <span class="logo-text">具身智能元宇宙</span>\
           </div>\
           <div class="mobile-nav-items">\
             <div\
@@ -147,7 +147,7 @@
               <div class="footer-brand">\
                 <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">\
                   <div style="width:32px;height:32px;flex-shrink:0;" v-html="logoSvg"></div>\
-                  <span style="font-size:17px;font-weight:700;color:#fff;">具身智能众创云空间</span>\
+                  <span style="font-size:17px;font-weight:700;color:#fff;">具身智能元宇宙</span>\
                 </div>\
                 <p>面向具身智能领域的全栈研发平台，提供数据集、模型库、云仿真、供应链等全链路服务，助力机器人技术创新与产业化落地。</p>\
                 <div style="margin-top:14px;display:flex;gap:10px;">\
@@ -185,7 +185,7 @@
                 </ul>\
               </div>\
             </div>\
-            <div class="footer-bottom">&copy; 2025 具身智能众创云空间 All rights reserved. | 粤ICP备XXXXXXXXX号</div>\
+            <div class="footer-bottom">&copy; 2025 具身智能元宇宙 All rights reserved. | 粤ICP备XXXXXXXXX号</div>\
           </div>\
         </footer>\
       </div>',

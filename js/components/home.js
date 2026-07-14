@@ -231,7 +231,7 @@
         var getIcon = function(key) { return window.AppIcons[key] || ''; };
         var handleLogin = function() {
           appState.isLoggedIn = true;
-          ElMessage.success('欢迎加入具身智能众创云空间！');
+          ElMessage.success('欢迎加入具身智能元宇宙！');
         };
         return {
           navigate: navigate,
