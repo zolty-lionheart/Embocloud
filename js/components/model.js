@@ -93,9 +93,28 @@
                 </div>\
               </el-tab-pane>\
               <el-tab-pane label="AI 模型库" name="ai">\
+                <div class="model-search-area">\
+                  <div class="model-search-row">\
+                    <el-select v-model="aiFilterCategory" placeholder="全部分类" clearable style="width:160px;">\
+                      <el-option v-for="c in aiCategoryOptions" :key="c" :label="c" :value="c" />\
+                    </el-select>\
+                    <el-input v-model="aiSearch" placeholder="搜索模型名称..." clearable prefix-icon="Search" class="model-search-input"/>\
+                  </div>\
+                  <div class="model-quick-tags">\
+                    <span class="model-quick-label">快捷筛选：</span>\
+                    <span v-for="c in aiCategoryOptions" :key="c" class="model-quick-tag" :class="{ active: aiFilterCategory === c }" @click="toggleAiCategory(c)">{{ c }}</span>\
+                    <span class="model-quick-tag" :class="{ active: !aiFilterCategory }" @click="aiFilterCategory = \'\'">📋 全部</span>\
+                  </div>\
+                </div>\
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">\
+                  <span style="font-size:13px;color:var(--medium-gray);">共 <b style="color:var(--primary-blue);">{{ filteredAiModels.length }}</b> 个模型</span>\
+                </div>\
                 <div class="model-grid model-grid--4">\
-                  <div v-for="m in aiModels" :key="m.id" class="model-card" @click="openDetail(m)">\
-                    <div class="model-card-img" style="font-size:36px;">{{ m.icon }}</div>\
+                  <div v-for="m in filteredAiModels" :key="m.id" class="model-card" @click="openDetail(m)">\
+                    <div class="model-card-img">\
+                      <img v-if="m.image" :src="m.image" :alt="m.name" class="model-card-photo" />\
+                      <span v-else style="font-size:36px;">{{ m.icon }}</span>\
+                    </div>\
                     <div class="model-card-body">\
                       <div class="model-card-name">{{ m.name }}</div>\
                       <div style="margin:3px 0;display:flex;gap:3px;">\
@@ -191,6 +210,9 @@
         var ElMessage = ElementPlus.ElMessage;
 
         var modelTab = ref('urdf');
+        var aiFilterCategory = ref('');
+        var aiSearch = ref('');
+        var aiCategoryOptions = ['大脑模型', '小脑模型', '检测模型'];
         var modelSearch = ref('');
         var filterCategory = ref('');
         var filterFormat = ref('');
@@ -215,14 +237,29 @@
           });
         });
 
+        var filteredAiModels = computed(function() {
+          return D.aiModels.filter(function(m) {
+            var kw = (aiSearch.value || '').trim().toLowerCase();
+            var kwOk = !kw || m.name.toLowerCase().indexOf(kw) >= 0 || m.category.toLowerCase().indexOf(kw) >= 0 || (m.desc || '').toLowerCase().indexOf(kw) >= 0;
+            var catOk = !aiFilterCategory.value || m.category === aiFilterCategory.value;
+            return kwOk && catOk;
+          });
+        });
+
         var toggleCategory = function(label) {
           filterCategory.value = filterCategory.value === label ? '' : label;
+        };
+
+        var toggleAiCategory = function(label) {
+          aiFilterCategory.value = aiFilterCategory.value === label ? '' : label;
         };
 
         var onTabChange = function() {
           filterCategory.value = '';
           filterFormat.value = '';
           modelSearch.value = '';
+          aiFilterCategory.value = '';
+          aiSearch.value = '';
         };
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -317,6 +354,9 @@
           modelSearch: modelSearch,
           filterCategory: filterCategory,
           filterFormat: filterFormat,
+          aiFilterCategory: aiFilterCategory,
+          aiSearch: aiSearch,
+          aiCategoryOptions: aiCategoryOptions,
           categoryOptions: categoryOptions,
           previewVisible: previewVisible,
           previewName: previewName,
@@ -325,8 +365,10 @@
           detailVisible: detailVisible,
           detailModel: detailModel,
           filteredModels: filteredModels,
+          filteredAiModels: filteredAiModels,
           aiModels: D.aiModels,
           toggleCategory: toggleCategory,
+          toggleAiCategory: toggleAiCategory,
           onTabChange: onTabChange,
           doPreview: doPreview,
           onPreviewClosed: onPreviewClosed,

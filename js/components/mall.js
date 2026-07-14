@@ -20,7 +20,7 @@
                 <div class="ds-stat-label">商品分类</div>
               </div>
               <div class="ds-stat-item">
-                <div class="ds-stat-num">12</div>
+                <div class="ds-stat-num">20</div>
                 <div class="ds-stat-label">合作品牌</div>
               </div>
               <div class="ds-stat-item">

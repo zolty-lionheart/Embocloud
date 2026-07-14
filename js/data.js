@@ -136,6 +136,9 @@ window.AppData = {
     { id:5,  name:'Unitree Laikago',  category:'四足机器人',     format:'URDF',     icon:'🐕', desc:'Unitree Laikago 经典四足平台，开源社区支持广泛。',                              version:'1.0',   downloads:'4,500',  size:'16 KB',  file:'models/urdf/quadruped/unitree_laikago.urdf', image:'models/images/quadruped/unitree_laikago.png' },
     { id:6,  name:'Unitree B1',       category:'四足机器人',     format:'URDF',     icon:'🐕', desc:'Unitree B1 工业防水四足机器人，适用于复杂地形巡检。',                        version:'1.0',   downloads:'1,200',  size:'41 KB',  file:'models/urdf/quadruped/unitree_b1.urdf',      image:'models/images/quadruped/unitree_b1.png' },
     { id:7,  name:'Unitree B2',       category:'四足机器人',     format:'URDF',     icon:'🐕', desc:'Unitree B2 最新工业四足机器人，续航与承载力全面升级。',                          version:'1.0',   downloads:'980',    size:'26 KB',  file:'models/urdf/quadruped/unitree_b2.urdf',      image:'models/images/quadruped/unitree_b2.png' },
+    { id:25, name:'ZSL-1',            category:'四足机器人',     format:'URDF',     icon:'🐕', desc:'ZSL-1 工业四足机器人，支持多路视觉，可进行多路视觉定位。',                  version:'1.0',   downloads:'1,200',  size:'41 KB',  file:'models/urdf/quadruped/ZSL-1.urdf',      image: 'models/images/quadruped/ZSL-1.png' },
+    { id:26, name:'ZSL-1W',           category:'四足机器人',     format:'URDF',     icon:'🐕', desc:'ZSL-1W 工业四足机器人，支持多路视觉，可进行多路视觉定位。',                  version:'1.0',   downloads:'1,200',  size:'41 KB',  file:'models/urdf/quadruped/ZSL-1W.urdf',     image: 'models/images/quadruped/ZSL-1W.png' },
+
     // 人形机器人
     { id:8,  name:'Unitree H1',       category:'人形机器人',     format:'URDF',     icon:'🤖', desc:'Unitree H1 通用人形机器人，19自由度，全身运动控制。',                              version:'1.0',   downloads:'2,100',  size:'23 KB',  file:'models/urdf/humanoid/unitree_h1.urdf',       image:'models/images/humanoid/unitree_h1.png' },
     { id:9,  name:'Unitree H1-2',     category:'人形机器人',     format:'URDF',     icon:'🤖', desc:'Unitree H1-2 升级版，支持灵巧手，全身29自由度。',                              version:'1.0',   downloads:'1,500',  size:'52 KB',  file:'models/urdf/humanoid/unitree_h1_2.urdf',     image:'models/images/humanoid/unitree_h1_2.png' },
@@ -164,12 +167,26 @@ window.AppData = {
     { id:24, name:'Figure 02',         category:'人形机器人',     format:'URDF',     icon:'🤖', desc:'Figure 02 通用人形机器人，搭载多模态AI大模型，面向工业装配与家庭服务场景。',       version:'1.0',   downloads:'2,900',  size:'42 KB',  file:'models/urdf/humanoid/figure_02.urdf',        image:'models/images/humanoid/figure_02.png' },
   ],
   aiModels: [
-    { id:101, name:'RT-2 机器人变换器', category:'端到端控制', framework:'JAX', icon:'🧠', desc:'Google DeepMind RT-2，视觉-语言-动作联合模型', accuracy:'89.4%', params:'55B', version:'1.0.0', downloads:'3,210' },
-    { id:102, name:'ACT 行为克隆', category:'模仿学习', framework:'PyTorch', icon:'🎭', desc:'Action Chunking with Transformers，高精度双臂操作', accuracy:'92.1%', params:'86M', version:'1.2.0', downloads:'6,540' },
-    { id:103, name:'Diffusion Policy', category:'生成式策略', framework:'PyTorch', icon:'🌊', desc:'扩散模型驱动的机器人操作策略，鲁棒性出色', accuracy:'87.6%', params:'120M', version:'0.9.5', downloads:'4,320' },
-    { id:104, name:'DreamerV3 世界模型', category:'强化学习', framework:'JAX', icon:'💭', desc:'基于世界模型的无模型强化学习，样本效率高', accuracy:'85.2%', params:'200M', version:'3.0.0', downloads:'2,890' },
-    { id:105, name:'OpenVLA 视觉语言动作', category:'多模态', framework:'PyTorch', icon:'👁️', desc:'开源视觉-语言-动作模型，支持自然语言指令控制', accuracy:'91.3%', params:'7B', version:'1.0.0', downloads:'5,670' },
-    { id:106, name:'SAM2-Robot 分割模型', category:'视觉感知', framework:'PyTorch', icon:'🎯', desc:'Meta SAM2机器人版，实时目标分割与追踪', accuracy:'96.8%', params:'636M', version:'2.0.0', downloads:'8,120' },
+    // 大脑模型（VLA/推理/规划）
+    { id:101, name:'RT-2', category:'大脑模型', framework:'JAX', icon:'🧠', desc:'Google DeepMind 视觉-语言-动作联合模型，首个将大语言模型推理能力迁移到机器人控制的VLA模型。', accuracy:'89.4%', params:'55B', version:'1.0.0', downloads:'3,210', image:'models/images/ai/rt2.png' },
+    { id:105, name:'OpenVLA', category:'大脑模型', framework:'PyTorch', icon:'👁️', desc:'斯坦福开源VLA模型，基于Prismatic-7B，支持自然语言指令控制机械臂。', accuracy:'91.3%', params:'7B', version:'1.0.0', downloads:'5,670', image:'models/images/ai/openvla.png' },
+    { id:107, name:'π0', category:'大脑模型', framework:'PyTorch', icon:'🧠', desc:'Physical Intelligence 通用机器人大脑模型，支持跨本体零样本泛化，可控制多种机器人执行复杂任务。', accuracy:'88.7%', params:'3.3B', version:'1.0', downloads:'4,890', image:'models/images/ai/pi0.png' },
+    { id:108, name:'π0.5', category:'大脑模型', framework:'PyTorch', icon:'🧠', desc:'Physical Intelligence π0增强版，引入高层规划能力，支持长程复杂任务自主分解与执行。', accuracy:'90.2%', params:'3.3B', version:'0.5', downloads:'3,450', image:'models/images/ai/pi05.png' },
+    { id:109, name:'GR00T', category:'大脑模型', framework:'PyTorch', icon:'🧠', desc:'NVIDIA 人形机器人基础模型，基于Isaac Lab训练，支持仿真到现实迁移，面向通用人形机器人。', accuracy:'87.5%', params:'10B', version:'1.0', downloads:'6,200', image:'models/images/ai/groot.png' },
+    { id:110, name:'Lingbot-1', category:'大脑模型', framework:'PyTorch', icon:'🧠', desc:'灵初智能通用机器人大模型，融合多模态感知与决策规划，支持中英文指令理解和复杂操作任务。', accuracy:'86.3%', params:'7B', version:'1.0', downloads:'2,130', image:'models/images/ai/lingbot1.png' },
+    { id:111, name:'Gemini Robotics', category:'大脑模型', framework:'JAX', icon:'🧠', desc:'Google DeepMind 基于Gemini的机器人模型，结合视觉-语言理解与灵巧操作能力。', accuracy:'90.8%', params:'30B', version:'1.0', downloads:'3,780', image:'models/images/ai/gemini_robotics.png' },
+    // 小脑模型（控制/模仿学习/策略）
+    { id:102, name:'ACT', category:'小脑模型', framework:'PyTorch', icon:'🎭', desc:'Action Chunking Transformers，高精度双臂模仿学习策略，支持精细操作任务。', accuracy:'92.1%', params:'86M', version:'1.2.0', downloads:'6,540', image:'models/images/ai/act.png' },
+    { id:103, name:'Diffusion Policy', category:'小脑模型', framework:'PyTorch', icon:'🌊', desc:'扩散模型驱动的机器人操作策略，对噪声和干扰具有出色鲁棒性。', accuracy:'87.6%', params:'120M', version:'0.9.5', downloads:'4,320', image:'models/images/ai/diffusion_policy.png' },
+    { id:104, name:'DreamerV3', category:'小脑模型', framework:'JAX', icon:'💭', desc:'基于世界模型的强化学习算法，在虚拟环境中想象并规划，样本效率高。', accuracy:'85.2%', params:'200M', version:'3.0.0', downloads:'2,890', image:'models/images/ai/dreamerv3.png' },
+    { id:112, name:'RDT-1B', category:'小脑模型', framework:'PyTorch', icon:'🌊', desc:'清华扩散Transformer机器人模型，10亿参数，支持双臂协同操作与多模态条件控制。', accuracy:'89.3%', params:'1B', version:'1.0', downloads:'3,560', image:'models/images/ai/rdt1b.png' },
+    { id:113, name:'ALOHA', category:'小脑模型', framework:'PyTorch', icon:'🤲', desc:'斯坦福双臂遥操作与模仿学习系统，Mobile ALOHA支持移动双臂操作，数据采集到策略部署全流程。', accuracy:'91.5%', params:'80M', version:'2.0', downloads:'7,890', image:'models/images/ai/aloha.png' },
+    { id:114, name:'DexCap', category:'小脑模型', framework:'PyTorch', icon:'✋', desc:'斯坦福灵巧手操作学习系统，通过人手数据采集实现机器人灵巧抓取与操作。', accuracy:'88.9%', params:'50M', version:'1.0', downloads:'2,450', image:'models/images/ai/dexcap.png' },
+    // 检测模型（感知/视觉/分割）
+    { id:106, name:'SAM2-Robot', category:'检测模型', framework:'PyTorch', icon:'🎯', desc:'Meta SAM2 机器人版，实时目标分割与追踪，支持零样本分割任意物体。', accuracy:'96.8%', params:'636M', version:'2.0.0', downloads:'8,120', image:'models/images/ai/sam2_robot.png' },
+    { id:115, name:'YOLO-v8 Robot', category:'检测模型', framework:'PyTorch', icon:'🔍', desc:'YOLOv8 机器人检测版，实时多目标检测，支持工业场景物体识别与位姿估计。', accuracy:'94.2%', params:'68M', version:'8.0', downloads:'9,560', image:'models/images/ai/yolov8_robot.png' },
+    { id:116, name:'GroundingDINO', category:'检测模型', framework:'PyTorch', icon:'🔍', desc:'IDEA研究院开放集目标检测模型，支持自然语言描述检测任意物体。', accuracy:'93.5%', params:'172M', version:'1.0', downloads:'5,430', image:'models/images/ai/groundingdino.png' },
+    { id:117, name:'CLIP-Robot', category:'检测模型', framework:'PyTorch', icon:'🔗', desc:'OpenAI CLIP 机器人适配版，视觉-语言对齐模型，支持开放词汇感知与场景理解。', accuracy:'92.7%', params:'400M', version:'2.0', downloads:'6,780', image:'models/images/ai/clip_robot.png' },
   ],
 
   // ===== COURSE =====
@@ -486,6 +503,16 @@ window.AppData = {
     { label:'计算平台', isLeaf:false, children:[{label:'边缘计算',isLeaf:true},{label:'运动控制器',isLeaf:true}] },
   ],
   mallProducts: [
+    { id:100, name:'MagicBot Gen1 全尺寸通用人形机器人', brand:'魔法原子', spec:'身高174cm，42自由度，单臂搬运负载≥7.5kg，全身静态负载40kg，最大关节扭矩≥350N·m，运动速度≥4km/h，续航3-5h，3D激光雷达+深度相机+鱼眼相机，100 TOPS AI算力，WiFi6+5G', price:350000, originalPrice:398000, sales:'67', rating:'4.8', img:'images/mall_new_01.png', category:'人形机器人' },
+    { id:101, name:'LUS2 全尺寸人形机器人', brand:'鹿明机器人', spec:'身高160cm/57kg，28自由度，最大关节扭矩360N·m，最大移动速度2m/s，单臂负载3kg，NVIDIA Orin AGX 275TOPS算力，3D激光雷达+双目深度摄像头，续航2h，支持二次开发', price:199000, originalPrice:228000, sales:'43', rating:'4.9', img:'images/mall_new_02.jpg', category:'人形机器人' },
+    { id:102, name:'Zeroth M1 家庭守护陪伴机器人', brand:'乐享科技', spec:'身高50cm/3.3kg，双足小型人形，强化学习控制伺服驱动，全屋视觉语言导航，自主回充，长期记忆与多模态交互，支持情绪识别，接入腾讯OpenClaw生态', price:10999, originalPrice:12999, sales:'1.2K', rating:'4.7', img:'images/mall_new_03.png', category:'人形机器人' },
+    { id:103, name:'GeminiBot A1 工业级人形机器人', brand:'双子智擎', spec:'身高1.75m，有效负载20kg，动态重复定位精度±0.1mm，行走速度1.6m/s，手臂运动速度2m/s，8h续航+自动换电，双脑协同控制（工业运动控制+AI决策），轮腿一体底盘', price:280000, originalPrice:320000, sales:'29', rating:'4.8', img:'images/mall_new_04.png', category:'人形机器人' },
+    { id:104, name:'IP1000 四轴桌面机器人', brand:'蜂鸟机器人', spec:'负载1000g，工作半径490mm，重复定位精度±0.05mm，控制器与本体一体化设计，占地面积0.044㎡（小于A4纸），15分钟开箱部署，支持图形化到Python/C++全栈编程', price:5999, originalPrice:7999, sales:'2.1K', rating:'4.8', img:'images/mall_new_05.png', category:'协作机械臂' },
+    { id:105, name:'铜锤M1 高负载四足机器人', brand:'智身科技', spec:'自重35kg/负载30kg，行业首个1:1负载自重比，IP67防护，-20℃~55℃宽温域，最大速度8m/s，越障80cm，45°爬坡，双电池热插拔，续航5h/29km，15个标准硬件接口', price:68000, originalPrice:78000, sales:'256', rating:'4.9', img:'images/mall_new_06.png', category:'四足机器人' },
+    { id:106, name:'ClicBot 可立宝模块化编程机器人', brand:'可以科技', spec:'模块化卡扣拼接设计，50+预置机器人构型，支持手掰编程+图形化编程，视觉识别/手势识别/运动检测/触摸感知，42+表情动画，全球82个国家用户社区', price:2999, originalPrice:3699, sales:'8.5K', rating:'4.9', img:'images/mall_new_07.png', category:'协作机械臂' },
+    { id:107, name:'Wanda 2.0 轮式双臂人形机器人', brand:'优理奇', spec:'身高140-168cm升降，8DOF仿生臂（4+1+3分配），双臂负载12kg，臂展982mm，末端定位精度±0.5mm，移动速度1.5m/s，续航8-16h，275TOPS算力，UniTouch视触觉大模型，自适应二指夹爪', price:88000, originalPrice:108000, sales:'84', rating:'4.8', img:'images/mall_new_08.jpg', category:'人形机器人' },
+    { id:108, name:'LCS系列杯形谐波减速器', brand:'绿的谐波', spec:'杯形标准筒结构，减速比30:1~160:1，额定扭矩4~969Nm，回差<1角分，规格14~58，输入轴平键连接，刚轮端固定/柔轮端输出，国内谐波减速器龙头60%+市占率', price:3500, originalPrice:4200, sales:'5.3K', rating:'4.9', img:'images/mall_new_09.png', category:'谐波减速器' },
+    { id:0, name:'钢蹦L1-W', brand:'智身科技', spec:'首款小型行业级轮式四足机器人,轮足仿生陪伴机器人 全地形通行 IP54防护 全平台拓展', price:48480, originalPrice:48880, sales:'389', rating:'4.9', img:'images/mall_00.png', category:'四足机器人' },
     { id:1, name:'Unitree Go2 四足机器人', brand:'宇树科技', spec:'标配4D LiDAR L2，最高3.5m/s，续航2h，IP65，支持ROS2二次开发', price:9970, originalPrice:11600, sales:'3.2K', rating:'4.9', img:'images/mall_01.jpg', category:'四足机器人' },
     { id:2, name:'Unitree H1 人形机器人', brand:'宇树科技', spec:'身高1.8m，全身19关节，最高5.5km/h奔跑，360°LiDAR+深度相机', price:198000, originalPrice:220000, sales:'128', rating:'4.9', img:'images/mall_02.png', category:'人形机器人' },
     { id:3, name:'Intel RealSense D435i 深度相机', brand:'Intel', spec:'RGB 1080P + 立体深度 + IMU，深度精度2%@2m，USB3.1，全局快门', price:3200, originalPrice:3800, sales:'5.6K', rating:'4.7', img:'images/mall_03.png', category:'深度相机' },
@@ -608,59 +635,70 @@ window.AppData = {
   testFields: [
     {
       id: 1,
-      name: '去野测试场',
+      name: '多功能区',
       icon: '🏔️',
       tags: ['基础测试', '楼梯', '台阶', '淋雨'],
       desc: '综合性基础测试场地，配备标准楼梯与台阶模块，支持机器人越障、爬坡、稳定性等基础运动能力测试。内置淋雨环境模拟区，可验证设备在雨天工况下的防水性能与传感器可靠性。适合四足、人形、轮式机器人基础性能评估。',
-      features: ['标准化楼梯（15°/30°/45°三档可调）', '多级台阶测试区（5cm-30cm可调）', '淋雨模拟系统（IP54-IP67分级测试）', '平整地面基准测试区'],
-      location: '去野机器人测试基地',
+      features: ['标准化楼梯（15°/30°/45°三档可调）', '多级台阶测试区（5cm-30cm可调）', '淋雨涉水模拟系统（IP54-IP67分级测试）', '平整地面基准测试区'],
+      location: '去野',
       phone: '400-888-0001',
-      price: '¥800/天起'
+      price: '¥ XXX /天起'
     },
     {
       id: 2,
-      name: '去野南测试场',
+      name: '越野区',
       icon: '🌋',
       tags: ['极限地形', '战壕', '废墟'],
       desc: '面向极限工况的专业测试场，模拟灾害救援、军事侦察等极端场景。设有战壕穿越区、废墟攀爬区、泥泞沼泽区，可全面测试机器人在非结构化复杂地形中的通过性、稳定性和自主恢复能力。',
-      features: ['战壕穿越区（深0.5-1.5m，宽0.3-0.8m）', '废墟攀爬区（不规则碎石+倒塌建筑模拟）', '泥泞沼泽区（含水位可调）', '极限坡道（最高60°）'],
-      location: '去野南极限测试基地',
+      features: ['战壕穿越区（深0.5-1.5m，宽0.3-0.8m）', '废墟攀爬区（不规则碎石+倒塌建筑模拟）', '通行性能长直道', '不同角度土质斜坡）'],
+      location: '去野南',
       phone: '400-888-0002',
-      price: '¥1,200/天起'
+      price: '¥ XXX /天起'
     },
     {
       id: 3,
-      name: '小木屋测试场',
-      icon: '🏠',
-      tags: ['智能家具', '家居场景'],
-      desc: '1:1 还原真实家居环境，配备全屋智能家居系统，专为家庭服务机器人设计。覆盖客厅、厨房、卧室、卫生间等典型场景，内含智能灯光、窗帘、门锁等IoT设备，支持机器人与智能家居的联动测试。',
-      features: ['全屋智能家居互联（支持Matter/HomeKit/米家）', '厨房操作区（含台面、水龙头、厨具）', '卧室与卫生间场景', '动态障碍物模拟（人体模型+宠物模型）'],
-      location: '小木屋智慧家居测试中心',
-      phone: '400-888-0003',
-      price: '¥600/天起'
+      name: '农业区',
+      icon: '🪴',
+      tags: ['智慧采摘', '智慧灌溉'],
+      desc: '面向农业机器人作业场景打造的专业测试场，模拟大田种植、设施大棚、果园丘陵等典型农地环境。可开展果蔬采摘、水肥灌溉、杂草清理、作物巡检等任务测试，验证机器人田间通行、视觉识别、末端作业与自主续航能力。',
+      features: ['设施大棚模拟区（垄沟、果蔬种植行）', '果园丘陵试验区（果树排布、缓坡地形）', '农田泥泞耕地（干湿土壤切换）', '果蔬采摘作业点位（多品种作物仿真植株）', '水肥灌溉模拟管路系统'],
+      location: '去野南',
+      phone: '400-888-0002',
+      price: '¥ XXX /天起'
     },
     {
       id: 4,
-      name: '九龙潭测试场',
+      name: '涉水区',
       icon: '🌊',
       tags: ['智慧水域', '水下测试'],
       desc: '面向水域机器人与水下装备的专业测试基地，涵盖静水池、流动水道、浅滩湿地三种水域环境。支持水下机器人导航、管道巡检、水面救援等场景测试，配备水下定位与通信系统。',
       features: ['静水池（20m×15m，水深1-3m可调）', '流动水道（流速0-2m/s可调）', '浅滩湿地区（芦苇+淤泥仿真）', '水下定位系统（USBL+SBL）'],
-      location: '九龙潭水域测试基地',
+      location: '九龙潭',
       phone: '400-888-0004',
-      price: '¥1,000/天起'
+      price: '¥ XXX /天起'
     },
     {
       id: 5,
-      name: '产业园测试场',
+      name: '机器人测试认证中心',
       icon: '🏭',
       tags: ['标准测试场', '工业场景'],
-      desc: '标准化工业测试场地，符合 GB/T 12642、ISO 9283 等国际标准要求，可开展机器人性能规范试验。配备产线模拟区、仓储物流区、质检工位区，满足工业机器人、协作机器人、AGV/AMR 的标准认证测试需求。',
-      features: ['符合 GB/T 12642 性能规范测试条件', '产线模拟区（含传送带、工装夹具）', '仓储物流区（含货架、AGV通道）', '电气安全与EMC测试间'],
-      location: '机器人产业园标准测试中心',
+      desc: '标准化工业测试场地，符合 GB/T 44251 等标准要求，可开展机器人性能规范试验。配备产线模拟区、仓储物流区、质检工位区，满足工业机器人、协作机器人、AGV/AMR 的标准认证测试需求。',
+      features: ['符合 GB/T 44251 性能规范测试条件', '传感器标定校准', '仿真测试区', '实战考试区等' ],
+      location: '机器人产业园',
       phone: '400-888-0005',
-      price: '¥500/天起'
-    }
+      price: '¥ XXX /天起'
+    },
+    {
+      id: 6,
+      name: '智慧家居区 [敬请期待]',
+      icon: '🏠',
+      tags: ['智能家具', '家居场景'],
+      desc: '1:1 还原真实家居环境，配备全屋智能家居系统，专为家庭服务机器人设计。覆盖客厅、厨房、卧室、卫生间等典型场景，内含智能灯光、窗帘、门锁等IoT设备，支持机器人与智能家居的联动测试。',
+      features: ['全屋智能家居互联（支持Matter/HomeKit/米家）', '厨房操作区（含台面、水龙头、厨具）', '卧室与卫生间场景', '动态障碍物模拟（人体模型+宠物模型）'],
+      location: '小木屋',
+      phone: '400-888-0003',
+      price: '¥ XXX /天起'
+    },
   ],
 
   // ===== PROFILE =====
