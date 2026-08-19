@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
     <!-- 引入地图所需的百度地图API（替换为你的AK） -->
-    <script type="text/javascript" src="http://api.map.baidu.com/api?v=3.0&ak=你的百度地图AK"></script>
+<!--    <script type="text/javascript" src="http://api.map.baidu.com/api?v=3.0&ak=你的百度地图AK"></script>-->
     <style type="text/tailwindcss">
         @layer utilities {
             .content-auto {
@@ -45,13 +45,13 @@
         <div class="flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <i class="fa fa-robot text-3xl text-sky-400 text-glow"></i>
-                <h1 class="text-2xl font-bold text-white">基于多智能体协同调度的云控数据管理平台</h1>
-                <span class="text-sm text-sky-300 bg-sky-900/30 px-2 py-1 rounded">苏州旺山景区</span>
+                <h1 class="text-3xl font-bold text-white">基于多智能体协同调度的云控数据管理平台</h1>
+                <span class="text-sm text-sky-300 bg-sky-900/30 px-2 py-1 rounded">苏州吴中·旺山基地</span>
             </div>
             <div class="flex items-center gap-6">
                 <div class="flex items-center gap-2">
-                    <i class="fa fa-clock-o text-sky-400"></i>
-                    <span id="current-time" class="text-sm">2026-03-11 15:30:00</span>
+                    <i class="fa fa-clock-o text-sky-400 text-2xl" ></i>
+                    <span id="current-time" class="text-3xl">2026-03-11 15:30:00</span>
                 </div>
                 <div class="flex items-center gap-2">
                     <img src="https://picsum.photos/32/32" alt="用户头像" class="w-8 h-8 rounded-full border border-sky-500">
@@ -198,12 +198,12 @@
         <div class="flex-1 bg-gray-800 rounded-lg p-2 card-shadow overflow-hidden">
             <h2 class="text-lg font-semibold text-white mb-2 px-2 flex items-center gap-2">
                 <i class="fa fa-map text-sky-400"></i>
-                苏州旺山景区机器人分布
+                全球具身智能全场景实训检测认证基地(苏州吴中·旺山基地) 机器人分布
             </h2>
             <!-- 地图容器（替换为百度地图/高德地图，这里先用模拟图+标注） -->
             <div class="w-full h-[calc(100%-40px)] relative rounded bg-gray-900">
                 <!-- 旺山景区背景图 -->
-                <img src="map.png" alt="苏州旺山景区地图" class="w-full h-full object-cover opacity-70">
+                <img src="map3.png" alt="苏州旺山景区地图" class="w-full h-full object-cover opacity-70">
                 
                 <!-- 机器人标注点（绝对定位模拟，可拖拽） -->
                 <!-- 标注1：旺山广场 - A公司巡检机器人01 -->
