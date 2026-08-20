@@ -40,6 +40,18 @@
 </script>
 </head>
 <body class="bg-gray-900 text-gray-200 min-h-screen">
+    <!-- 视频弹窗 -->
+    <div id="video-modal" class="fixed inset-0 bg-black/85 z-[9999] hidden flex items-center justify-center p-6">
+        <div class="relative w-full max-w-5xl">
+            <button id="close-modal" class="absolute -top-10 right-0 text-white text-2xl hover:text-sky-400">
+                <i class="fa fa-times"></i>
+            </button>
+            <div class="bg-gray-800 rounded-lg p-3">
+                <img src="line.gif" alt="实时视频" class="w-full rounded">
+            </div>
+        </div>
+    </div>
+
     <!-- 顶部导航栏 -->
     <header class="bg-tech py-3 px-6 border-b border-blue-900/50">
         <div class="flex justify-between items-center">
@@ -165,7 +177,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- 充电基地信息卡片 -->
             <div class="bg-gray-800 rounded-lg p-4 card-shadow">
                 <h2 class="text-lg font-semibold text-white mb-3 flex items-center gap-2">
@@ -206,7 +218,7 @@
             <div class="w-full h-[calc(100%-40px)] relative rounded bg-gray-900">
                 <!-- 旺山景区背景图 -->
                 <img src="map3.png" alt="苏州旺山景区地图" class="w-full h-full object-cover opacity-70">
-                
+
                 <!-- 机器人标注点（绝对定位模拟，可拖拽） -->
                 <!-- 标注1：旺山广场 - A公司巡检机器人01 -->
                 <div class="absolute top-[55%] left-[49%] cursor-move group" draggable="true">
@@ -218,7 +230,7 @@
                         <div class="text-yellow-400">位置：多功能区 | 电量：88% | 状态：楼梯区训练中</div>
                     </div>
                 </div>
-                
+
                 <!-- 标注2：九龙潭景区 - A公司安防机器狗02 -->
                 <div class="absolute top-[10%] left-[65%] cursor-move group" draggable="true">
                     <div class="w-6 h-6 bg-green-500 rounded-full border-2 border-white flex items-center justify-center animate-pulse">
@@ -229,7 +241,7 @@
                         <div class="text-blue-400">位置：涉水区 | 电量：52% | 状态：水域巡检中</div>
                     </div>
                 </div>
-                
+
                 <!-- 标注3：叆叇岭 - B公司清洁机器人03（低电量） -->
                 <div class="absolute top-[30%] left-[56%] cursor-move group" draggable="true">
                     <div class="w-6 h-6 bg-red-500 rounded-full border-2 border-white flex items-center justify-center animate-pulse">
@@ -240,7 +252,7 @@
                         <div class="text-gray-400">位置：西施塘 | 电量：10% | 状态：离线（低电量）</div>
                     </div>
                 </div>
-                
+
                 <!-- 标注4：宝华寺 - B公司巡逻机器狗04（故障） -->
                 <div class="absolute top-[63%] left-[51%] cursor-move group" draggable="true">
                     <div class="w-6 h-6 bg-yellow-500 rounded-full border-2 border-white flex items-center justify-center animate-pulse">
@@ -251,17 +263,6 @@
                         <div class="text-green-400">位置：越野区 | 电量：25% | 状态：越野测试中</div>
                     </div>
                 </div>
-                
-<!--                &lt;!&ndash; 标注5：旺山民宿区 - C公司配送机器人05 &ndash;&gt;-->
-<!--                <div class="absolute top-[92%] left-[58%] cursor-move group" draggable="true">-->
-<!--                    <div class="w-6 h-6 bg-green-500 rounded-full border-2 border-white flex items-center justify-center animate-pulse">-->
-<!--                        <i class="fa fa-truck text-white text-xs"></i>-->
-<!--                    </div>-->
-<!--                    <div class="opacity-1 absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-gray-800 text-xs p-2 rounded shadow-lg w-48">-->
-<!--                        <div class="font-medium text-white">鹿明 - 配送机器人05</div>-->
-<!--                        <div class="text-red-400">位置：测试认证中心 | 电量：76% | 状态：直线性能检测中</div>-->
-<!--                    </div>-->
-<!--                </div>-->
 
                 <!-- 标注5：无人机检测到火情 -->
                 <div class="absolute top-[92%] left-[58%] cursor-move group" draggable="true">
@@ -272,11 +273,11 @@
                         <div class="font-medium text-white">智身 - 智能巡检机器人01</div>
                         <div class="text-red-400">位置：测试认证中心 | 电量：76% | 状态：检测中！</div>
                         <div class="mt-2 flex justify-center">
-                            <img src="line.gif" alt="火灾预警" class="w-72 h-54 object-cover rounded">
+                            <img src="line.gif" alt="直线性能测试" class="w-72 h-54 object-cover rounded">
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- 标注6：无人机检测到火情 -->
                 <div class="absolute top-[42%] left-[30%] cursor-move group" draggable="true">
                     <div class="w-6 h-6 bg-red-500 rounded-full border-2 border-white flex items-center justify-center animate-pulse">
@@ -314,7 +315,7 @@
                             <button class="text-xs bg-sky-600 px-2 py-1 rounded hover:bg-sky-500 transition">处理</button>
                         </div>
                     </div>
-                    
+
                     <!-- 事件2：低电量告警 -->
                     <div class="bg-red-900/20 border-l-4 border-red-200 rounded-r p-3 hover:bg-red-900/30 transition">
                         <div class="flex justify-between items-start mb-1">
@@ -327,7 +328,7 @@
                             <button class="text-xs bg-sky-600 px-2 py-1 rounded hover:bg-sky-500 transition">处理</button>
                         </div>
                     </div>
-                    
+
                     <!-- 事件3：故障告警 -->
                     <div class="bg-yellow-900/20 border-l-4 border-yellow-500 rounded-r p-3 hover:bg-yellow-900/30 transition">
                         <div class="flex justify-between items-start mb-1">
@@ -340,7 +341,7 @@
                             <button class="text-xs bg-sky-600 px-2 py-1 rounded hover:bg-sky-500 transition">处理</button>
                         </div>
                     </div>
-                    
+
                     <!-- 事件4：离线告警 -->
                     <div class="bg-red-900/20 border-l-4 border-red-500 rounded-r p-3 hover:bg-red-900/30 transition">
                         <div class="flex justify-between items-start mb-1">
@@ -353,7 +354,7 @@
                             <button class="text-xs bg-sky-600 px-2 py-1 rounded hover:bg-sky-500 transition">处理</button>
                         </div>
                     </div>
-                    
+
                     <!-- 事件5：越界告警 -->
                     <div class="bg-yellow-900/20 border-l-4 border-yellow-500 rounded-r p-3 hover:bg-yellow-900/30 transition">
                         <div class="flex justify-between items-start mb-1">
@@ -366,7 +367,7 @@
                             <button class="text-xs bg-sky-600 px-2 py-1 rounded hover:bg-sky-500 transition">处理</button>
                         </div>
                     </div>
-                    
+
                     <!-- 事件6：任务完成提醒 -->
                     <div class="bg-green-900/20 border-l-4 border-green-500 rounded-r p-3 hover:bg-green-900/30 transition">
                         <div class="flex justify-between items-start mb-1">
@@ -380,7 +381,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- 快捷操作卡片 -->
             <div class="bg-gray-800 rounded-lg p-4 card-shadow">
                 <h2 class="text-lg font-semibold text-white mb-3 flex items-center gap-2">
@@ -396,7 +397,7 @@
                         <i class="fa fa-download"></i>
                         <span>导出报表</span>
                     </button>
-                    <button class="bg-red-600 hover:bg-red-500 rounded p-2 text-sm flex items-center justify-center gap-2 transition">
+                    <button id="btn-video" class="bg-red-600 hover:bg-red-500 rounded p-2 text-sm flex items-center justify-center gap-2 transition">
                         <i class="fa fa-video-camera"></i>
                         <span>实时视频监控</span>
                     </button>
@@ -410,6 +411,24 @@
     </main>
 
     <script>
+        // 弹窗逻辑
+        const videoModal = document.getElementById('video-modal');
+        const btnVideo = document.getElementById('btn-video');
+        const closeModal = document.getElementById('close-modal');
+
+        btnVideo.addEventListener('click', ()=>{
+            videoModal.classList.remove('hidden');
+        });
+        closeModal.addEventListener('click', ()=>{
+            videoModal.classList.add('hidden');
+        });
+        // 点击遮罩关闭
+        videoModal.addEventListener('click', (e)=>{
+            if(e.target === videoModal){
+                videoModal.classList.add('hidden');
+            }
+        });
+
         // 1. 实时更新时间
         function updateTime() {
             const now = new Date();
@@ -450,7 +469,7 @@
                 type: 'line',
                 smooth: true,
                 itemStyle: { color: '#38bdf8' },
-                areaStyle: { 
+                areaStyle: {
                     color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
                         { offset: 0, color: 'rgba(56, 189, 248, 0.4)' },
                         { offset: 1, color: 'rgba(56, 189, 248, 0.05)' }
